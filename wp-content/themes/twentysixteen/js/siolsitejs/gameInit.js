@@ -5,11 +5,14 @@ console.log('string' + typeof(x));
 var num = parseInt(x);
 console.log(typeof(num)); 
 
-window.addEventListener("DOMContentLoaded", function(event) {
+//window.addEventListener("DOMContentLoaded", function(event) {
     console.log("DOM fully loaded and parsed");
     
     
-        
+define(['oimo', 'three','orbitControls'], function(OIMO,THREE) {
+      
+      
+
     //////////////////////////
     //****Three Variables****//
     //////////////////////////
@@ -80,6 +83,8 @@ window.addEventListener("DOMContentLoaded", function(event) {
 
     // calculate statistique or not
     var noStat = false;
+    
+    console.log('oimo ' + OIMO ); 
 
     // create oimo world contains all rigidBodys and joint.
     var world = new OIMO.World( timestep, boardphase, Iterations, noStat );
@@ -308,7 +313,10 @@ window.addEventListener("DOMContentLoaded", function(event) {
         bodsNum += 1;
 
     }
+
 });
+
+//});
 
 
 

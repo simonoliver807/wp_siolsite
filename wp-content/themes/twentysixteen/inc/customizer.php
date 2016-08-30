@@ -436,10 +436,9 @@ function wptuts_scripts_basic()
 //    wp_register_script( 'script1', get_template_directory_uri() . '/js/script1.js', array(), $ver=FALSE, TRUE );
 //    wp_register_script( 'three', get_template_directory_uri() . '/js/three.js', array(), $ver=FALSE, TRUE );
 //    wp_register_script( 'orbitControls', get_template_directory_uri() . '/js/orbitControls.js', array(), $ver=FALSE, TRUE );
-   // wp_register_script( 'requirejs', get_template_directory_uri() . '/js/require.js', array(), $ver=FALSE, TRUE );
+ wp_register_script( 'requirejs', get_template_directory_uri() . '/js/require.js', array(), $ver=FALSE, TRUE );
     
     
-     wp_register_script( 'unysonChanges', get_template_directory_uri() . '/js/siolsitejs/unysonChanges.js', array(), $ver=FALSE, TRUE );
     
     // For either a plugin or a theme, you can then enqueue the script
 	
@@ -450,17 +449,27 @@ function wptuts_scripts_basic()
 //    wp_enqueue_script( 'script1' );
 //    wp_enqueue_script( 'three' );
 //    wp_enqueue_script( 'orbitControls' );
-    wp_enqueue_script( 'unysonChanges' );
+
     
-    
-    
+    // siolsite
+    // changed this for below which loads the requirejs script last. No conflict then with jquery ui componets.
 //    wp_enqueue_script( 'requirejs' );
 //    $app_base = get_template_directory_uri(). '/js';
-//    debug_to_console( $app_base);
 //    wp_localize_script('requirejs', 'require', array(
 //        'baseurl' => $app_base,
 //        'deps'    => array( $app_base . '/main.js')
 //    ));
+    
+    function wpse47618_load_script_last()
+{
+       wp_enqueue_script( 'requirejs' );
+    $app_base = get_template_directory_uri(). '/js';
+    wp_localize_script('requirejs', 'require', array(
+        'baseurl' => $app_base,
+        'deps'    => array( $app_base . '/main.js')
+    ));
+}
+add_action( 'wp_enqueue_scripts', 'wpse47618_load_script_last', 99999 );
     
 }
 // siolsite added function to debug to console

@@ -5,6 +5,9 @@
  * to Oimo.js 2015 JAVASCRIPT
  * @author LoTh / http://lo-th.github.io/labs/
  */
+
+define([], function () {
+   
  
 var OIMO = { 
     REVISION: "1.2",
@@ -88,6 +91,7 @@ var OIMO = {
         else OIMO.CustomError.innerHTML += Class + " - " + Msg + '<br>';
     }
 };
+    
 
 var OIMO_ARRAY_TYPE;
 if(!OIMO_ARRAY_TYPE) { OIMO_ARRAY_TYPE = typeof Float32Array !== 'undefined' ? Float32Array : Array; }
@@ -747,6 +751,7 @@ OIMO.World.prototype = {
     }
 
 }
+
 /**
 * The class of rigid body. 
 * Rigid body has the shape of a single or multiple collision processing, 
@@ -850,6 +855,7 @@ OIMO.RigidBody = function ( x, y, z, rad, ax, ay, az ) {
     this.sleeping = false;
 
 };
+    
 
 OIMO.RigidBody.prototype = {
 
@@ -1625,6 +1631,7 @@ OIMO.Link.prototype = {
         this.joint.awake();
     }
 }
+
 /**
 * The Dictionary class for testing
 * @author lo-th
@@ -12508,3 +12515,6 @@ OIMO.World.prototype.add = function(obj){
         return body;
     }
 }
+
+return OIMO;    
+});
