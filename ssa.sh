@@ -28,9 +28,20 @@ OpenEverything ()
     open /Applications/Mail.app
     echo "everything open"
 }
+CloseEverything ()
+{
+    echo "close everything"
+    osascript -e 'quit app "MAMP"'
+    osascript -e 'quit app "Chrome"'
+    osascript -e 'quit app "Brackets"'
+    osascript -e 'quit app "Mail"'
+    osascript -e 'quit app "Terminal"'
+    echo "close everything closed"
+}
 
 if [ $1 == 'start' ]; then Start 
 elif [ $1 == 'stop' ]; then Stop
 elif [ $1 == 'restart' ]; then Restart 
 elif [ $1 == 'openAll' ]; then OpenEverything
+elif [ $1 == 'closeAll' ]; then CloseEverything
 fi

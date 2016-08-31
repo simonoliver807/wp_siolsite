@@ -39,7 +39,7 @@ define(['oimo', 'three','orbitControls'], function(OIMO,THREE) {
         10000       // Far
     );
     //move camera back
-    camera.position.z = 5;
+    camera.position.z = 100;
     
     
     // build the renderer
@@ -156,7 +156,7 @@ define(['oimo', 'three','orbitControls'], function(OIMO,THREE) {
     s1.name = 's1';
     meshs[meshNum] = s1;
     meshNum += 1;
-    s1.position.y = 1.0;
+    s1.position.y = 10.0;
     console.log('s1 position.x ' + s1.position.x + 's1 position.x ' + s1.position.y + 's1 position.z ' + s1.position.z); 
     window.addEventListener( 'resize', onWindowResize, false );
     
@@ -179,46 +179,46 @@ define(['oimo', 'three','orbitControls'], function(OIMO,THREE) {
     
     
   //  document.addEventListener( 'mousedown', onDocumentMouseDown, false );
-    function onDocumentMouseDown( event ) {
-
-				event.preventDefault();
-
-				document.addEventListener( 'mousemove', onDocumentMouseMove, false );
-				document.addEventListener( 'mouseup', onDocumentMouseUp, false );
-				document.addEventListener( 'mouseout', onDocumentMouseOut, false );
-
-				mouseXOnMouseDown = event.clientX - windowHalfX;
-				targetRotationOnMouseDown = targetRotation;
-
-			}
-
-    function onDocumentMouseMove( event ) {
-
-        var mouseX = event.clientX - windowHalfX;
-
-        targetRotation = targetRotationOnMouseDown + ( mouseX - mouseXOnMouseDown ) * 0.02;
-        
-        console.log(targetRotation, targetRotationOnMouseDown, mouseX, mouseXOnMouseDown); 
-
-    }
-
-    function onDocumentMouseUp( event ) {
-
-        document.removeEventListener( 'mousemove', onDocumentMouseMove, false );
-        document.removeEventListener( 'mouseup', onDocumentMouseUp, false );
-        document.removeEventListener( 'mouseout', onDocumentMouseOut, false );
-
-    }
-
-    function onDocumentMouseOut( event ) {
-
-        document.removeEventListener( 'mousemove', onDocumentMouseMove, false );
-        document.removeEventListener( 'mouseup', onDocumentMouseUp, false );
-        document.removeEventListener( 'mouseout', onDocumentMouseOut, false );
-
-    }
-    
-    
+//    function onDocumentMouseDown( event ) {
+//
+//				event.preventDefault();
+//
+//				document.addEventListener( 'mousemove', onDocumentMouseMove, false );
+//				document.addEventListener( 'mouseup', onDocumentMouseUp, false );
+//				document.addEventListener( 'mouseout', onDocumentMouseOut, false );
+//
+//				mouseXOnMouseDown = event.clientX - windowHalfX;
+//				targetRotationOnMouseDown = targetRotation;
+//
+//			}
+//
+//    function onDocumentMouseMove( event ) {
+//
+//        var mouseX = event.clientX - windowHalfX;
+//
+//        targetRotation = targetRotationOnMouseDown + ( mouseX - mouseXOnMouseDown ) * 0.02;
+//        
+//        console.log(targetRotation, targetRotationOnMouseDown, mouseX, mouseXOnMouseDown); 
+//
+//    }
+//
+//    function onDocumentMouseUp( event ) {
+//
+//        document.removeEventListener( 'mousemove', onDocumentMouseMove, false );
+//        document.removeEventListener( 'mouseup', onDocumentMouseUp, false );
+//        document.removeEventListener( 'mouseout', onDocumentMouseOut, false );
+//
+//    }
+//
+//    function onDocumentMouseOut( event ) {
+//
+//        document.removeEventListener( 'mousemove', onDocumentMouseMove, false );
+//        document.removeEventListener( 'mouseup', onDocumentMouseUp, false );
+//        document.removeEventListener( 'mouseout', onDocumentMouseOut, false );
+//
+//    }
+//    
+//    
     
     function onWindowResize() {
         camera.aspect = container.offsetWidth / container.offsetHeight;
