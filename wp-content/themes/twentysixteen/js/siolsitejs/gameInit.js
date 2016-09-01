@@ -1,15 +1,8 @@
 "use strict";
 
-var x = '0';
-console.log('string' + typeof(x));
-var num = parseInt(x);
-console.log(typeof(num)); 
-
-//window.addEventListener("DOMContentLoaded", function(event) {
-    console.log("DOM fully loaded and parsed");
     
     
-define(['oimo', 'three','orbitControls'], function(OIMO,THREE) {
+define(['oimo', 'v3d'], function(OIMO,V3D) {
       
       
 
@@ -17,52 +10,11 @@ define(['oimo', 'three','orbitControls'], function(OIMO,THREE) {
     //****Three Variables****//
     //////////////////////////
     
-    // set the scene size
-    var container = document.getElementById('container');
-    container.style.width = '100%';
-    container.style.height = '500px';
-    var WIDTH = container.offsetWidth,
-      HEIGHT = container.offsetHeight;
-    console.log('width: '+WIDTH+' height: '+HEIGHT);
-    // container to hold three.js objects
-    var meshs = {};
-    var meshNum = 0;
-    var scene = new THREE.Scene();
-    
 
-    // get a camera and set parameters
+    // container to hold three.js objects
+    var meshs = [];
+    var meshNum = 0;
     
-    var camera = new THREE.PerspectiveCamera(
-        75,         // Field of view
-        WIDTH/HEIGHT,  // Aspect ratio
-        0.1,        // Near
-        10000       // Far
-    );
-    //move camera back
-    camera.position.z = 100;
-    
-    
-    // build the renderer
-    var renderer = new THREE.WebGLRenderer();
-    // start the renderer
-    renderer.setSize(WIDTH, HEIGHT);
-    // renderer = new THREE.WebGLRenderer( { antialias: true } );
-    renderer.setClearColor( 0x000000 );
-    // renderer.setPixelRatio( window.devicePixelRatio );
-    
-    // get the canvas element
-    var container = document.getElementById('container')
-    container.appendChild(renderer.domElement);
-    
-    // light
-	//var light = new THREE.PointLight(0xffffff);
-	//light.position.set(100,250,100);
-	//scene.add(light);
-    
-    var controls = new THREE.OrbitControls( camera, renderer.domElement );
-    controls.enableDamping = true;
-    controls.dampingFactor = 0.25;
-    controls.enableZoom = true;
     
     
     //////////////////////////
@@ -84,156 +36,31 @@ define(['oimo', 'three','orbitControls'], function(OIMO,THREE) {
     // calculate statistique or not
     var noStat = false;
     
-    console.log('oimo ' + OIMO ); 
 
     // create oimo world contains all rigidBodys and joint.
     var world = new OIMO.World( timestep, boardphase, Iterations, noStat );
 
     // you can choose world gravity 
     world.gravity = new OIMO.Vec3(0, -9.8, 0);
+    
+    world.worldscale(100);
+
+    // three.js view with geometrys and materials ../js/v3d.js
+    var v3d = new V3D.View();
+    v3d.initLight();
 
     // container to hold oimo objects
-    var bods = {};
-    var bodsNum = 0;
-
-
-    // Oimo Physics use international system units 0.1 to 10 meters max for dynamique body.
-    // for three.js i use by default *100  so object is between 10 to 10000 three unit.
-    // big object give better precision try change value 10 , 1 ...
-    world.worldscale(100);
-    
-
-    
-    // create the ground as a plane 
-//    var loader = new THREE.TextureLoader();
-//    loader.load(
-//                            '/website/wordpress/wp-content/uploads/2016/08/assets/pavingGround.jpg',
-//                            function (texture) {
-//                                //texture.repeat.x = 256;
-//                                //texture.repeat.y = 256;
-//                                //texture.repeat.set = (10,10);
-//                                //texture.wrapS = THREE.RepeatWrapping; 
-//                               // texture.wrapT = THREE.RepeatWrapping; 
-//                              //  texture.minFilter = THREE.LinearFilter;
-//                               // var material = new THREE.MeshBasicMaterial({map:texture}); 
-//                                
-//                                var material = new THREE.MeshBasicMaterial({color:0xff0000,wireframe:true});    
-//
-//                                // PlaneGeometry(width, height, widthSegments, heightSegments)
-//                                var gGeo = new THREE.PlaneGeometry(100,100,512,512);
-//                                var g = new THREE.Mesh(gGeo,material);
-//                                g.position.y = -0.5;
-//                                g.rotation.x = -Math.PI/2; //-90 degrees around the xaxis
-//                                g.name = 'g';
-//                                meshs[meshNum] = g;
-//                                meshNum += 1;                                
-//                            },
-//                            function (xhr) {
-//                                console.log( (xhr.loaded / xhr.total * 100) + '% loaded' );
-//	                        },
-//                            // Function called when download errors
-//                            function ( xhr ) {
-//                                console.log( 'An error happened' );
-//                            
-//                            });
+    var bodys = [];
+    var bodysNum = 0;
 
     
     
-    var material = new THREE.MeshBasicMaterial({color:0xff0000,wireframe:true});    
-    var gGeo = new THREE.PlaneGeometry(100,100,512,512);
-    var g = new THREE.Mesh(gGeo,material);
-    g.position.y = -0.5;
-    g.rotation.x = -Math.PI/2; //-90 degrees around the xaxis
-    g.name = 'g';
-    meshs[meshNum] = g;
-    meshNum += 1;                                
-    
-    
-    
-    var sphereMaterial = new THREE.MeshBasicMaterial({ color: 0x66ff33, wireframe: true });
-    //SphereGeometry(radius, widthSegments, heightSegments, phiStart, phiLength, thetaStart, thetaLength)
-    var s1 = new THREE.Mesh( new THREE.SphereGeometry(10,16,16), sphereMaterial);
-    s1.name = 's1';
-    meshs[meshNum] = s1;
-    meshNum += 1;
-    s1.position.y = 10.0;
-    console.log('s1 position.x ' + s1.position.x + 's1 position.x ' + s1.position.y + 's1 position.z ' + s1.position.z); 
-    window.addEventListener( 'resize', onWindowResize, false );
-    
-    
-    
-    // add obj to OIMO
-    oimoPopulate(g);
-    oimoPopulate(s1);
-    scene.add(g);
-    scene.add(s1);
-    
-    
-    
-    var targetRotationOnMouseDown = 0;
-    var targetRotation = 0;
-    var mouseXOnMouseDown = 0;
-    var mouseX = 0;
-    var windowHalfX = WIDTH/2;
-    
-    
-    
-  //  document.addEventListener( 'mousedown', onDocumentMouseDown, false );
-//    function onDocumentMouseDown( event ) {
-//
-//				event.preventDefault();
-//
-//				document.addEventListener( 'mousemove', onDocumentMouseMove, false );
-//				document.addEventListener( 'mouseup', onDocumentMouseUp, false );
-//				document.addEventListener( 'mouseout', onDocumentMouseOut, false );
-//
-//				mouseXOnMouseDown = event.clientX - windowHalfX;
-//				targetRotationOnMouseDown = targetRotation;
-//
-//			}
-//
-//    function onDocumentMouseMove( event ) {
-//
-//        var mouseX = event.clientX - windowHalfX;
-//
-//        targetRotation = targetRotationOnMouseDown + ( mouseX - mouseXOnMouseDown ) * 0.02;
-//        
-//        console.log(targetRotation, targetRotationOnMouseDown, mouseX, mouseXOnMouseDown); 
-//
-//    }
-//
-//    function onDocumentMouseUp( event ) {
-//
-//        document.removeEventListener( 'mousemove', onDocumentMouseMove, false );
-//        document.removeEventListener( 'mouseup', onDocumentMouseUp, false );
-//        document.removeEventListener( 'mouseout', onDocumentMouseOut, false );
-//
-//    }
-//
-//    function onDocumentMouseOut( event ) {
-//
-//        document.removeEventListener( 'mousemove', onDocumentMouseMove, false );
-//        document.removeEventListener( 'mouseup', onDocumentMouseUp, false );
-//        document.removeEventListener( 'mouseout', onDocumentMouseOut, false );
-//
-//    }
-//    
-//    
-    
-    function onWindowResize() {
-        camera.aspect = container.offsetWidth / container.offsetHeight;
-        camera.updateProjectionMatrix();
-        renderer.setSize( container.innerWidth, container.innerHeight );
-    }
-    
+
+    populate(1);
 
     var render = function () {
         requestAnimationFrame( render );
-        s1.rotation.y += ( targetRotation - s1.rotation.y ) * 0.05;
-        
-        controls.update();
-        
-        renderer.render(scene, camera);
+        v3d.render();
     };
     
     
@@ -249,74 +76,89 @@ define(['oimo', 'three','orbitControls'], function(OIMO,THREE) {
     ///////////////////
 
 
-    /* oimo loop */
-    function oimoLoop() 
-    {  
-        world.step();// update world
+/* oimo loop */
+function oimoLoop() 
+{  
+    world.step();// update world
 
-        var x, y, z, mesh, bod;
-        var i = bodsNum;
-        while (i--){
-            bod = bods[i];
-            mesh = meshs[i];
+    var x, y, z, mesh, body;
+    var i = bodys.length;
+    while (i--){
+        body = bodys[i];
+        mesh = meshs[i];
 
-            if(!bod.getSleep()){ // if body didn't sleep
+        if(!body.getSleep()){ // if body didn't sleep
 
-                // apply rigidbody position and rotation to mesh
-                mesh.position.copy(bod.getPosition());
-                mesh.quaternion.copy(bod.getQuaternion());
+            // apply rigidbody position and rotation to mesh
+            mesh.position.copy(body.getPosition());
+            mesh.quaternion.copy(body.getQuaternion());
 
-                console.log('name '+ mesh.name + 'x: ' + mesh.position.x + ' y: ' + mesh.position.y + ' z: ' + mesh.position.z)
+            // change material
+            if(mesh.material.name === 'sbox') mesh.material = v3d.mats.box;
+            if(mesh.material.name === 'ssph') mesh.material = v3d.mats.sph; 
 
-                ///change material
-          //      if(mesh.material.name === 'sbox') mesh.material = v3d.mats.box;
-          //      if(mesh.material.name === 'ssph') mesh.material = v3d.mats.sph; kjkjhkjh
-
-                // reset position
-    //            if(mesh.position.y<-100){
-    //                x = rand(-100,100);
-    //                z = rand(-100,100);
-    //                y = rand(100,1000);
-    //                body.resetPosition(x,y,z);
-    //            }
-            } 
-    //        else {
-    //            if(mesh.material.name === 'box') mesh.material = v3d.mats.sbox;
-    //            if(mesh.material.name === 'sph') mesh.material = v3d.mats.ssph;
-    //        }
+            // reset position
+            if(mesh.position.y<-100){
+                x = rand(-100,100);
+                z = rand(-100,100);
+                y = rand(100,1000);
+                body.resetPosition(x,y,z);
+            }
+        } else {
+            if(mesh.material.name === 'box') mesh.material = v3d.mats.sbox;
+            if(mesh.material.name === 'sph') mesh.material = v3d.mats.ssph;
         }
-        // oimo stat display
-       // document.getElementById("info").innerHTML = world.performance.show();
     }
+    // oimo stat display
+  //  document.getElementById("info").innerHTML = world.performance.show();
+}
 
-    function oimoPopulate(obj){
-        console.log(obj);
-        var oimoObj = {};
-        var w;
-        var h;
-        var posx = obj.position.x;
-        var posy = obj.position.y;
-        var posz = obj.position.z;
-        if (obj.name.charAt(0) === 'g') {
-             //add static ground
-            w = obj.geometry.parameters.width;
-            h = obj.geometry.parameters.height;
-            // 22082016 changed flat true which i could not find in oimo code to rot: [90,0,0] to rotate ground 90 degrees
-            oimoObj = {type:'box', size: [h, 400, w], pos:[posx, posy, posz], world:world, rot: [90,0,0], name:obj.name };
-        }
-        else if (obj.name.charAt(0) === 's'){
-            //add sphere
-            w = obj.geometry.parameters.radius;
-            oimoObj = { type:'sphere', size:[w,w,w], pos:[posx,posy,posz], move:true, world:world, name:obj.name };;
-        }
-        bods[bodsNum] = new OIMO.Body(oimoObj);
-        bodsNum += 1;
+/* add random object */
+function populate(n) 
+{
+    var obj;
 
+    //add static ground
+    obj = { size:[400, 40, 390], pos:[0,-20,0], world:world, flat:true }
+    new OIMO.Body(obj);
+    v3d.add(obj);
+
+    //add random objects
+    var x, y, z, w, h, d, t;
+    var i = 1;
+
+    while (i--){
+        t = 1;
+        x = rand(-100,100);
+        z = rand(-100,100);
+        y = rand(100,1000);
+        w = rand(10,20);
+        h = rand(10,20);
+        d = rand(10,20);
+
+        if(t===1) obj = { type:'sphere', size:[w*0.5, w*0.5, w*0.5], pos:[x,y,z], move:true, world:world, name:'sph1' };
+        if(t===2) obj = { type:'box', size:[w,h,d], pos:[x,y,z], move:true, world:world };
+        if(t===3) obj = { type:'cylinder', size:[w,h,w, w,h,w, w,h,w, w,h,w], pos:[x,y,z], rot:[0,0,0, 0,45,0, 0,22.5,0, 0,-22.5,0], move:true, world:world };
+        
+        bodys[i] = new OIMO.Body(obj);
+        meshs[i] = v3d.add(obj);
     }
+}
 
+/* random number */
+function rand(min, max, n)
+{
+    var r, n = n||0;
+    if (min < 0) r = min + Math.random() * (Math.abs(min)+max);
+    else r = min + Math.random() * max;
+    return r.toFixed(n)*1;
+}
+    
 });
 
-//});
+
+
+
 
 
 
