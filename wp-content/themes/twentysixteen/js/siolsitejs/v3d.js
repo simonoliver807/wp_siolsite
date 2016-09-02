@@ -27,24 +27,29 @@ V3D.View.prototype = {
     constructor: V3D.View,
     init:function(h,v,d){
     	this.clock = new THREE.Clock();
-
     	this.renderer = new THREE.WebGLRenderer({precision: "mediump", antialias:false});
     	this.renderer.setSize( this.w, this.h );
     	this.renderer.setClearColor( 0x1d1f20, 1 );
     	this.camera = new THREE.PerspectiveCamera( 60, this.w/this.h, 0.1, 2000 );
-        this.camera.position.z = 1000;
+        this.camera.position.z = 500;
+        this.camera.position.y = 10;
+        
+        
     	this.scene = new THREE.Scene();
+        
+        
+        
     	this.initBackground();
-    	
         this.container = document.getElementById(this.id)
         this.container.appendChild( this.renderer.domElement );
 
+        // siolsite abandoned the nav controls and loaded Orbit Controls 020916
        // this.nav = new V3D.Navigation(this);
        // this.nav.initCamera( h,v,d );
-            var controls = new THREE.OrbitControls( this.camera, this.renderer.domElement );
-    controls.enableDamping = true;
-    controls.dampingFactor = 0.25;
-    controls.enableZoom = true;
+        var controls = new THREE.OrbitControls( this.camera, this.renderer.domElement );
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.25;
+        controls.enableZoom = true;
 
         this.miniMap = null;
         this.player = null;

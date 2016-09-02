@@ -73,7 +73,7 @@ THREE.OrbitControls = function ( object, domElement ) {
 	this.enableKeys = true;
 
 	// The four arrow keys
-	this.keys = { LEFT: 37, UP: 38, RIGHT: 39, BOTTOM: 40 };
+	this.keys = { LEFT: 37, UP: 38, RIGHT: 39, BOTTOM: 40, ECS: 27 };
 
 	// Mouse buttons
 	this.mouseButtons = { ORBIT: THREE.MOUSE.LEFT, ZOOM: THREE.MOUSE.MIDDLE, PAN: THREE.MOUSE.RIGHT };
@@ -541,6 +541,11 @@ THREE.OrbitControls = function ( object, domElement ) {
 				pan( - scope.keyPanSpeed, 0 );
 				scope.update();
 				break;
+                // siolsite remove events if the ESC key is pressed
+            case scope.keys.ECS:
+                document.removeEventListener( 'mousemove', onMouseMove, false );
+				break;
+                
 
 		}
 
@@ -686,7 +691,9 @@ THREE.OrbitControls = function ( object, domElement ) {
 		if ( state !== STATE.NONE ) {
 
 			document.addEventListener( 'mousemove', onMouseMove, false );
-			document.addEventListener( 'mouseup', onMouseUp, false );
+            var container = document.getElementById('container');
+            container.addEventListener( 'mouseout', onMouseUp, false);
+		// siolsite so camera constantly move	document.addEventListener( 'mouseup', onMouseUp, false );
 
 			scope.dispatchEvent( startEvent );
 

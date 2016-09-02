@@ -42,6 +42,8 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
 
     // you can choose world gravity 
     world.gravity = new OIMO.Vec3(0, -9.8, 0);
+    // siolsite new force
+    var newForce = new OIMO.Vec3(1.0,0,0);
     
     world.worldscale(100);
 
@@ -52,9 +54,6 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
     // container to hold oimo objects
     var bodys = [];
     var bodysNum = 0;
-
-    
-    
 
     populate(1);
 
@@ -86,6 +85,17 @@ function oimoLoop()
     while (i--){
         body = bodys[i];
         mesh = meshs[i];
+        
+        
+        // siolsite try again to add force
+        body.linearVelocity.addTime(newForce , world.timeStep );
+        body.updatePosition( world.timeStep );
+        
+//    siolsite   if(appFor > 0){
+//            var bodyPos = body.getPosition();
+//            body.body.applyImpulse(bodyPos, new OIMO.Vec3(0.5, 0, 0));
+//            appFor -= 1;
+//        }
 
         if(!body.getSleep()){ // if body didn't sleep
 
@@ -119,7 +129,7 @@ function populate(n)
     var obj;
 
     //add static ground
-    obj = { size:[400, 40, 390], pos:[0,-20,0], world:world, flat:true }
+    obj = { size:[400, 40, 390], pos:[0,-20,0], world:world, name:'ground', flat:true }
     new OIMO.Body(obj);
     v3d.add(obj);
 
@@ -129,9 +139,9 @@ function populate(n)
 
     while (i--){
         t = 1;
-        x = rand(-100,100);
-        z = rand(-100,100);
-        y = rand(100,1000);
+        x = 0;
+        z = 0;
+        y = 100;
         w = rand(10,20);
         h = rand(10,20);
         d = rand(10,20);
