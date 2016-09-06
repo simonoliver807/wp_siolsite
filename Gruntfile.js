@@ -17,6 +17,16 @@ module.exports = function(grunt) {
             files: ['app/sass/*.scss'],
             tasks: ['sass']
           }
+        },
+        requirejs: {
+             compile: {
+                 options: {
+                   baseUrl: '/website/wordpress/wp-content/themes/twentysixteen/js/siolsitejs',
+                   mainConfigFile: '/website/wordpress/wp-content/themes/twentysixteen/js/config.js',
+                  include: [ 'gameinit','oimo.js' ],
+                  out: '/website/wordpress/wp-content/themes/twentysixteen/js/siolsitejs/optimized.js'
+                }
+          }
         }
 
       });
@@ -32,7 +42,8 @@ grunt.event.on('watch', function(action, filepath, target) {
 //   grunt.loadNpmTasks('grunt-sass');
 //   grunt.loadNpmTasks('grunt-contrib-uglify');
 grunt.loadNpmTasks('grunt-contrib-watch');
-grunt.registerTask('default', ['watch']);   
+grunt.loadNpmTasks('grunt-contrib-requirejs');
+grunt.registerTask('default', ['watch','requirejs']);   
 
 //grunt.registerTask('default', ['uglify','availabletasks','connect','watch']);
 };

@@ -54,6 +54,8 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
     // container to hold oimo objects
     var bodys = [];
     var bodysNum = 0;
+    
+    var thisPerf;
 
     populate(1);
 
@@ -88,8 +90,11 @@ function oimoLoop()
         
         
         // siolsite try again to add force
-        body.linearVelocity.addTime(newForce , world.timeStep );
-        body.updatePosition( world.timeStep );
+        var rb = body.body;
+        rb.linearVelocity.addTime(newForce , world.timeStep );
+        rb.updatePosition( world.timeStep );
+//        var thisInfo = document.createTextNode(thisPerf.show());
+//        document.getElementById('perf').appendChild(thisInfo)
         
 //    siolsite   if(appFor > 0){
 //            var bodyPos = body.getPosition();
@@ -128,6 +133,7 @@ function populate(n)
 {
     var obj;
 
+    thisPerf = new OIMO.Performance(world);
     //add static ground
     obj = { size:[400, 40, 390], pos:[0,-20,0], world:world, name:'ground', flat:true }
     new OIMO.Body(obj);
@@ -135,16 +141,20 @@ function populate(n)
 
     //add random objects
     var x, y, z, w, h, d, t;
-    var i = 1;
-
-    while (i--){
-        t = 1;
+    var shapes = [1,2];
+    
         x = 0;
         z = 0;
         y = 100;
-        w = rand(10,20);
-        h = rand(10,20);
-        d = rand(10,20);
+        w = 15;
+        h = 15;
+        d = 15;
+
+    for(var i=0;i<shapes.length;i++){
+//        w = rand(10,20);
+//        h = rand(10,20);
+//        d = rand(10,20);
+        var t = shapes[i];
 
         if(t===1) obj = { type:'sphere', size:[w*0.5, w*0.5, w*0.5], pos:[x,y,z], move:true, world:world, name:'sph1' };
         if(t===2) obj = { type:'box', size:[w,h,d], pos:[x,y,z], move:true, world:world };

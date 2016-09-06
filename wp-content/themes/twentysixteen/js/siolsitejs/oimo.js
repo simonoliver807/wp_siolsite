@@ -143,8 +143,6 @@ OIMO.World = function ( TimeStep, BroadPhaseType, Iterations, NoStat ) {
     // Whether the constraints randomizer is enabled or not.
     this.enableRandomizer = true;
 
-    
-
 
     // The rigid body list
     this.rigidBodies=null;

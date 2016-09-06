@@ -26,6 +26,31 @@ class FW_Db_Options_Model_Settings extends FW_Db_Options_Model {
 		);
 	}
 
+	protected function _after_set($item_id, $option_id, $sub_keys, $old_value, array $extra_data = array()) {
+		/**
+		 * @since 2.6.0
+		 */
+		do_action('fw_settings_options_update', array(
+			/**
+			 * Option id
+			 * First level multi-key
+			 * For e.g. if $option_id is 'hello/world/7' this will be 'hello'
+			 */
+			'option_id' => $option_id,
+			/**
+			 * The remaining sub-keys
+			 * For e.g.
+			 * if $option_id is 'hello/world/7' this will be array('world', '7')
+			 * if $option_id is 'hello' this will be array()
+			 */
+			'sub_keys' => explode('/', $sub_keys),
+			/**
+			 * Old option(s) value
+			 */
+			'old_value' => $old_value
+		));
+	}
+
 	protected function _init() {
 		/**
 		 * Get a theme settings option value from the database
@@ -136,15 +161,15 @@ class FW_Db_Options_Model_Post extends FW_Db_Options_Model {
 	}
 
 	protected function get_values($item_id, array $extra_data = array()) {
-		return FW_WP_Meta::get( 'post', $item_id, 'fw_options', array() );
+		return FW_WP_Meta::get( 'post', $this->get_post_id($item_id), 'fw_options', array() );
 	}
 
 	protected function set_values($item_id, $values, array $extra_data = array()) {
-		FW_WP_Meta::set( 'post', $item_id, 'fw_options', $values );
+		FW_WP_Meta::set( 'post', $this->get_post_id($item_id), 'fw_options', $values );
 	}
 
 	protected function get_fw_storage_params($item_id, array $extra_data = array()) {
-		return array( 'post-id' => $item_id );
+		return array( 'post-id' => $this->get_post_id($item_id) );
 	}
 
 	protected function _get_cache_key($key, $item_id, array $extra_data = array()) {
@@ -169,23 +194,14 @@ class FW_Db_Options_Model_Post extends FW_Db_Options_Model {
 			/**
 			 * Option id
 			 * First level multi-key
-			 *
-			 * For e.g.
-			 *
-			 * if $option_id is 'hello/world/7'
-			 * this will be 'hello'
+			 * For e.g. if $option_id is 'hello/world/7' this will be 'hello'
 			 */
 			$option_id,
 			/**
 			 * The remaining sub-keys
-			 *
 			 * For e.g.
-			 *
-			 * if $option_id is 'hello/world/7'
-			 * $option_id_keys will be array('world', '7')
-			 *
-			 * if $option_id is 'hello'
-			 * $option_id_keys will be array()
+			 * if $option_id is 'hello/world/7' this will be array('world', '7')
+			 * if $option_id is 'hello' this will be array()
 			 */
 			explode('/', $sub_keys),
 			/**
@@ -234,11 +250,15 @@ class FW_Db_Options_Model_Term extends FW_Db_Options_Model {
 	}
 
 	protected function get_values($item_id, array $extra_data = array()) {
-		return FW_WP_Meta::get( 'fw_term', $item_id, 'fw_options', array(), null );
+		self::migrate($item_id);
+
+		return (array)get_term_meta( $item_id, 'fw_options', true);
 	}
 
 	protected function set_values($item_id, $values, array $extra_data = array()) {
-		FW_WP_Meta::set( 'fw_term', $item_id, 'fw_options', $values );
+		self::migrate($item_id);
+
+		update_term_meta($item_id, 'fw_options', $values);
 	}
 
 	protected function get_options($item_id, array $extra_data = array()) {
@@ -258,6 +278,123 @@ class FW_Db_Options_Model_Term extends FW_Db_Options_Model {
 		} else {
 			return $item_id;
 		}
+	}
+
+	/**
+	 * Cache termmeta table name if exists
+	 * @var string|false
+	 */
+	private static $old_table_name;
+
+	/**
+	 * @return string|false
+	 */
+	private static function get_old_table_name() {
+		if (is_null(self::$old_table_name)) {
+			/** @var WPDB $wpdb */
+			global $wpdb;
+
+			$table_name = $wpdb->get_results( "show tables like '{$wpdb->prefix}fw_termmeta'", ARRAY_A );
+			$table_name = $table_name ? array_pop($table_name[0]) : false;
+
+			if ( $table_name && ! $wpdb->get_results( "SELECT 1 FROM `{$table_name}` LIMIT 1" ) ) {
+				// The table is empty, delete it
+				$wpdb->query( "DROP TABLE `{$table_name}`" );
+				$table_name = false;
+			}
+
+			self::$old_table_name = $table_name;
+		}
+
+		return self::$old_table_name;
+	}
+
+	/**
+	 * @internal
+	 */
+	public static function _action_switch_blog() {
+		self::$old_table_name = null; // reset
+	}
+
+	/**
+	 * When a term is deleted, delete its meta from old fw_termmeta table
+	 *
+	 * @param mixed $term_id
+	 *
+	 * @return void
+	 * @internal
+	 */
+	public static function _action_fw_delete_term( $term_id ) {
+		if ( ! ( $table_name = self::get_old_table_name() ) ) {
+			return;
+		}
+
+		$term_id = (int) $term_id;
+
+		if ( ! $term_id ) {
+			return;
+		}
+
+		/** @var WPDB $wpdb */
+		global $wpdb;
+
+		$wpdb->delete( $table_name, array( 'fw_term_id' => $term_id ), array( '%d' ) );
+	}
+
+	/**
+	 * In WP 4.4 was introduced native term meta https://codex.wordpress.org/Version_4.4#For_Developers
+	 * All data from old table must be migrated to native term meta
+	 * @param int $term_id
+	 * @return bool
+	 */
+	private static function migrate($term_id) {
+		global $wpdb; /** @var wpdb $wpdb */
+
+		if (
+			( $old_table_name = self::get_old_table_name() )
+			&&
+			( $value = $wpdb->get_col( $wpdb->prepare(
+				"SELECT meta_value FROM `{$old_table_name}` WHERE fw_term_id = %d AND meta_key = 'fw_options' LIMIT 1",
+				$term_id
+			) ) )
+			&&
+			( $value = unserialize( $value[0] ) )
+		) {
+			$wpdb->delete( $old_table_name, array( 'fw_term_id' => $term_id ), array( '%d' ) );
+
+			update_term_meta( $term_id, 'fw_options', $value );
+
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	protected function _after_set($item_id, $option_id, $sub_keys, $old_value, array $extra_data = array()) {
+		/**
+		 * @since 2.6.0
+		 */
+		do_action('fw_term_options_update', array(
+			'term_id' => $item_id,
+			'taxonomy' => $extra_data['taxonomy'],
+			/**
+			 * Option id
+			 * First level multi-key
+			 * For e.g. if $option_id is 'hello/world/7' this will be 'hello'
+			 */
+			'option_id' => $option_id,
+			/**
+			 * The remaining sub-keys
+			 * For e.g.
+			 * if $option_id is 'hello/world/7' this will be array('world', '7')
+			 * if $option_id is 'hello' this will be array()
+			 */
+			'sub_keys' => explode('/', $sub_keys),
+			/**
+			 * Old option(s) value
+			 */
+			'old_value' => $old_value
+		));
 	}
 
 	protected function _init() {
@@ -301,6 +438,9 @@ class FW_Db_Options_Model_Term extends FW_Db_Options_Model {
 				'taxonomy' => $taxonomy
 			));
 		}
+
+		add_action( 'switch_blog', array( __CLASS__, '_action_switch_blog' ) );
+		add_action( 'delete_term', array( __CLASS__, '_action_fw_delete_term' ) );
 	}
 }
 new FW_Db_Options_Model_Term();
@@ -391,6 +531,31 @@ class FW_Db_Options_Model_Customizer extends FW_Db_Options_Model {
 		return array(
 			'customizer' => true
 		);
+	}
+
+	protected function _after_set($item_id, $option_id, $sub_keys, $old_value, array $extra_data = array()) {
+		/**
+		 * @since 2.6.0
+		 */
+		do_action('fw_customizer_options_update', array(
+			/**
+			 * Option id
+			 * First level multi-key
+			 * For e.g. if $option_id is 'hello/world/7' this will be 'hello'
+			 */
+			'option_id' => $option_id,
+			/**
+			 * The remaining sub-keys
+			 * For e.g.
+			 * if $option_id is 'hello/world/7' this will be array('world', '7')
+			 * if $option_id is 'hello' this will be array()
+			 */
+			'sub_keys' => explode('/', $sub_keys),
+			/**
+			 * Old option(s) value
+			 */
+			'old_value' => $old_value
+		));
 	}
 
 	protected function _init() {

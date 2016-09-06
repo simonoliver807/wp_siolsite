@@ -1504,6 +1504,8 @@ final class WP_Customize_Widgets {
 		if ( $is_updating_widget_template ) {
 			wp_send_json_error( 'template_widget_not_updatable' );
 		}
+        
+        var_dump($this);
 
 		$updated_widget = $this->call_widget_update( $widget_id ); // => {instance,form}
 		if ( is_wp_error( $updated_widget ) ) {

@@ -21,9 +21,20 @@ final class _FW_Extensions_Manager
 		'standalone' => false,
 	);
 
-	private $download_timeout = 300;
-
 	private $default_thumbnail = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQIW2PUsHf9DwAC8AGtfm5YCAAAAABJRU5ErkJgggAA';
+
+	/**
+	 * @var FW_Access_Key
+	 */
+	private static $access_key;
+
+	private static function get_access_key() {
+		if (!self::$access_key) {
+			self::$access_key = new FW_Access_Key('fw_ext_manager');
+		}
+
+		return self::$access_key;
+	}
 
 	public function __construct()
 	{
@@ -31,6 +42,17 @@ final class _FW_Extensions_Manager
 		{
 			add_action('fw_plugin_pre_update', array($this, '_action_plugin_pre_update'));
 			add_action('fw_plugin_post_update', array($this, '_action_plugin_post_update'));
+		}
+
+		// Preserve {theme}/framework-customizations/theme/available-extensions.php
+		{
+			add_filter('upgrader_pre_install',  array($this, '_filter_theme_available_extensions_copy'), 999, 2);
+
+			/**
+			 * Must be executed after
+			 * https://github.com/WordPress/WordPress/blob/4.6/wp-admin/includes/class-theme-upgrader.php#L204-L205
+			 */
+			add_action('upgrader_process_complete', array($this, '_action_theme_available_extensions_restore'), 999, 2);
 		}
 
 		if (!is_admin()) {
@@ -191,9 +213,58 @@ final class _FW_Extensions_Manager
 
 			return FW_Cache::get($cache_key);
 		} catch (FW_Cache_Not_Found_Exception $e) {
-			$vars = fw_get_variables_from_file( dirname( __FILE__ ) . '/available-extensions.php', array(
-				'extensions' => array()
-			) );
+			$extensions = fw_get_variables_from_file(
+				dirname( __FILE__ ) . '/available-extensions.php',
+				array( 'extensions' => array() )
+			);
+			$extensions = $extensions['extensions'];
+
+			// Allow theme to register available extensions
+			if (file_exists(
+				$theme_available_ext_file = fw_fix_path(get_template_directory())
+					. fw_get_framework_customizations_dir_rel_path( '/theme/available-extensions.php' )
+			)) {
+				require_once dirname( __FILE__ ) . '/includes/available-ext/class--fw-available-extensions-register.php';
+				require_once dirname( __FILE__ ) . '/includes/available-ext/class-fw-available-extension.php';
+
+				$register = new _FW_Available_Extensions_Register(self::get_access_key()->get_key());
+
+				/**
+				 * Usage:
+				 * Create {theme}/framework-customizations/theme/available-extensions.php with the following contents:
+				 * $extension = new FW_Available_Extension();
+				 * $extension->set_...();
+				 * $register->register($extension);
+				 */
+				fw_get_variables_from_file($theme_available_ext_file, array(), array('register' => $register));
+
+				foreach ($register->_get_types(self::$access_key) as $extension) {
+					/** @var FW_Available_Extension $extension */
+					if (isset($extensions[ $extension->get_name() ])) {
+						trigger_error(
+							'Overwriting default extension "'. $extension->get_name() .'" is not allowed',
+							E_USER_WARNING
+						);
+						continue;
+					} elseif (!$extension->is_valid()) {
+						trigger_error(
+							'Theme extension "'. $extension->get_name() .'" is not valid',
+							E_USER_WARNING
+						);
+						continue;
+					} else {
+						$extensions[ $extension->get_name() ] = array(
+							'theme'       => true, // Registered by theme
+							'display'     => $extension->get_display(),
+							'parent'      => $extension->get_parent(),
+							'name'        => $extension->get_title(),
+							'description' => $extension->get_description(),
+							'thumbnail'   => $extension->get_thumbnail(),
+							'download'    => $extension->get_download_source(),
+						);
+					}
+				}
+			}
 
 			{
 				$installed_extensions = $this->get_installed_extensions();
@@ -201,7 +272,7 @@ final class _FW_Extensions_Manager
 
 				if (isset($installed_extensions['backup'])) {
 					// make sure only Backup or Backups can be installed
-					unset($vars['extensions']['backups']);
+					unset($extensions['backups']);
 				}
 
 				foreach (
@@ -213,14 +284,14 @@ final class _FW_Extensions_Manager
 						&&
 						!isset($installed_extensions[$obsolete_extension])
 					) {
-						unset($vars['extensions'][$obsolete_extension]);
+						unset($extensions[$obsolete_extension]);
 					}
 				}
 			}
 
-			FW_Cache::set($cache_key, $vars['extensions']);
+			FW_Cache::set($cache_key, $extensions);
 
-			return $vars['extensions'];
+			return $extensions;
 		}
 	}
 
@@ -816,7 +887,15 @@ final class _FW_Extensions_Manager
 					'display' => isset($ext_data['display'])
 						? $ext_data['display']
 						: $this->manifest_default_values['display'],
+					'theme' => isset($ext_data['theme']) && $ext_data['theme'],
 				);
+
+				if ($lists['available'][$ext_name]['theme']) {
+					$lists['supported'][$ext_name] = array(
+						'name' => $lists['available'][$ext_name]['name'],
+						'description' => $lists['available'][$ext_name]['description'],
+					);
+				}
 			}
 
 			foreach (fw()->theme->manifest->get('supported_extensions', array()) as $required_ext_name => $required_ext_data) {
@@ -928,6 +1007,7 @@ final class _FW_Extensions_Manager
 			if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 				if (!isset($_POST[$nonce['name']]) || !wp_verify_nonce($_POST[$nonce['name']], $nonce['action'])) {
 					$skin->error(__('Invalid nonce.', 'fw'));
+					break;
 				}
 
 				if (!FW_WP_Filesystem::request_access(
@@ -1142,14 +1222,22 @@ final class _FW_Extensions_Manager
 			 * Install parent extensions and the extension
 			 */
 			{
-				$current_extension_path = fw_get_framework_directory();
+				$destination_path = array(
+					'framework' => fw_get_framework_directory(),
+					'theme' => fw_fix_path(get_template_directory()) . fw_get_framework_customizations_dir_rel_path()
+				);
+				$current_extension_path = '';
 
 				foreach ($parents as $parent_extension_name) {
 					$current_extension_path .= '/extensions/'. $parent_extension_name;
+					$destination = (
+						isset($available_extensions[$parent_extension_name]['theme'])
+						&&
+						$available_extensions[$parent_extension_name]['theme']
+					) ? 'theme' : 'framework';
 
 					if (isset($installed_extensions[$parent_extension_name])) {
-						// skip already installed extensions
-						continue;
+						continue; // skip already installed extensions
 					}
 
 					if ($verbose) {
@@ -1210,7 +1298,9 @@ final class _FW_Extensions_Manager
 
 					$merge_result = $this->merge_extension(
 						$wp_fw_downloaded_dir,
-						FW_WP_Filesystem::real_path_to_filesystem_path($current_extension_path)
+						FW_WP_Filesystem::real_path_to_filesystem_path(
+							$destination_path[$destination] . $current_extension_path
+						)
 					);
 
 					if (is_wp_error($merge_result)) {
@@ -1425,6 +1515,7 @@ final class _FW_Extensions_Manager
 			if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 				if (!isset($_POST[$nonce['name']]) || !wp_verify_nonce($_POST[$nonce['name']], $nonce['action'])) {
 					$skin->error(__('Invalid nonce.', 'fw'));
+					break;
 				}
 
 				if (!FW_WP_Filesystem::request_access(
@@ -2352,7 +2443,7 @@ final class _FW_Extensions_Manager
 	/**
 	 * Download an extension
 	 *
-	 * global $wp_filesystem; must me initialized
+	 * global $wp_filesystem; must be initialized
 	 *
 	 * @param string $extension_name
 	 * @param array $data Extension data from the "available extensions" array
@@ -2362,6 +2453,7 @@ final class _FW_Extensions_Manager
 	{
 		$wp_error_id = 'fw_extension_download';
 
+		// TODO: more checks for $data['download']
 		if (empty($data['download'])) {
 			return new WP_Error(
 				$wp_error_id,
@@ -2394,220 +2486,103 @@ final class _FW_Extensions_Manager
 			}
 		}
 
-		$theme_ext_requirements = fw()->theme->manifest->get('requirements/extensions');
+		require_once dirname( __FILE__ ) . '/includes/download-source/class--fw-ext-download-source.php';
+		require_once dirname( __FILE__ ) . '/includes/download-source/class--fw-ext-download-source-register.php';
 
-		foreach ($data['download'] as $source => $source_data) {
-			switch ($source) {
-				case 'github':
-					if (empty($source_data['user_repo'])) {
-						return new WP_Error(
-							$wp_error_id,
-							sprintf(__('"%s" extension github source "user_repo" parameter is required', 'fw'), $this->get_extension_title($extension_name))
-						);
-					}
+		require_once dirname( __FILE__ ) . '/includes/download-source/types/init.php';
 
-					{
-						$transient_name = 'fw_ext_mngr_gh_dl';
-						$transient_ttl  = HOUR_IN_SECONDS;
+		$register = new _FW_Ext_Download_Source_Register(self::get_access_key()->get_key());
 
-						$cache = get_site_transient($transient_name);
+		/**
+		 * Register download sources for extensions.
+		 *
+		 * Usage:
+		 *   $download_source = new FW_Ext_Download_Source();
+		 *   $register->register($download_source);
+		 */
+		do_action( 'fw_register_ext_download_sources', $register );
 
-						if ($cache === false) {
-							$cache = array();
-						}
-					}
+		$download_source = $register->_get_type(
+			self::get_access_key(), $data['download']['source']
+		);
 
-					if (isset($cache[ $source_data['user_repo'] ])) {
-						$download_link = $cache[ $source_data['user_repo'] ]['zipball_url'];
-					} else {
-						$http = new WP_Http();
+		if (!$download_source) {
+			return new WP_Error(
+				'invalid_dl_source',
+				sprintf(__('Invalid download source: %s', 'fw'), $data['download']['source'])
+			);
+		}
 
-						if (
-							isset($theme_ext_requirements[$extension_name])
-							&&
-							isset($theme_ext_requirements[$extension_name]['max_version'])
-						) {
-							$tag = 'tags/v'. $theme_ext_requirements[$extension_name]['max_version'];
-						} else {
-							$tag = 'latest';
-						}
+		return $this->perform_zip_download(
+			$download_source,
+			array_merge(array(
+				'extension_name' => $extension_name,
+				'extension_title' => $this->get_extension_title($extension_name)
+			), $data['download']['opts']),
+			$wp_fs_tmp_dir
+		);
+	}
 
-						$response = $http->get(
-							apply_filters('fw_github_api_url', 'https://api.github.com')
-							. '/repos/'. $source_data['user_repo'] .'/releases/'. $tag
-						);
+	private function perform_zip_download(FW_Ext_Download_Source $download_source, array $opts, $wp_fs_tmp_dir)
+	{
+		$wp_error_id = 'fw_extension_download';
 
-						unset($http);
+		/** @var WP_Filesystem_Base $wp_filesystem */
+		global $wp_filesystem;
 
-						$response_code = intval(wp_remote_retrieve_response_code($response));
+		$zip_path = $wp_fs_tmp_dir . '/temp.zip';
 
-						if ($response_code !== 200) {
-							if ($response_code === 403) {
-								if ($json_response = json_decode($response['body'], true)) {
-									return new WP_Error(
-										$wp_error_id,
-										__('Github error:', 'fw') .' '. $json_response['message']
-									);
-								} else {
-									return new WP_Error(
-										$wp_error_id,
-										sprintf(
-											__( 'Failed to access Github repository "%s" releases. (Response code: %d)', 'fw' ),
-											$source_data['user_repo'], $response_code
-										)
-									);
-								}
-							} elseif ($response_code) {
-								return new WP_Error(
-									$wp_error_id,
-									sprintf(
-										__( 'Failed to access Github repository "%s" releases. (Response code: %d)', 'fw' ),
-										$source_data['user_repo'], $response_code
-									)
-								);
-							} elseif (is_wp_error($response)) {
-								return new WP_Error(
-									$wp_error_id,
-									sprintf(
-										__( 'Failed to access Github repository "%s" releases. (%s)', 'fw' ),
-										$source_data['user_repo'], $response->get_error_message()
-									)
-								);
-							} else {
-								return new WP_Error(
-									$wp_error_id,
-									sprintf(
-										__( 'Failed to access Github repository "%s" releases.', 'fw' ),
-										$source_data['user_repo']
-									)
-								);
-							}
-						}
+		$download_result = $download_source->download($opts, $zip_path);
 
-						$release = json_decode($response['body'], true);
+		/**
+		 * Pass further the error, if the service returned one.
+		 */
+		if (is_wp_error($download_result)) {
+			return $download_result;
+		}
 
-						unset($response);
+		$extension_name = $opts['extension_name'];
 
-						if (empty($release)) {
-							return new WP_Error(
-								$wp_error_id,
-								sprintf(
-									__('"%s" extension github repository "%s" has no releases.', 'fw'),
-									$this->get_extension_title($extension_name), $source_data['user_repo']
-								)
-							);
-						}
+		$unzip_result = unzip_file(
+			FW_WP_Filesystem::filesystem_path_to_real_path($zip_path),
+			$wp_fs_tmp_dir
+		);
 
-						{
-							$cache[ $source_data['user_repo'] ] = array(
-								'zipball_url' => 'https://github.com/'. $source_data['user_repo'] .'/archive/'. $release['tag_name'] .'.zip',
-								'tag_name' => $release['tag_name']
-							);
+		if (is_wp_error($unzip_result)) {
+			return $unzip_result;
+		}
 
-							set_site_transient($transient_name, $cache, $transient_ttl);
-						}
+		// remove zip file
+		if (!$wp_filesystem->delete($zip_path, false, 'f')) {
+			return new WP_Error(
+				$wp_error_id,
+				sprintf(__('Cannot remove the "%s" extension downloaded zip.', 'fw'), $this->get_extension_title($extension_name))
+			);
+		}
 
-						$download_link = $cache[ $source_data['user_repo'] ]['zipball_url'];
+		$unzipped_dir_files = $wp_filesystem->dirlist($wp_fs_tmp_dir);
 
-						unset($release);
-					}
+		if (!$unzipped_dir_files) {
+			return new WP_Error(
+				$wp_error_id,
+				__('Cannot access the unzipped directory files.', 'fw')
+			);
+		}
 
-					{
-						$http = new WP_Http();
-
-						$response = $http->request($download_link, array(
-							'timeout' => $this->download_timeout,
-						));
-
-						unset($http);
-
-						if (($response_code = intval(wp_remote_retrieve_response_code($response))) !== 200) {
-							if ($response_code) {
-								return new WP_Error(
-									$wp_error_id,
-									sprintf( __( 'Cannot download the "%s" extension zip. (Response code: %d)', 'fw' ),
-										$this->get_extension_title( $extension_name ), $response_code
-									)
-								);
-							} elseif (is_wp_error($response)) {
-								return new WP_Error(
-									$wp_error_id,
-									sprintf( __( 'Cannot download the "%s" extension zip. %s', 'fw' ),
-										$this->get_extension_title( $extension_name ),
-										$response->get_error_message()
-									)
-								);
-							} else {
-								return new WP_Error(
-									$wp_error_id,
-									sprintf( __( 'Cannot download the "%s" extension zip.', 'fw' ),
-										$this->get_extension_title( $extension_name )
-									)
-								);
-							}
-						}
-
-						$zip_path = $wp_fs_tmp_dir .'/temp.zip';
-
-						// save zip to file
-						if (!$wp_filesystem->put_contents($zip_path, $response['body'])) {
-							return new WP_Error(
-								$wp_error_id,
-								sprintf(__('Cannot save the "%s" extension zip.', 'fw'), $this->get_extension_title($extension_name))
-							);
-						}
-
-						unset($response);
-
-						$unzip_result = unzip_file(
-							FW_WP_Filesystem::filesystem_path_to_real_path($zip_path),
-							$wp_fs_tmp_dir
-						);
-
-						if (is_wp_error($unzip_result)) {
-							return $unzip_result;
-						}
-
-						// remove zip file
-						if (!$wp_filesystem->delete($zip_path, false, 'f')) {
-							return new WP_Error(
-								$wp_error_id,
-								sprintf(__('Cannot remove the "%s" extension downloaded zip.', 'fw'), $this->get_extension_title($extension_name))
-							);
-						}
-
-						$unzipped_dir_files = $wp_filesystem->dirlist($wp_fs_tmp_dir);
-
-						if (!$unzipped_dir_files) {
-							return new WP_Error(
-								$wp_error_id,
-								__('Cannot access the unzipped directory files.', 'fw')
-							);
-						}
-
-						/**
-						 * get first found directory
-						 * (if everything worked well, there should be only one directory)
-						 */
-						foreach ($unzipped_dir_files as $file) {
-							if ($file['type'] == 'd') {
-								return $wp_fs_tmp_dir .'/'. $file['name'];
-							}
-						}
-
-						return new WP_Error(
-							$wp_error_id,
-							sprintf(__('The unzipped "%s" extension directory not found.', 'fw'), $this->get_extension_title($extension_name))
-						);
-					}
-					break;
-				default:
-					return new WP_Error(
-						$wp_error_id,
-						sprintf(__('Unknown "%s" extension download source "%s"', 'fw'), $this->get_extension_title($extension_name), $source)
-					);
+		/**
+		 * get first found directory
+		 * (if everything worked well, there should be only one directory)
+		 */
+		foreach ($unzipped_dir_files as $file) {
+			if ($file['type'] == 'd') {
+				return $wp_fs_tmp_dir .'/'. $file['name'];
 			}
 		}
+
+		return new WP_Error(
+			$wp_error_id,
+			sprintf(__('The unzipped "%s" extension directory not found.', 'fw'), $this->get_extension_title($extension_name))
+		);
 	}
 
 	/**
@@ -2625,18 +2600,20 @@ final class _FW_Extensions_Manager
 
 		$wp_error_id = 'fw_extensions_merge';
 
-		$source_files = $wp_filesystem->dirlist($source_wp_fs_dir);
+		// check source
+		{
+			$source_files = $wp_filesystem->dirlist($source_wp_fs_dir);
 
-		if ($source_files === false) {
-			return new WP_Error(
-				$wp_error_id,
-				sprintf(__('Cannot read directory "%s".', 'fw'), $source_wp_fs_dir)
-			);
-		}
+			if ($source_files === false) {
+				return new WP_Error(
+					$wp_error_id,
+					sprintf(__('Cannot read directory "%s".', 'fw'), $source_wp_fs_dir)
+				);
+			}
 
-		if (empty($source_files)) {
-			// directory is empty, nothing to move
-			return;
+			if (empty($source_files)) {
+				return; // directory is empty, nothing to move
+			}
 		}
 
 		/**
@@ -2654,18 +2631,42 @@ final class _FW_Extensions_Manager
 			}
 
 			if (!empty($destination_files)) {
-				// the directory contains some files, delete everything
-				foreach ($destination_files as $file) {
-					if ($file['name'] === 'extensions' && $file['type'] === 'd') {
-						// do not touch the extensions/ directory
-						continue;
-					}
+				if (
+					count($source_files) == 1
+					&&
+					($file = reset($source_files))
+					&&
+					$file['name'] === 'extensions'
+					&&
+					$file['type'] === 'd'
+				) {
+					/**
+					 * Source extension is empty
+					 * It happens when you merge a directory which contains child extensions
+					 * Do not delete current destination files, just go in the next child extensions level
+					 * Used by https://github.com/ThemeFuse/Unyson/issues/1874
+					 */
+				} else {
+					// the directory contains some files, delete everything
+					foreach ($destination_files as $file) {
+						if ($file['name'] === 'extensions' && $file['type'] === 'd') {
+							// do not touch the extensions/ directory
+							continue;
+						}
 
-					if (!$wp_filesystem->delete($destination_wp_fs_dir .'/'. $file['name'], true, $file['type'])) {
-						return new WP_Error(
-							$wp_error_id,
-							sprintf(__('Cannot delete "%s".', 'fw'), $destination_wp_fs_dir .'/'. $file['name'])
-						);
+						if (!$wp_filesystem->delete(
+							$destination_wp_fs_dir .'/'. $file['name'],
+							true,
+							$file['type']
+						)) {
+							return new WP_Error(
+								$wp_error_id,
+								sprintf(
+									__('Cannot delete "%s".', 'fw'),
+									$destination_wp_fs_dir .'/'. $file['name']
+								)
+							);
+						}
 					}
 				}
 
@@ -2680,28 +2681,30 @@ final class _FW_Extensions_Manager
 			}
 		}
 
-		$has_sub_extensions = false;
+		// Move files from source to destination
+		{
+			$has_sub_extensions = false;
 
-		foreach ($source_files as $file) {
-			if ($file['name'] === 'extensions' && $file['type'] === 'd') {
-				// do not touch the extensions/ directory
-				$has_sub_extensions = true;
-				continue;
+			foreach ($source_files as $file) {
+				if ($file['name'] === 'extensions' && $file['type'] === 'd') {
+					$has_sub_extensions = true; // do not touch the extensions/ directory
+					continue;
+				}
+
+				if (!$wp_filesystem->move($source_wp_fs_dir .'/'. $file['name'], $destination_wp_fs_dir .'/'. $file['name'])) {
+					return new WP_Error(
+						$wp_error_id,
+						sprintf(
+							__('Cannot move "%s" to "%s".', 'fw'),
+							$source_wp_fs_dir .'/'. $file['name'],
+							$destination_wp_fs_dir .'/'. $file['name']
+						)
+					);
+				}
 			}
 
-			if (!$wp_filesystem->move($source_wp_fs_dir .'/'. $file['name'], $destination_wp_fs_dir .'/'. $file['name'])) {
-				return new WP_Error(
-					$wp_error_id,
-					sprintf(
-						__('Cannot move "%s" to "%s".', 'fw'),
-						$source_wp_fs_dir .'/'. $file['name'],
-						$destination_wp_fs_dir .'/'. $file['name']
-					)
-				);
-			}
+			unset($source_files);
 		}
-
-		unset($source_files);
 
 		if (!$has_sub_extensions) {
 			return;
@@ -2741,6 +2744,13 @@ final class _FW_Extensions_Manager
 	private function get_supported_extensions_for_install()
 	{
 		$supported_extensions = fw()->theme->manifest->get('supported_extensions', array());
+
+		// Add Available Extensions registered by the theme
+		foreach ($this->get_available_extensions() as $name => $extension) {
+			if (isset($extension['theme']) && $extension['theme']) {
+				$supported_extensions[$name] = array();
+			}
+		}
 
 		if (empty($supported_extensions)) {
 			return array();
@@ -3194,6 +3204,9 @@ final class _FW_Extensions_Manager
 		return $extensions;
 	}
 
+	/**
+	 * @internal
+	 */
 	public function _action_admin_notices() {
 		/**
 		 * In v2.4.12 was done a terrible mistake https://github.com/ThemeFuse/Unyson-Extensions-Approval/issues/160
@@ -3214,6 +3227,228 @@ final class _FW_Extensions_Manager
 			, fw_html_tag('a', array('href' => $this->get_link() .'&sub-page=install&supported'),
 				__('Install theme compatible extensions', 'fw'))
 			, '</p></div>';
+		}
+	}
+
+	/**
+	 * Copy Theme Available Extensions to a tmp directory
+	 * Used before theme update
+	 * @since 2.6.0
+	 * @return null|WP_Error
+	 */
+	public function theme_available_extensions_copy() {
+		/** @var WP_Filesystem_Base $wp_filesystem */
+		global $wp_filesystem;
+
+		if (!$wp_filesystem || (is_wp_error($wp_filesystem->errors) && $wp_filesystem->errors->get_error_code())) {
+			return new WP_Error(
+				'fs_not_initialized',
+				__('WP Filesystem is not initialized', 'fw')
+			);
+		}
+
+		// Prepare temporary directory
+		{
+			$wpfs_tmp_dir = FW_WP_Filesystem::real_path_to_filesystem_path(
+				$this->get_tmp_dir('/theme-ext')
+			);
+
+			if (
+				$wp_filesystem->exists( $wpfs_tmp_dir )
+				&&
+				! $wp_filesystem->rmdir( $wpfs_tmp_dir, true )
+			) {
+				return new WP_Error(
+					'tmp_dir_rm_fail',
+					sprintf(__('Temporary directory cannot be removed: %s', 'fw'), $wpfs_tmp_dir)
+				);
+			}
+
+			if ( ! FW_WP_Filesystem::mkdir_recursive( $wpfs_tmp_dir ) ) {
+				return new WP_Error(
+					'tmp_dir_rm_fail',
+					sprintf(__('Temporary directory cannot be created: %s', 'fw'), $wpfs_tmp_dir)
+				);
+			}
+		}
+
+		$available_extensions = $this->get_available_extensions();
+		$installed_extensions = $this->get_installed_extensions(true);
+		$base_dir = fw_get_template_customizations_directory('/extensions');
+
+		foreach ($installed_extensions as $name => $ext) {
+			if ( ! (
+				isset($available_extensions[$name])
+				&&
+				isset($available_extensions[$name]['theme'])
+				&&
+				$available_extensions[$name]['theme']
+			) ) {
+				continue;
+			}
+
+			if ( ($rel_path = preg_replace('/^'. preg_quote($base_dir, '/') .'/', '', $ext['path'])) === $base_dir ) {
+				return new WP_Error(
+					'rel_path_failed',
+					sprintf(__('Failed to extract relative directory from: %s', 'fw'), $ext['path'])
+				);
+			}
+
+			if ( ($wpfs_path = FW_WP_Filesystem::real_path_to_filesystem_path($ext['path'])) === false) {
+				return new WP_Error(
+					'real_to_wpfs_filed',
+					sprintf(__('Failed to extract relative directory from: %s', 'fw'), $ext['path'])
+				);
+			}
+
+			$wpfs_dest_dir = $wpfs_tmp_dir . $rel_path;
+
+			if ( ! FW_WP_Filesystem::mkdir_recursive($wpfs_dest_dir) ) {
+				return new WP_Error(
+					'dest_dir_mk_fail',
+					sprintf(__('Failed to create directory %s', 'fw'), $wpfs_dest_dir)
+				);
+			}
+
+			if ( is_wp_error( $copy_result = copy_dir($wpfs_path, $wpfs_dest_dir) ) ) {
+				/** @var WP_Error $copy_result */
+				return new WP_Error(
+					'ext_copy_failed',
+					sprintf( __('Failed to copy extension to %s', 'fw'), $wpfs_dest_dir )
+				);
+			}
+		}
+	}
+
+	/**
+	 * Copy Theme Available Extensions from tmp directory to theme
+	 * Used after theme update
+	 * @since 2.6.0
+	 * @return null|WP_Error
+	 */
+	public function theme_available_extensions_restore() {
+		/** @var WP_Filesystem_Base $wp_filesystem */
+		global $wp_filesystem;
+
+		if (!$wp_filesystem || (is_wp_error($wp_filesystem->errors) && $wp_filesystem->errors->get_error_code())) {
+			return new WP_Error(
+				'fs_not_initialized',
+				__('WP Filesystem is not initialized', 'fw')
+			);
+		}
+
+		if ( ! $wp_filesystem->exists(
+			$wpfs_tmp_dir = FW_WP_Filesystem::real_path_to_filesystem_path(
+				$this->get_tmp_dir('/theme-ext')
+			)
+		) ) {
+			return new WP_Error(
+				'no_tmp_dir',
+				sprintf(__('Temporary directory does not exist: %s', 'fw'), $wpfs_tmp_dir)
+			);
+		}
+
+		/**
+		 * Fixes the case when the theme path before update was
+		 * wp-content/themes/theme-name/theme-name-parent
+		 * but after update it became
+		 * wp-content/themes/theme-name-parent
+		 *
+		 * and at this point get_template_directory() returns old theme directory
+		 * so fw_get_template_customizations_directory() also returns old path
+		 */
+		$theme_dir = wp_get_theme()->get_theme_root() .'/'. wp_get_theme()->get_template();
+
+		if ( ! ($wpfs_base_dir = FW_WP_Filesystem::real_path_to_filesystem_path(
+			$base_dir = $theme_dir . fw_get_framework_customizations_dir_rel_path('/extensions')
+		) ) ) {
+			return new WP_Error(
+				'base_dir_to_wpfs_fail',
+				sprintf( __('Cannot obtain WP Filesystem dir for %s', 'fw'), $base_dir )
+			);
+		}
+
+		if ( ! ( $dirlist = $wp_filesystem->dirlist($wpfs_tmp_dir) ) ) {
+			return;
+		}
+
+		foreach ( $dirlist as $filename => $fileinfo ) {
+			if ( 'd' !== $fileinfo['type'] ) {
+				continue;
+			}
+
+			if ( is_wp_error($merge_result = $this->merge_extension(
+				$wpfs_tmp_dir  .'/'. $filename,
+				$wpfs_base_dir .'/'. $filename
+			)) ) {
+				return $merge_result;
+			}
+		}
+
+		$wp_filesystem->rmdir( $wpfs_tmp_dir, true );
+	}
+
+	/**
+	 * Copy Theme Available Extensions to tmp dir
+	 * @param bool|WP_Error $result
+	 * @param array $data
+	 *
+	 * @return bool|WP_Error
+	 */
+	public function _filter_theme_available_extensions_copy($result, $data) {
+		if (
+			!is_wp_error($result)
+			&&
+			is_array($data)
+			&&
+			isset($data['theme'])
+			&&
+			$data['theme'] === wp_get_theme()->get_template()
+		) {
+			if ( is_wp_error( $copy_result = fw()->extensions->manager->theme_available_extensions_copy() ) ) {
+				return $copy_result;
+			}
+		}
+
+		return $result;
+	}
+
+	/**
+	 * Restore Theme Available Extensions from tmp dir
+	 * @param Theme_Upgrader $instance
+	 * @param array $data
+	 *
+	 * @return bool|WP_Error
+	 */
+	public function _action_theme_available_extensions_restore($instance, $data) {
+		if (
+			!is_wp_error($instance->skin->result)
+			&&
+			is_array($data)
+			&&
+			isset($data['action']) && $data['action'] === 'update'
+			&&
+			isset($data['type']) && $data['type'] === 'theme'
+			&&
+			isset($data['themes'])
+			&&
+			($template = wp_get_theme()->get_template())
+			&&
+			(
+				in_array($template, $data['themes'])
+				||
+				/**
+				 * Fixes the case when the theme path before update was
+				 * wp-content/themes/theme-name/theme-name-parent
+				 * but after update it became
+				 * wp-content/themes/theme-name-parent
+				 */
+				( preg_match($regex = '/\-parent$/', $template)
+					? in_array( preg_replace($regex, '', $template) .'/'. $template, $data['themes'] )
+					: false )
+			)
+		) {
+			fw()->extensions->manager->theme_available_extensions_restore();
 		}
 	}
 }

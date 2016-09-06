@@ -20,7 +20,7 @@ wp_enqueue_style(
 
 wp_enqueue_script(
 	'fw-shortcode-calendar-bootstrap3',
-	$shortcodes_extension->get_declared_URI( '/shortcodes/calendar/static/libs/bootstrap3/js/bootstrap.min.js' ),
+	$shortcodes_extension->get_declared_URI( '/shortcodes/calendar/static/libs/bootstrap3/js/bootstrap.js' ),
 	array( 'jquery', 'underscore' ),
 	fw()->manifest->get_version(),
 	true

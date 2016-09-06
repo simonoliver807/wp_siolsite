@@ -2,6 +2,7 @@
 	die( 'Forbidden' );
 }
 ?>
+
 <div class="fw-accordion">
 	<?php foreach ( $atts['tabs'] as $tab ) : ?>
 		<h3 class="fw-accordion-title"><?php echo $tab['tab_title']; ?></h3>

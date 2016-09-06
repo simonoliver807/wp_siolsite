@@ -489,15 +489,21 @@ function fw_current_screen_match(array $rules) {
  * @return string URI
  */
 function fw_locate_theme_path_uri($rel_path) {
-	if (is_child_theme() && file_exists(get_stylesheet_directory() . $rel_path)) {
-		return get_stylesheet_directory_uri() . $rel_path;
-	}
+	try {
+		return FW_File_Cache::get($cache_key = 'theme-uri:'. $rel_path);
+	} catch (FW_File_Cache_Not_Found_Exception $e) {
+		if (is_child_theme() && file_exists(get_stylesheet_directory() . $rel_path)) {
+			$result = get_stylesheet_directory_uri() . $rel_path;
+		} elseif (file_exists(get_template_directory() . $rel_path)) {
+			$result = get_template_directory_uri() . $rel_path;
+		} else {
+			$result = 'about:blank#theme-file-not-found:'. $rel_path;
+		}
 
-	if (file_exists(get_template_directory() . $rel_path)) {
-		return get_template_directory_uri() . $rel_path;
-	}
+		FW_File_Cache::set($cache_key, $result);
 
-	return 'about:blank#theme-file-not-found:'. $rel_path;
+		return $result;
+	}
 }
 
 /**
@@ -507,15 +513,21 @@ function fw_locate_theme_path_uri($rel_path) {
  * @return string URI
  */
 function fw_locate_theme_path($rel_path) {
-	if (is_child_theme() && file_exists(get_stylesheet_directory() . $rel_path)) {
-		return get_stylesheet_directory() . $rel_path;
-	}
+	try {
+		return FW_File_Cache::get($cache_key = 'theme-path:'. $rel_path);
+	} catch (FW_File_Cache_Not_Found_Exception $e) {
+		if (is_child_theme() && file_exists(get_stylesheet_directory() . $rel_path)) {
+			$result = get_stylesheet_directory() . $rel_path;
+		} elseif (file_exists(get_template_directory() . $rel_path)) {
+			$result = get_template_directory() . $rel_path;
+		} else {
+			$result = false;
+		}
 
-	if (file_exists(get_template_directory() . $rel_path)) {
-		return get_template_directory() . $rel_path;
-	}
+		FW_File_Cache::set($cache_key, $result);
 
-	return false;
+		return $result;
+	}
 }
 
 /**
@@ -741,33 +753,38 @@ function fw_collect_options(&$result, &$options, $settings = array(), $_recursio
 		 * @type int Limit the number of options that will be collected
 		 */
 		'limit' => 0,
+		/**
+		 * @type callable Executed on each collected option
+		 * @since 2.6.0
+		 */
+		'callback' => null,
 	);
 
 	static $access_key = null;
-
-	if (is_null($access_key)) {
-		$access_key = new FW_Access_Key('fw_collect_options');
-	}
 
 	if (empty($options)) {
 		return;
 	}
 
-	$settings = array_merge($default_settings, $settings);
-
 	if (empty($_recursion_data)) {
+		if (is_null($access_key)) {
+			$access_key = new FW_Access_Key('fw_collect_options');
+		}
+
+		$settings = array_merge($default_settings, $settings);
+
 		$_recursion_data = array(
 			'level' => 1,
 			'access_key' => $access_key,
 			// todo: maybe add 'parent' => array('id' => '{id}', 'type' => 'container|option') ?
 		);
-	} elseif (
-		!isset($_recursion_data['access_key'])
-		||
-		!($_recursion_data['access_key'] instanceof FW_Access_Key)
-		||
-		!($_recursion_data['access_key']->get_key() === 'fw_collect_options')
-	) {
+	} elseif (!(
+		isset($_recursion_data['access_key'])
+		&&
+		($_recursion_data['access_key'] instanceof FW_Access_Key)
+		&&
+		($_recursion_data['access_key']->get_key() === 'fw_collect_options')
+	)) {
 		trigger_error('Call not allowed', E_USER_ERROR);
 	}
 
@@ -812,6 +829,14 @@ function fw_collect_options(&$result, &$options, $settings = array(), $_recursio
 					);
 				} else {
 					$result[$option_id] = &$option;
+				}
+
+				if ($settings['callback']) {
+					call_user_func_array($settings['callback'], array(array(
+						'group' => 'container',
+						'id' => $option_id,
+						'option' => &$option,
+					)));
 				}
 			} while(false);
 
@@ -883,6 +908,14 @@ function fw_collect_options(&$result, &$options, $settings = array(), $_recursio
 				);
 			} else {
 				$result[$option_id] = &$option;
+			}
+
+			if ($settings['callback']) {
+				call_user_func_array($settings['callback'], array(array(
+					'group' => 'option',
+					'id' => $option_id,
+					'option' => &$option,
+				)));
 			}
 		} else {
 			trigger_error('Invalid option: '. $option_id, E_USER_WARNING);

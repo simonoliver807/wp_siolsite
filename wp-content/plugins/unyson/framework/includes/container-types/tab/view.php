@@ -6,16 +6,7 @@
  */
 
 $lazy_tabs = fw()->theme->get_config('lazy_tabs');
-?> 
-<?php 
-//siolsite  
-//    foreach ($tabs as $tab_id => &$tab):
-//    {
-//        debug_to_console( $tabs );
-//    }
 ?>
-      
-
 <div class="fw-options-tabs-wrapper">
 	<div class="fw-options-tabs-list">
 		<ul>
