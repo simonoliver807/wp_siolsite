@@ -30,26 +30,32 @@ V3D.View.prototype = {
     	this.renderer = new THREE.WebGLRenderer({precision: "mediump", antialias:false});
     	this.renderer.setSize( this.w, this.h );
     	this.renderer.setClearColor( 0x1d1f20, 1 );
-    	this.camera = new THREE.PerspectiveCamera( 60, this.w/this.h, 0.1, 2000 );
-        this.camera.position.z = 500;
-        this.camera.position.y = 10;
+
+
+    	// siolsite this.camera = new THREE.PerspectiveCamera( 60, this.w/this.h, 0.1, 2000 );
+        this.camera = new THREE.PerspectiveCamera( 60, this.w/this.h, 0.1, 10000 );
+
+
+        this.camera.position.z = 10;
         
         
     	this.scene = new THREE.Scene();
+        this.scene.background = new THREE.Color( 0x000000 );
+
         
         
         
-    	this.initBackground();
+    	// siolsite abandoned changed the scene color this.initBackground();
         this.container = document.getElementById(this.id)
         this.container.appendChild( this.renderer.domElement );
 
         // siolsite abandoned the nav controls and loaded Orbit Controls 020916
        // this.nav = new V3D.Navigation(this);
        // this.nav.initCamera( h,v,d );
-        var controls = new THREE.OrbitControls( this.camera, this.renderer.domElement );
-        controls.enableDamping = true;
-        controls.dampingFactor = 0.25;
-        controls.enableZoom = true;
+        this.controls = new THREE.OrbitControls( this.camera, this.renderer.domElement );
+        this.controls.enableDamping = true;
+        this.controls.dampingFactor = 0.25;
+        this.controls.enableZoom = false;
 
         this.miniMap = null;
         this.player = null;
@@ -99,18 +105,31 @@ V3D.View.prototype = {
 	    geos['sph'].fromGeometry( new THREE.SphereGeometry(1,12,10)); 
 	    geos['cyl'].fromGeometry( new THREE.CylinderGeometry(0.5,0.5,1,12,1));  
 	    geos['box'].fromGeometry( new THREE.BoxGeometry(1,1,1));
-	    geos['plane'] = new THREE.PlaneBufferGeometry(1,1);
+	    geos['plane'] = new THREE.PlaneBufferGeometry(1,1, 100, 100);
 	    geos['plane'].applyMatrix(new THREE.Matrix4().makeRotationX(-90*V3D.ToRad));
 
+
+
+
 	    var mats = {};
-	    mats['sph'] = new THREE.MeshLambertMaterial( { map: this.basicTexture(0), name:'sph' } );
+	   // mats['sph'] = new THREE.MeshLambertMaterial( { map: this.basicTexture(0), name:'sph', wireframe:'true'} );
+        mats['sph'] = new THREE.MeshLambertMaterial( { color: 0x66ff33, wireframe: true, name:'sph'} );
+
 	    mats['ssph'] = new THREE.MeshLambertMaterial( { map: this.basicTexture(1), name:'ssph' } );
-	    mats['box'] = new THREE.MeshLambertMaterial( { map: this.basicTexture(2), name:'box' } );
+
+
+	    //mats['box'] = new THREE.MeshLambertMaterial( { map: this.basicTexture(2), name:'box' } );
+        mats['box'] = new THREE.MeshLambertMaterial( { color: 0x66ff33, wireframe: true, name:'box'} );
+
+
 	    mats['sbox'] = new THREE.MeshLambertMaterial( { map: this.basicTexture(3), name:'sbox' } );
 	    mats['cyl'] = new THREE.MeshLambertMaterial( { map: this.basicTexture(5), name:'cyl' } );
 	    mats['scyl'] = new THREE.MeshLambertMaterial( { map: this.basicTexture(6), name:'scyl' } );
 	    mats['static'] = new THREE.MeshLambertMaterial( { map: this.basicTexture(4), name:'static' } );
-	    mats['static2'] = new THREE.MeshLambertMaterial( { map: this.basicTexture(4, 6), name:'static2' } );
+	   
+
+       // mats['static2'] = new THREE.MeshLambertMaterial( { map: this.basicTexture(4, 6), name:'static2' } );
+        mats['static2'] = new THREE.MeshLambertMaterial( { color: 0xff0000, wireframe: true, name:'static2' } );
 
 	    mats['joint']  = new THREE.LineBasicMaterial( { color: 0x00ff00 } );
 
@@ -118,6 +137,7 @@ V3D.View.prototype = {
 	    this.geos = geos;
     },
     render : function(){
+        this.controls.update();
     	this.renderer.render( this.scene, this.camera );
     },
     add : function(obj, target){
@@ -126,6 +146,7 @@ V3D.View.prototype = {
     	var pos = obj.pos || [0,0,0];
     	var rot = obj.rot || [0,0,0];
     	var move = obj.move || false;
+        var name = obj.name || '';
     	if(obj.flat){ type = 'plane'; pos[1]+=size[1]*0.5; }
     	
     	if(type.substring(0,5) === 'joint'){//_____________ Joint
@@ -141,18 +162,26 @@ V3D.View.prototype = {
 			return joint;
     	} else {//_____________ Object
     		var mesh;
-    		if(type=='box' && move) mesh = new THREE.Mesh( this.geos.box, this.mats.box );
-	    	if(type=='box' && !move) mesh = new THREE.Mesh( this.geos.box, this.mats.static);
-	    	if(type=='plane' && !move) mesh = new THREE.Mesh( this.geos.plane, this.mats.static2);
-	    	if(type=='sphere' && move) mesh = new THREE.Mesh( this.geos.sph, this.mats.sph );
-	    	if(type=='sphere' && !move) mesh = new THREE.Mesh( this.geos.sph, this.mats.static);
-	    	if(type=='cylinder' && move) mesh = new THREE.Mesh( this.geos.cyl, this.mats.cyl );
-	    	if(type=='cylinder' && !move) mesh = new THREE.Mesh( this.geos.cyl, this.mats.static);
+    		if(type=='box' && move) mesh = new THREE.Mesh( this.geos.box, this.mats.box, name );
+	    	if(type=='box' && !move) mesh = new THREE.Mesh( this.geos.box, this.mats.static, name);
+	    	if(type=='plane' && !move) mesh = new THREE.Mesh( this.geos.plane, this.mats.static2, name );
+	    	if(type=='sphere' && move) mesh = new THREE.Mesh( this.geos.sph, this.mats.sph, name );
+	    	if(type=='sphere' && !move) mesh = new THREE.Mesh( this.geos.sph, this.mats.static, name);
+	    	if(type=='cylinder' && move) mesh = new THREE.Mesh( this.geos.cyl, this.mats.cyl, name );
+	    	if(type=='cylinder' && !move) mesh = new THREE.Mesh( this.geos.cyl, this.mats.static, name);
 	    	mesh.scale.set( size[0], size[1], size[2] );
 	        mesh.position.set( pos[0], pos[1], pos[2] );
 	        mesh.rotation.set( rot[0]*V3D.ToRad, rot[1]*V3D.ToRad, rot[2]*V3D.ToRad );
 	        if(target)target.add( mesh );
 	        else this.scene.add( mesh );
+            // siolsite first person controls, camera follows sphere
+            // if(obj.name=='sph1'){
+            // mesh.add(this.camera);
+            // }
+            if(obj.name=='sph1'){
+                this.controls.updateTarget(mesh);
+            }
+
 	        return mesh;
     	}
     	
@@ -214,6 +243,18 @@ V3D.View.prototype = {
         tx.repeat = new THREE.Vector2( r || 1, r || 1);
         tx.needsUpdate = true;
         return tx;
+    },
+    getCamDir : function (direction){
+        var camPos = this.camera.position;
+        var playerPos = this.scene.children[3].position;
+        var heading = new THREE.Vector3();
+        if(direction == 'forward'){
+            heading = heading.subVectors(playerPos, camPos);
+        }
+        else {
+            heading = heading.subVectors(camPos, playerPos);
+        }
+        return heading;
     }
 
 }

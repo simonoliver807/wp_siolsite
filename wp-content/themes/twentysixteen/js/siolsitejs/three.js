@@ -18475,7 +18475,7 @@
 	 * @author jonobr1 / http://jonobr1.com/
 	 */
 
-	function Mesh( geometry, material ) {
+	function Mesh( geometry, material, name ) {
 
 		Object3D.call( this );
 
@@ -18485,6 +18485,9 @@
 		this.material = material !== undefined ? material : new MeshBasicMaterial( { color: Math.random() * 0xffffff } );
 
 		this.drawMode = TrianglesDrawMode;
+
+		// siolsite added name param to function call and constructor
+		this.name = name;
 
 		this.updateMorphTargets();
 

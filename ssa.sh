@@ -22,9 +22,9 @@ OpenEverything ()
 {
     echo "open everything"
     open /Applications/MAMP/MAMP.app
-    open http://localhost:8887/website/oimo-demo/
+    open http://localhost:8887/website
     open /Applications/Transmission.app
-    open /Applications/Brackets.app
+    open /Applications/Sublime\ Text.app
     open /Applications/Mail.app
     echo "everything open"
 }
@@ -33,7 +33,7 @@ CloseEverything ()
     echo "close everything"
     osascript -e 'quit app "MAMP"'
     osascript -e 'quit app "Chrome"'
-    osascript -e 'quit app "Brackets"'
+    osascript -e 'quit app "Sublime Text"'
     osascript -e 'quit app "Mail"'
     osascript -e 'quit app "Terminal"'
     echo "close everything closed"

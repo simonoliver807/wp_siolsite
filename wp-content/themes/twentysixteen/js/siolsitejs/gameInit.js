@@ -41,9 +41,13 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
     var world = new OIMO.World( timestep, boardphase, Iterations, noStat );
 
     // you can choose world gravity 
-    world.gravity = new OIMO.Vec3(0, -9.8, 0);
+    // world.gravity = new OIMO.Vec3(0, -9.8, 0);
+    world.gravity = new OIMO.Vec3(0, 0, 0);
+
+
     // siolsite new force
-    var newForce = new OIMO.Vec3(1.0,0,0);
+    var newForce = new OIMO.Vec3(0,0,0);
+    var keys = { LEFT: 37, UP: 38, RIGHT: 39, BOTTOM: 40, ECS: 27 };
     
     world.worldscale(100);
 
@@ -90,9 +94,9 @@ function oimoLoop()
         
         
         // siolsite try again to add force
-        var rb = body.body;
-        rb.linearVelocity.addTime(newForce , world.timeStep );
-        rb.updatePosition( world.timeStep );
+       // var rb = body.body;
+       // rb.linearVelocity.addTime(newForce , world.timeStep );
+       // rb.updatePosition( world.timeStep );
 //        var thisInfo = document.createTextNode(thisPerf.show());
 //        document.getElementById('perf').appendChild(thisInfo)
         
@@ -144,6 +148,7 @@ function populate(n)
     var shapes = [1,2];
     
         x = 0;
+        var xbox = 100;
         z = 0;
         y = 100;
         w = 15;
@@ -157,12 +162,17 @@ function populate(n)
         var t = shapes[i];
 
         if(t===1) obj = { type:'sphere', size:[w*0.5, w*0.5, w*0.5], pos:[x,y,z], move:true, world:world, name:'sph1' };
-        if(t===2) obj = { type:'box', size:[w,h,d], pos:[x,y,z], move:true, world:world };
+        if(t===2) obj = { type:'box', size:[w,h,d], pos:[xbox,y,z], move:true, world:world, name:'box1' };
         if(t===3) obj = { type:'cylinder', size:[w,h,w, w,h,w, w,h,w, w,h,w], pos:[x,y,z], rot:[0,0,0, 0,45,0, 0,22.5,0, 0,-22.5,0], move:true, world:world };
         
         bodys[i] = new OIMO.Body(obj);
         meshs[i] = v3d.add(obj);
     }
+    // add targeting system to the display
+    obj { type:'sphere', size:[1, 1, 1, pos:[0,100,10], move:true, world:world, name:'sight' };
+    bodys[i+1] = new OIMO.Body(obj);
+    meshs[i+1] = v3d.add(obj);
+
 }
 
 /* random number */
@@ -173,6 +183,58 @@ function rand(min, max, n)
     else r = min + Math.random() * max;
     return r.toFixed(n)*1;
 }
+
+function handleKeyDown( event ) {
+
+      event.preventDefault();
+      event.stopPropagation();
+
+    switch ( event.keyCode ) {
+
+        case keys.UP:
+            var heading = v3d.getCamDir('forward');
+            heading.x /= 10;
+            heading.y /=10;
+            heading.z /=10;
+            var rb = bodys[0].body;
+            rb.linearVelocity.addTime(heading , world.timeStep );
+            v3d.controls.update();
+            break;
+        case keys.BOTTOM:
+            var heading = v3d.getCamDir('reverse');
+            heading.x /= 10;
+            heading.y /=10;
+            heading.z /=10;
+            var rb = bodys[0].body;
+            rb.linearVelocity.addTime(heading , world.timeStep ); 
+            v3d.controls.update();
+            break;
+        case keys.LEFT:
+            var rb = bodys[0].body;
+            newForce.x = -5;
+            rb.linearVelocity.addTime(newForce , world.timeStep );
+            break;
+
+        case keys.RIGHT:
+            var rb = bodys[0].body;
+            newForce.x = 5;
+            rb.linearVelocity.addTime(newForce , world.timeStep );
+            break;
+            // siolsite remove events if the ESC key is pressed
+        case keys.ECS:
+            document.removeEventListener( 'mousemove', onMouseMove, false );
+            break;
+            
+
+    }
+
+}
+window.addEventListener( 'keydown', handleKeyDown, false );
+window.scrollTo(0, document.body.clientHeight);
+var falseKey = {keyCode: 38};
+// for(var i=0;i<1000;i++){
+  //  handleKeyDown(falseKey);
+// }
     
 });
 

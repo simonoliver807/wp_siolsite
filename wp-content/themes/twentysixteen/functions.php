@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Twenty Sixteen functions and definitions
  *

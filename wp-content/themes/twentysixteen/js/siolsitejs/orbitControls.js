@@ -14,7 +14,7 @@
 //    Pan - right mouse, or arrow keys / touch: three finter swipe
 
 
-define(['./three'], function(THREE) {
+define(['three'], function(THREE) { 
 
 THREE.OrbitControls = function ( object, domElement ) {
 
@@ -26,11 +26,11 @@ THREE.OrbitControls = function ( object, domElement ) {
 	this.enabled = true;
 
 	// "target" sets the location of focus, where the object orbits around
-	this.target = new THREE.Vector3();
+	this.target = new THREE.Vector3(0,100,0);
 
 	// How far you can dolly in and out ( PerspectiveCamera only )
-	this.minDistance = 0;
-	this.maxDistance = Infinity;
+	this.minDistance = 100;
+	this.maxDistance = 100;
 
 	// How far you can zoom in and out ( OrthographicCamera only )
 	this.minZoom = 0;
@@ -66,14 +66,15 @@ THREE.OrbitControls = function ( object, domElement ) {
 
 	// Set to true to automatically rotate around the target
 	// If auto-rotate is enabled, you must call controls.update() in your animation loop
-	this.autoRotate = false;
+	//siolsite
+	this.autoRotate = true;
 	this.autoRotateSpeed = 2.0; // 30 seconds per round when fps is 60
 
 	// Set to false to disable use of the keys
-	this.enableKeys = true;
+	this.enableKeys = false;
 
 	// The four arrow keys
-	this.keys = { LEFT: 37, UP: 38, RIGHT: 39, BOTTOM: 40, ECS: 27 };
+	//this.keys = { LEFT: 37, UP: 38, RIGHT: 39, BOTTOM: 40, ECS: 27 };
 
 	// Mouse buttons
 	this.mouseButtons = { ORBIT: THREE.MOUSE.LEFT, ZOOM: THREE.MOUSE.MIDDLE, PAN: THREE.MOUSE.RIGHT };
@@ -127,10 +128,14 @@ THREE.OrbitControls = function ( object, domElement ) {
 		var lastQuaternion = new THREE.Quaternion();
 
 		return function update () {
+			// siolsite hack to update the taget position with the current player position
+			if(scope.target.position === undefined){
+				scope.target.position = this.target;
+			}
 
 			var position = scope.object.position;
 
-			offset.copy( position ).sub( scope.target );
+			offset.copy( position ).sub( scope.target.position );
 
 			// rotate offset to "y-axis-is-up" space
 			offset.applyQuaternion( quat );
@@ -162,16 +167,19 @@ THREE.OrbitControls = function ( object, domElement ) {
 			spherical.radius = Math.max( scope.minDistance, Math.min( scope.maxDistance, spherical.radius ) );
 
 			// move target to panned location
-			scope.target.add( panOffset );
+			scope.target.position.add( panOffset );
 
 			offset.setFromSpherical( spherical );
 
 			// rotate offset back to "camera-up-vector-is-up" space
 			offset.applyQuaternion( quatInverse );
 
-			position.copy( scope.target ).add( offset );
+			position.copy( scope.target.position ).add( offset );
 
-			scope.object.lookAt( scope.target );
+
+			scope.object.position = position;
+			scope.object.lookAt( scope.target.position );
+
 
 			if ( scope.enableDamping === true ) {
 
@@ -229,6 +237,10 @@ THREE.OrbitControls = function ( object, domElement ) {
 		//scope.dispatchEvent( { type: 'dispose' } ); // should this be added here?
 
 	};
+	// siolsite
+	this.updateTarget = function(target) {
+		this.target = target;
+	}
 
 	//
 	// internals
@@ -516,40 +528,40 @@ THREE.OrbitControls = function ( object, domElement ) {
 
 	}
 
-	function handleKeyDown( event ) {
+	// function handleKeyDown( event ) {
 
-		//console.log( 'handleKeyDown' );
+	// 	//console.log( 'handleKeyDown' );
 
-		switch ( event.keyCode ) {
+	// 	switch ( event.keyCode ) {
 
-			case scope.keys.UP:
-				pan( 0, scope.keyPanSpeed );
-				scope.update();
-				break;
+	// 		case scope.keys.UP:
+	// 			pan( 0, scope.keyPanSpeed );
+	// 			scope.update();
+	// 			break;
 
-			case scope.keys.BOTTOM:
-				pan( 0, - scope.keyPanSpeed );
-				scope.update();
-				break;
+	// 		case scope.keys.BOTTOM:
+	// 			pan( 0, - scope.keyPanSpeed );
+	// 			scope.update();
+	// 			break;
 
-			case scope.keys.LEFT:
-				pan( scope.keyPanSpeed, 0 );
-				scope.update();
-				break;
+	// 		case scope.keys.LEFT:
+	// 			pan( scope.keyPanSpeed, 0 );
+	// 			scope.update();
+	// 			break;
 
-			case scope.keys.RIGHT:
-				pan( - scope.keyPanSpeed, 0 );
-				scope.update();
-				break;
-                // siolsite remove events if the ESC key is pressed
-            case scope.keys.ECS:
-                document.removeEventListener( 'mousemove', onMouseMove, false );
-				break;
+	// 		case scope.keys.RIGHT:
+	// 			pan( - scope.keyPanSpeed, 0 );
+	// 			scope.update();
+	// 			break;
+ //                // siolsite remove events if the ESC key is pressed
+ //            case scope.keys.ECS:
+ //                document.removeEventListener( 'mousemove', onMouseMove, false );
+	// 			break;
                 
 
-		}
+	// 	}
 
-	}
+	// }
 
 	function handleTouchStartRotate( event ) {
 
@@ -758,13 +770,16 @@ THREE.OrbitControls = function ( object, domElement ) {
 
 	}
 
-	function onKeyDown( event ) {
+	// function onKeyDown( event ) {
 
-		if ( scope.enabled === false || scope.enableKeys === false || scope.enablePan === false ) return;
+	// 	if ( scope.enabled === false || scope.enableKeys === false || scope.enablePan === false ) return;
 
-		handleKeyDown( event );
+	// 	event.preventDefault();
+	// 	event.stopPropagation();
 
-	}
+	// 	handleKeyDown( event );
+
+	// }
 
 	function onTouchStart( event ) {
 
@@ -889,7 +904,7 @@ THREE.OrbitControls = function ( object, domElement ) {
 	scope.domElement.addEventListener( 'touchend', onTouchEnd, false );
 	scope.domElement.addEventListener( 'touchmove', onTouchMove, false );
 
-	window.addEventListener( 'keydown', onKeyDown, false );
+	// window.addEventListener( 'keydown', onKeyDown, false );
 
 	// force an update at start
 

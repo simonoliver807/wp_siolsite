@@ -16,8 +16,9 @@ requirejs.config({
 var pageTitle = document.title;
 // Start the main app logic.
 if (pageTitle == '3d game – siolsite'){
-    requirejs(['oimo', 'three', 'v3d', 'gameInit'],
-        function (OIMO, THREE, V3D, gameInits) {
+    requirejs(['oimo', 'three', 'v3d', 'gameinit','orbitControls'],
+        function (OIMO, THREE, V3D, OrbitControls) {
+          
         }
     );
 };
