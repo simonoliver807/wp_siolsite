@@ -113,7 +113,7 @@ V3D.View.prototype = {
 
 	    var mats = {};
 	   // mats['sph'] = new THREE.MeshLambertMaterial( { map: this.basicTexture(0), name:'sph', wireframe:'true'} );
-        mats['sph'] = new THREE.MeshLambertMaterial( { color: 0x66ff33, wireframe: true, name:'sph'} );
+        // mats['sph'] = new THREE.MeshLambertMaterial( { color: 0x66ff33, wireframe: true, name:'sph'} );
 
 	    mats['ssph'] = new THREE.MeshLambertMaterial( { map: this.basicTexture(1), name:'ssph' } );
 
@@ -140,7 +140,12 @@ V3D.View.prototype = {
         this.controls.update();
     	this.renderer.render( this.scene, this.camera );
     },
-    add : function(obj, target){
+    setMesh : function(color) {
+        var mats = {};
+        return mats['sph'] = new THREE.MeshLambertMaterial( { color: color, wireframe: true, name:'sph'} );
+
+    },
+    add : function(obj, target, color){
     	var type = obj.type || 'box';
     	var size = obj.size || [10,10,10];
     	var pos = obj.pos || [0,0,0];
@@ -162,6 +167,9 @@ V3D.View.prototype = {
 			return joint;
     	} else {//_____________ Object
     		var mesh;
+            if(color){ 
+                this.mats['sph'] = this.setMesh(color);
+            }
     		if(type=='box' && move) mesh = new THREE.Mesh( this.geos.box, this.mats.box, name );
 	    	if(type=='box' && !move) mesh = new THREE.Mesh( this.geos.box, this.mats.static, name);
 	    	if(type=='plane' && !move) mesh = new THREE.Mesh( this.geos.plane, this.mats.static2, name );
@@ -178,7 +186,7 @@ V3D.View.prototype = {
             // if(obj.name=='sph1'){
             // mesh.add(this.camera);
             // }
-            if(obj.name=='sph1'){
+            if(obj.name=='containerSphere'){
                 this.controls.updateTarget(mesh);
             }
 
@@ -244,9 +252,9 @@ V3D.View.prototype = {
         tx.needsUpdate = true;
         return tx;
     },
-    getCamDir : function (direction){
+    getCamDir : function (direction, containerMesh){
         var camPos = this.camera.position;
-        var playerPos = this.scene.children[3].position;
+        var playerPos = containerMesh.position;
         var heading = new THREE.Vector3();
         if(direction == 'forward'){
             heading = heading.subVectors(playerPos, camPos);

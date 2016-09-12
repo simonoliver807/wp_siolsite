@@ -433,7 +433,6 @@ function wptuts_scripts_basic()
     wp_register_script( 'requirejs', get_template_directory_uri() . '/js/require.js', array(), $ver=FALSE, TRUE );
     
     // For either a plugin or a theme, you can then enqueue the script
-	
 	wp_enqueue_script( 'livereload' );
     
     // siolsite    
@@ -454,6 +453,9 @@ function debug_to_console( $data ) {
 
     if ( is_array( $data ) )
         $output = "<script>console.log( 'Debug Objects: " . implode( ',', $data) . "' );</script>";
+    elseif (is_object($data) ) {
+    	var_dump($data);
+    }
     else
         $output = "<script>console.log( 'Debug Objects: " . $data . "' );</script>";
 

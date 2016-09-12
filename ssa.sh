@@ -26,6 +26,7 @@ OpenEverything ()
     open /Applications/Transmission.app
     open /Applications/Sublime\ Text.app
     open /Applications/Mail.app
+    open /Applications/Sequel\ Pro.app
     echo "everything open"
 }
 CloseEverything ()
@@ -35,6 +36,7 @@ CloseEverything ()
     osascript -e 'quit app "Chrome"'
     osascript -e 'quit app "Sublime Text"'
     osascript -e 'quit app "Mail"'
+    osascript -e 'quit app "Sequel Pro"'
     osascript -e 'quit app "Terminal"'
     echo "close everything closed"
 }

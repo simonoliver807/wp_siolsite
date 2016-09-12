@@ -135,7 +135,7 @@ class FW_Extension_Contact_Forms extends FW_Extension_Forms_Form {
 				} else {
 					FW_Flash_Messages::add(
 						$flash_id,
-						__( 'Invalid destination email (please contact the site administrator)', 'fw' ),
+						__( 'Invalid destination mail (please contact the site administrator)', 'fw' ),
 						'error'
 					);
 

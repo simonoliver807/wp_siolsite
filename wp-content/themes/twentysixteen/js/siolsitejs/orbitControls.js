@@ -26,7 +26,7 @@ THREE.OrbitControls = function ( object, domElement ) {
 	this.enabled = true;
 
 	// "target" sets the location of focus, where the object orbits around
-	this.target = new THREE.Vector3(0,100,0);
+	this.target = new THREE.Vector3(0,0,0);
 
 	// How far you can dolly in and out ( PerspectiveCamera only )
 	this.minDistance = 100;
@@ -713,7 +713,7 @@ THREE.OrbitControls = function ( object, domElement ) {
 
 	}
 
-	function onMouseMove( event ) {
+	onMouseMove = function ( event ) {
 
 		if ( scope.enabled === false ) return;
 

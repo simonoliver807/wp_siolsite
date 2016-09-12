@@ -32,8 +32,11 @@
 if ( version_compare( $GLOBALS['wp_version'], '4.4-alpha', '<' ) ) {
 	require get_template_directory() . '/inc/back-compat.php';
 }
+// siolsite set global variable for login
+$login = 'true';
 
 if ( ! function_exists( 'twentysixteen_setup' ) ) :
+
 /**
  * Sets up theme defaults and registers support for various WordPress features.
  *
