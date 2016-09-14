@@ -62,6 +62,7 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
     var thisPerf;
 
     var containerMesh;
+    var sightMesh;
 
     var newForce = 0;
 
@@ -106,6 +107,10 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
 
                 if(body.name == 'sph1'){
                     containerMesh.position.copy(body.getPosition());
+                    var tmpVec = new OIMO.Vec3();
+                    tmpVec.copy(body.getPosition());
+                    tmpVec.z += 100;
+                    v3d.camera.position.copy(tmpVec);
                 }
                 
 
@@ -125,32 +130,31 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
              //   if(mesh.material.name === 'sph') mesh.material = v3d.mats.ssph;
             }
         }
+
+
+
         if(newForce){
 
-            var heading = v3d.getCamDir('forward', containerMesh);
-
+            var heading = v3d.getPlayerDir('forward', containerMesh, sightMesh);
+         // TODO only update vector if camera pos changes
          //   if(lastCamPos.pos != v3d.getCam.position){
 
-                console.log('magnitude ' + heading.length()); 
+                var headingMag = heading.length();
+                console.log('magnitude ' + headingMag); 
                 console.log('heading x: '+ heading.x + ' heading y: '+ heading.y + 'heading z: '+ heading.z); 
-                if(heading.length() > 99){
-                   heading.x = heading.x - 1;
-                   heading.y = heading.y - 1;
-                   heading.z = heading.z - 1;
-                }
-                console.log('magnitude limit ' + heading.length()); 
-                console.log('heading x: '+ heading.x + ' heading y: '+ heading.y + 'heading z: '+ heading.z); 
-
-                heading.x /= 10;
-                heading.y /=10;
-                heading.z /=10;
+                // headingMag /= 10;
+                // heading.x /= (headingMag);
+                // heading.y /= (headingMag);
+                // heading.z /= (headingMag);
                 var rb = bodys[0].body;
                 rb.linearVelocity.addTime(heading , world.timeStep );
+
+                console.log('magnitude limit ' + heading.length()); 
+                console.log('heading x: '+ heading.x + ' heading y: '+ heading.y + 'heading z: '+ heading.z); 
 
         //        lastCamPos.setPos(v3d.get.position);
        //     }
 
-          //  console.log('heading x: '+ heading.x + ' heading x: '+ heading.x + 'heading x: '+ heading.x); 
         }
         // oimo stat display
         //  docu//ment.getElementById("info").innerHTML = world.performance.show();
@@ -180,10 +184,10 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
             h = 15;
             d = 15;
 
-        var spheres = [{ "size":[7.5, 7.5, 7.5], "pos":[0,0,0], "move":"true", "name":"sph1", "color":'#66ff33'},
-                       { "size":[1, 1, 1], "pos":[50,0,0], "move":"true", "name":"sight","color":'#66ff33'},
-                       { "size":[1, 1, 1], "pos":[0,0,0], "move":"true", "name":"containerSphere", "color":'#ff0000'},
-                       { "size":[500, 500, 500], "pos":[500,10,500], "move":"true", "name":"planet","color":'#66ff33'}];
+        var spheres = [{ "size":[7.5, 7.5, 7.5], "pos":[0,0,-100], "move":"true", "name":"sph1", "color":'#66ff33'},
+                       { "size":[1, 1, 1], "pos":[0,20,-150], "move":"true", "name":"sight","color":'#66ff33'},
+                       { "size":[1, 1, 1], "pos":[0,0,-100], "move":"true", "name":"containerSphere", "color":'#ff0000'},
+                       { "size":[500, 500, 500], "pos":[500,10,-5000], "move":"true", "name":"planet","color":'#0000ff'}];
         addSphere(spheres);
 
         for(var i=0;i<shapes.length;i++){
@@ -205,7 +209,7 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
         var target;
         for( var i in spheres){
             var sphere =  {type: 'sphere', size:spheres[i].size, pos:spheres[i].pos, move:spheres[i].move, world:world, name:spheres[i].name, color: spheres[i].color}
-            if(sphere.name != 'containerSphere'){
+            if(sphere.name != 'containerSphere' && sphere.name != 'sight'){
                 bodys[bodysNum] = new OIMO.Body(sphere);
                 meshs[meshNum] = v3d.add(sphere,target,sphere.color);
                 bodysNum += 1;
@@ -213,36 +217,40 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
             if(sphere.name == 'containerSphere'){
                 containerMesh = v3d.add(sphere,target,sphere.color);
             }
+            if(sphere.name == 'sight'){
+                sightMesh = v3d.add(sphere,target,sphere.color);
+            }
         }
     }
 
 function handleKeyDown( event ) {
 
-      event.preventDefault();
-      event.stopPropagation();
+    event.preventDefault();
+    event.stopPropagation();
 
     switch ( event.keyCode ) {
 
         case keys.UP:
-            var heading = v3d.getCamDir('forward', containerMesh);
+        console.log('up key pressed'); 
+            var heading = v3d.getPlayerDir('forward', containerMesh, sightMesh);
 
             console.log('magnitude ' + heading.length()); 
 
             console.log('heading x: '+ heading.x + ' heading y: '+ heading.y + 'heading z: '+ heading.z); 
 
-            if(heading.length() > 100){
-               heading.x = heading.x - 10;
-               heading.y = heading.y - 10;
-               heading.z = heading.z - 10;
-            }
+            // if(heading.length() > 100){
+            //    heading.x = heading.x /= 10;
+            //    heading.y = heading.y /= 10;
+            //    heading.z = heading.z /= 10;
+            // }
 
-            console.log('magnitude limit ' + heading.length()); 
+            // console.log('magnitude limit ' + heading.length()); 
 
-            console.log('heading x: '+ heading.x + ' heading y: '+ heading.y + 'heading z: '+ heading.z); 
+            // console.log('heading x: '+ heading.x + ' heading y: '+ heading.y + 'heading z: '+ heading.z); 
 
-            heading.x /= 10;
-            heading.y /=10;
-            heading.z /=10;
+            heading.x *= 5;
+            heading.y *= 5;
+            heading.z *= 5;
 
 
             var rb = bodys[0].body;
@@ -301,10 +309,27 @@ function handleKeyDown( event ) {
 
 window.addEventListener( 'keydown', handleKeyDown, false );
 window.scrollTo(0, document.body.clientHeight);
-var falseKey = {keyCode: 38};
-// for(var i=0;i<1000;i++){
-  //  handleKeyDown(falseKey);
-// }
+
+function getMousePos(canvas, evt) {
+        var rect = canvas.getBoundingClientRect();
+        return {
+          x: evt.clientX - rect.left,
+          y: evt.clientY - rect.top
+        };
+}
+var canvas = document.getElementById('container');
+canvas.addEventListener('mousemove', function(evt) {
+    var mousePos = getMousePos(canvas, evt);
+         if(mousePos.x > 398.5){
+              sightMesh.position.x = (mousePos.x-398.5)/3.192;
+                    }
+         if(mousePos.x < 398.5){
+            sightMesh.position.x = (398.5 - mousePos.x)/-3.192;
+        }
+    //console.log('Mouse position: ' + mousePos.x.toFixed(0) + ',' + mousePos.y.toFixed(0));
+    //console.log('sight position' + sightMesh.position.x + ',' + sightMesh.position.y ); 
+}, false);
+
 
 });   
 

@@ -52,10 +52,10 @@ V3D.View.prototype = {
         // siolsite abandoned the nav controls and loaded Orbit Controls 020916
        // this.nav = new V3D.Navigation(this);
        // this.nav.initCamera( h,v,d );
-        this.controls = new THREE.OrbitControls( this.camera, this.renderer.domElement );
-        this.controls.enableDamping = true;
-        this.controls.dampingFactor = 0.25;
-        this.controls.enableZoom = false;
+        // this.controls = new THREE.OrbitControls( this.camera, this.renderer.domElement );
+        // this.controls.enableDamping = true;
+        // this.controls.dampingFactor = 0.25;
+        // this.controls.enableZoom = false;
 
         this.miniMap = null;
         this.player = null;
@@ -137,7 +137,7 @@ V3D.View.prototype = {
 	    this.geos = geos;
     },
     render : function(){
-        this.controls.update();
+       // this.controls.update();
     	this.renderer.render( this.scene, this.camera );
     },
     setMesh : function(color) {
@@ -183,12 +183,9 @@ V3D.View.prototype = {
 	        if(target)target.add( mesh );
 	        else this.scene.add( mesh );
             // siolsite first person controls, camera follows sphere
-            // if(obj.name=='sph1'){
-            // mesh.add(this.camera);
+            // if(obj.name=='containerSphere'){
+            //     this.camera.lookAt(mesh);
             // }
-            if(obj.name=='containerSphere'){
-                this.controls.updateTarget(mesh);
-            }
 
 	        return mesh;
     	}
@@ -252,16 +249,24 @@ V3D.View.prototype = {
         tx.needsUpdate = true;
         return tx;
     },
-    getCamDir : function (direction, containerMesh){
-        var camPos = this.camera.position;
+    getPlayerDir : function (direction, containerMesh, sightMesh){
         var playerPos = containerMesh.position;
+        var sightPos = sightMesh.position;
+ 
+      //  console.log('camp.x: ' + camPos.x + 'cam.y: ' + camPos.y + 'cam.y: ' + camPos.y); 
+      //  console.log('playerPos.x: ' + playerPos.x + 'playerPos.y:' + playerPos.y + 'playerPos.y:' + playerPos.y); 
+
+
         var heading = new THREE.Vector3();
         if(direction == 'forward'){
-            heading = heading.subVectors(playerPos, camPos);
+            heading = heading.subVectors(sightPos, playerPos);
+            heading.normalize();
         }
         else {
-            heading = heading.subVectors(camPos, playerPos);
+            heading = heading.subVectors(playerPos, sightPos);
         }
+
+
         return heading;
     },
     getCam : function (){
