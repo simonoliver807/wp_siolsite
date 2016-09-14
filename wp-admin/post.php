@@ -38,6 +38,7 @@ if ( $post ) {
 	$post_type_object = get_post_type_object( $post_type );
 }
 
+
 if ( isset( $_POST['deletepost'] ) )
 	$action = 'delete';
 elseif ( isset($_POST['wp-preview']) && 'dopreview' == $_POST['wp-preview'] )

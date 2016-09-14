@@ -42,6 +42,7 @@ class _FW_Ext_Contact_Form_DB_Data
 
 	public static function set($form_id, $data)
 	{
+
 		self::delete_data_from_old_location($form_id);
 
 		return update_option(

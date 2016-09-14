@@ -452,7 +452,8 @@ add_action( 'wp_enqueue_scripts', 'wpse47618_load_script_last', 99999 );
 function debug_to_console( $data ) {
 
     if ( is_array( $data ) )
-        $output = "<script>console.log( 'Debug Objects: " . implode( ',', $data) . "' );</script>";
+     //   $output = "<script>console.log( 'Debug Objects: " . implode( ',', $data) . "' );</script>";
+    	   $output = "<script>console.log( 'Debug Objects: " .  serialize($data) . "' );</script>";
     elseif (is_object($data) ) {
     	var_dump($data);
     }

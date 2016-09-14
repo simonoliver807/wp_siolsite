@@ -263,7 +263,11 @@ V3D.View.prototype = {
             heading = heading.subVectors(camPos, playerPos);
         }
         return heading;
+    },
+    getCam : function (){
+        return this.camera;
     }
+
 
 }
 

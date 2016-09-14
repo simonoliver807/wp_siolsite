@@ -126,13 +126,31 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
             }
         }
         if(newForce){
-         var heading = v3d.getCamDir('forward', containerMesh);
-            heading.x /= 100;
-            heading.y /=100;
-            heading.z /=100;
-            var rb = bodys[0].body;
-            rb.linearVelocity.addTime(heading , world.timeStep );
-            console.log('heading x: '+ heading.x + ' heading x: '+ heading.x + 'heading x: '+ heading.x); 
+
+            var heading = v3d.getCamDir('forward', containerMesh);
+
+         //   if(lastCamPos.pos != v3d.getCam.position){
+
+                console.log('magnitude ' + heading.length()); 
+                console.log('heading x: '+ heading.x + ' heading y: '+ heading.y + 'heading z: '+ heading.z); 
+                if(heading.length() > 99){
+                   heading.x = heading.x - 1;
+                   heading.y = heading.y - 1;
+                   heading.z = heading.z - 1;
+                }
+                console.log('magnitude limit ' + heading.length()); 
+                console.log('heading x: '+ heading.x + ' heading y: '+ heading.y + 'heading z: '+ heading.z); 
+
+                heading.x /= 10;
+                heading.y /=10;
+                heading.z /=10;
+                var rb = bodys[0].body;
+                rb.linearVelocity.addTime(heading , world.timeStep );
+
+        //        lastCamPos.setPos(v3d.get.position);
+       //     }
+
+          //  console.log('heading x: '+ heading.x + ' heading x: '+ heading.x + 'heading x: '+ heading.x); 
         }
         // oimo stat display
         //  docu//ment.getElementById("info").innerHTML = world.performance.show();
@@ -207,11 +225,31 @@ function handleKeyDown( event ) {
 
         case keys.UP:
             var heading = v3d.getCamDir('forward', containerMesh);
+
+            console.log('magnitude ' + heading.length()); 
+
+            console.log('heading x: '+ heading.x + ' heading y: '+ heading.y + 'heading z: '+ heading.z); 
+
+            if(heading.length() > 100){
+               heading.x = heading.x - 10;
+               heading.y = heading.y - 10;
+               heading.z = heading.z - 10;
+            }
+
+            console.log('magnitude limit ' + heading.length()); 
+
+            console.log('heading x: '+ heading.x + ' heading y: '+ heading.y + 'heading z: '+ heading.z); 
+
             heading.x /= 10;
             heading.y /=10;
             heading.z /=10;
+
+
             var rb = bodys[0].body;
             rb.linearVelocity.addTime(heading , world.timeStep );
+
+            console.log('heading x: '+ rb.linearVelocity.x + ' heading y: '+ rb.linearVelocity.y + 'heading z: '+ rb.linearVelocity.z); 
+
             newForce = true;
 
             break;
@@ -222,6 +260,9 @@ function handleKeyDown( event ) {
             heading.z /=10;
             var rb = bodys[0].body;
             rb.linearVelocity.addTime(heading , world.timeStep ); 
+
+            console.log('heading x: '+ rb.linearVelocity.x + ' heading y: '+ rb.linearVelocity.y + 'heading z: '+ rb.linearVelocity.z); 
+
             break;
         // case keys.LEFT:
         //     var rb = bodys[0].body;
@@ -241,7 +282,23 @@ function handleKeyDown( event ) {
 
     }
 
-}   
+}
+
+// var lastCamPos = (function () {
+//     return {
+//         setPos: function (camPos) {
+//             this.pos.x = camPos.x;
+//             this.pos.y = camPos.y;
+//             this.pos.z = camPos.z;
+//         },
+//         getPos: function () {
+//             return this.pos;
+//         }
+//     };
+// })();
+// var camPos = OIMO.Vec3(0,0,0);
+// lastCamPos.setPos(camPos);
+
 window.addEventListener( 'keydown', handleKeyDown, false );
 window.scrollTo(0, document.body.clientHeight);
 var falseKey = {keyCode: 38};
