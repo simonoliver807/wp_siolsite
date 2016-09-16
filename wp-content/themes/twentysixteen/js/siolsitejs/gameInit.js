@@ -47,7 +47,7 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
 
     // siolsite new force
     var newForce = new OIMO.Vec3(0,0,0);
-    var keys = { LEFT: 37, UP: 38, RIGHT: 39, BOTTOM: 40, ECS: 27 };
+    var keys = { LEFT: 37, UP: 38, RIGHT: 39, BOTTOM: 40, ECS: 27, SPC: 32 };
     
     world.worldscale(100);
 
@@ -61,10 +61,22 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
     
     var thisPerf;
 
+    // my variables
     var containerMesh;
     var sightMesh;
+    var planetMesh;
+
+    var mousePos;
+    var canvasCentreX = 398.5;
+    var canvasCentreY = 251.5;
+    var ratio = 0.7;
 
     var newForce = 0;
+
+    var containerMeshPrev;
+    containerMeshPrev = new OIMO.Vec3(0,0,0)
+   
+
 
     populate(1);
 
@@ -106,13 +118,15 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
                 mesh.quaternion.copy(body.getQuaternion());
 
                 if(body.name == 'sph1'){
+                    containerMeshPrev.copy(containerMesh.position);
                     containerMesh.position.copy(body.getPosition());
-                    var tmpVec = new OIMO.Vec3();
-                    tmpVec.copy(body.getPosition());
-                    tmpVec.z += 100;
-                    v3d.camera.position.copy(tmpVec);
+                   var tmpPosX = (containerMesh.position.x - containerMeshPrev.x);
+                   var tmpPosY = (containerMesh.position.y - containerMeshPrev.y);
+                    sightMesh.position.x += tmpPosX;
+                    sightMesh.position.y += tmpPosY; 
+                    sightMesh.position.z = containerMesh.position.z - 500; 
+
                 }
-                
 
                 // change material
                 if(mesh.material.name === 'sbox') mesh.material = v3d.mats.box;
@@ -131,31 +145,29 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
             }
         }
 
+       //  if(newForce){
 
+       //      var heading = v3d.getPlayerDir('forward', containerMesh, sightMesh);
+       //   // TODO only update vector if camera pos changes
+       //   //   if(lastCamPos.pos != v3d.getCam.position){
 
-        if(newForce){
+       //          var headingMag = heading.length();
+       //          console.log('magnitude ' + headingMag); 
+       //          console.log('heading x: '+ heading.x + ' heading y: '+ heading.y + 'heading z: '+ heading.z); 
+       //          // headingMag /= 10;
+       //          // heading.x /= (headingMag);
+       //          // heading.y /= (headingMag);
+       //          // heading.z /= (headingMag);
+       //          var rb = bodys[0].body;
+       //          rb.linearVelocity.addTime(heading , world.timeStep );
 
-            var heading = v3d.getPlayerDir('forward', containerMesh, sightMesh);
-         // TODO only update vector if camera pos changes
-         //   if(lastCamPos.pos != v3d.getCam.position){
+       //          console.log('magnitude limit ' + heading.length()); 
+       //          console.log('heading x: '+ heading.x + ' heading y: '+ heading.y + 'heading z: '+ heading.z); 
 
-                var headingMag = heading.length();
-                console.log('magnitude ' + headingMag); 
-                console.log('heading x: '+ heading.x + ' heading y: '+ heading.y + 'heading z: '+ heading.z); 
-                // headingMag /= 10;
-                // heading.x /= (headingMag);
-                // heading.y /= (headingMag);
-                // heading.z /= (headingMag);
-                var rb = bodys[0].body;
-                rb.linearVelocity.addTime(heading , world.timeStep );
+       //  //        lastCamPos.setPos(v3d.get.position);
+       // //     }
 
-                console.log('magnitude limit ' + heading.length()); 
-                console.log('heading x: '+ heading.x + ' heading y: '+ heading.y + 'heading z: '+ heading.z); 
-
-        //        lastCamPos.setPos(v3d.get.position);
-       //     }
-
-        }
+        //}
         // oimo stat display
         //  docu//ment.getElementById("info").innerHTML = world.performance.show();
     }
@@ -174,34 +186,39 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
 
         //add random objects
         var x, y, z, w, h, d, t;
-        var shapes = [2];
         
-            x = 0;
-            var xbox = 100;
-            z = 0;
+            x = 500;
+            z = -1500;
             y = 100;
-            w = 15;
-            h = 15;
-            d = 15;
+            w = 60;
+            h = 60;
+            d = 60;
 
         var spheres = [{ "size":[7.5, 7.5, 7.5], "pos":[0,0,-100], "move":"true", "name":"sph1", "color":'#66ff33'},
-                       { "size":[1, 1, 1], "pos":[0,20,-150], "move":"true", "name":"sight","color":'#66ff33'},
+                       { "size":[2, 2, 2], "pos":[20,20,-500], "move":"true", "name":"sight","color":'#ff00ff'},
                        { "size":[1, 1, 1], "pos":[0,0,-100], "move":"true", "name":"containerSphere", "color":'#ff0000'},
                        { "size":[500, 500, 500], "pos":[500,10,-5000], "move":"true", "name":"planet","color":'#0000ff'}];
+
+
         addSphere(spheres);
 
-        for(var i=0;i<shapes.length;i++){
-    //        w = rand(10,20);
-    //        h = rand(10,20);
-    //        d = rand(10,20);
-            var t = shapes[i];
-            if(t===2) obj = { type:'box', size:[w,h,d], pos:[xbox,y,z], move:true, world:world, name:'box1' };
+        for(var i=0;i<1;i++){
+
+            var t = 2;
+            if(t===2) obj = { type:'box', size:[w,h,d], pos:[x,y,z], move:true, world:world, name:'box1' };
             if(t===3) obj = { type:'cylinder', size:[w,h,w, w,h,w, w,h,w, w,h,w], pos:[x,y,z], rot:[0,0,0, 0,45,0, 0,22.5,0, 0,-22.5,0], move:true, world:world };
-            
+
             bodys[bodysNum] = new OIMO.Body(obj);
             meshs[meshNum] = v3d.add(obj);
             bodysNum += 1;
             meshNum +=1
+
+            x = randMinMax(-1000,1000);
+            y = randMinMax(-1000,1000);
+            z = randMinMax(200,-500);
+
+
+
         }
     }
 
@@ -212,98 +229,117 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
             if(sphere.name != 'containerSphere' && sphere.name != 'sight'){
                 bodys[bodysNum] = new OIMO.Body(sphere);
                 meshs[meshNum] = v3d.add(sphere,target,sphere.color);
+                if(sphere.name == 'planet'){
+                    planetMesh = meshs[meshNum];
+                }
                 bodysNum += 1;
-                meshNum +=1}
+                meshNum +=1;
+                 if(sphere.name == 'shoot') {
+                    return bodys[bodysNum - 1];
+                }
+            }
             if(sphere.name == 'containerSphere'){
                 containerMesh = v3d.add(sphere,target,sphere.color);
+                containerMesh.add(v3d.camera);
             }
             if(sphere.name == 'sight'){
                 sightMesh = v3d.add(sphere,target,sphere.color);
+               // v3d.camera.add(sightMesh);
             }
         }
     }
 
-function handleKeyDown( event ) {
+    function randMinMax(min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
 
-    event.preventDefault();
-    event.stopPropagation();
+    function handleKeyDown( event ) {
 
-    switch ( event.keyCode ) {
+        event.preventDefault();
+        event.stopPropagation();
 
-        case keys.UP:
-        console.log('up key pressed'); 
-            var heading = v3d.getPlayerDir('forward', containerMesh, sightMesh);
+        switch ( event.keyCode ) {
 
-            console.log('magnitude ' + heading.length()); 
+            case keys.UP:
+                console.log('up key pressed'); 
+                var heading = v3d.getPlayerDir('forward', containerMesh, sightMesh);
 
-            console.log('heading x: '+ heading.x + ' heading y: '+ heading.y + 'heading z: '+ heading.z); 
+                // console.log('sightMesh x: '+ sightMesh.position.x + ' sightMesh y: '+ sightMesh.position.y + 'sightMesh z: '+ sightMesh.position.z); 
 
-            // if(heading.length() > 100){
-            //    heading.x = heading.x /= 10;
-            //    heading.y = heading.y /= 10;
-            //    heading.z = heading.z /= 10;
-            // }
+                // console.log('magnitude ' + heading.length()); 
 
-            // console.log('magnitude limit ' + heading.length()); 
+                // console.log('heading x: '+ heading.x + ' heading y: '+ heading.y + 'heading z: '+ heading.z); 
 
-            // console.log('heading x: '+ heading.x + ' heading y: '+ heading.y + 'heading z: '+ heading.z); 
+                // console.log('magnitude limit ' + heading.length()); 
 
-            heading.x *= 5;
-            heading.y *= 5;
-            heading.z *= 5;
+                // console.log('heading x: '+ heading.x + ' heading y: '+ heading.y + 'heading z: '+ heading.z); 
 
+                heading.x *= 50;
+                heading.y *= 50;
+                heading.z *= 50;
+                var rb = bodys[0].body;
+                rb.linearVelocity.addTime(heading , world.timeStep);
+                console.log('heading x: '+ rb.linearVelocity.x + ' heading y: '+ rb.linearVelocity.y + 'heading z: '+ rb.linearVelocity.z); 
+                newForce = true;
 
-            var rb = bodys[0].body;
-            rb.linearVelocity.addTime(heading , world.timeStep );
+                break;
+            case keys.BOTTOM:
+                var heading = v3d.getPlayerDir('reverse',containerMesh, sightMesh);
+                heading.x *= 50;
+                heading.y *= 50;
+                heading.z *= 50;
+                var rb = bodys[0].body;
+                rb.linearVelocity.addTime(heading , world.timeStep); 
 
-            console.log('heading x: '+ rb.linearVelocity.x + ' heading y: '+ rb.linearVelocity.y + 'heading z: '+ rb.linearVelocity.z); 
+                console.log('heading x: '+ rb.linearVelocity.x + ' heading y: '+ rb.linearVelocity.y + 'heading z: '+ rb.linearVelocity.z); 
 
-            newForce = true;
+                break;
+            // case keys.LEFT:
+            //     var rb = bodys[0].body;
+            //     newForce.x = 5;
+            //     rb.linearVelocity.addTime(newForce , world.timeStep );
+            //     break;
+            // case keys.RIGHT:
+            //     var rb = bodys[0].body;
+            //     newForce.x = -5;
+            //     rb.linearVelocity.addTime(newForce , world.timeStep );
+            //     break;
+                // siolsite remove events if the ESC key is pressed
+            case keys.SPC:
+                var heading = v3d.getPlayerDir('forward', containerMesh, sightMesh);
+                heading.x *= 500;
+                heading.y *= 500;
+                heading.z *= 500;
+                var shootStart = containerMesh.position;
+                var sphere = [{ "size":[1.5, 1.5, 1.5], "pos":[shootStart.x, shootStart.y, shootStart.z -1], "move":"true", "name":"shoot", "color":'#66ff33'}];
+                var ss = addSphere(sphere);
+                ss.body.linearVelocity.addTime(heading, world.timeStep);
 
-            break;
-        case keys.BOTTOM:
-            var heading = v3d.getCamDir('reverse', containerMesh);
-            heading.x /= 10;
-            heading.y /=10;
-            heading.z /=10;
-            var rb = bodys[0].body;
-            rb.linearVelocity.addTime(heading , world.timeStep ); 
-
-            console.log('heading x: '+ rb.linearVelocity.x + ' heading y: '+ rb.linearVelocity.y + 'heading z: '+ rb.linearVelocity.z); 
-
-            break;
-        // case keys.LEFT:
-        //     var rb = bodys[0].body;
-        //     newForce.x = 5;
-        //     rb.linearVelocity.addTime(newForce , world.timeStep );
-        //     break;
-        // case keys.RIGHT:
-        //     var rb = bodys[0].body;
-        //     newForce.x = -5;
-        //     rb.linearVelocity.addTime(newForce , world.timeStep );
-        //     break;
-            // siolsite remove events if the ESC key is pressed
-        case keys.ECS:
-            pause = (pause === 1) ? 0: 1;
-            break;
+                break;
+            case keys.ECS:
+                pause = (pause === 1) ? 0: 1;
+                break;
             
 
     }
 
 }
 
-// var lastCamPos = (function () {
+// var LastPos = (function () {
+//     var pos;
 //     return {
-//         setPos: function (camPos) {
-//             this.pos.x = camPos.x;
-//             this.pos.y = camPos.y;
-//             this.pos.z = camPos.z;
+//         setPos: function (pos) {
+//             this.pos.x = pos.x;
+//             this.pos.y = pos.y;
+//             this.pos.z = pos.z;
 //         },
 //         getPos: function () {
 //             return this.pos;
 //         }
 //     };
-// })();
+// });
+//var containerMeshPrev = new LastPos();
+
 // var camPos = OIMO.Vec3(0,0,0);
 // lastCamPos.setPos(camPos);
 
@@ -317,88 +353,42 @@ function getMousePos(canvas, evt) {
           y: evt.clientY - rect.top
         };
 }
+
 var canvas = document.getElementById('container');
 canvas.addEventListener('mousemove', function(evt) {
-    var mousePos = getMousePos(canvas, evt);
-         if(mousePos.x > 398.5){
-              sightMesh.position.x = (mousePos.x-398.5)/3.192;
-                    }
-         if(mousePos.x < 398.5){
-            sightMesh.position.x = (398.5 - mousePos.x)/-3.192;
+         mousePos = getMousePos(canvas, evt);
+
+
+   //      console.log('mousePos.x 1: ' + mousePos.x); 
+    //     console.log('containerMesh' + containerMesh.position.x +', '+ containerMesh.position.y )
+
+
+       //  mousePos.x += containerMesh.position.x;
+       //  canvasCentre += containerMesh.position.x;
+
+   //      console.log('canvas centre: ' + canvasCentre);
+    //     console.log('mousPos.x 2: ' + mousePos.x);   
+
+         if(mousePos.x > canvasCentreX){
+              sightMesh.position.x = ((mousePos.x-canvasCentreX)/ratio) + containerMesh.position.x;
         }
-    //console.log('Mouse position: ' + mousePos.x.toFixed(0) + ',' + mousePos.y.toFixed(0));
-    //console.log('sight position' + sightMesh.position.x + ',' + sightMesh.position.y ); 
+
+         if(mousePos.x < canvasCentreX){
+            sightMesh.position.x = ((canvasCentreX-mousePos.x)/-ratio) + containerMesh.position.x;
+        }
+
+         if(mousePos.y < canvasCentreY){
+            sightMesh.position.y = ((mousePos.y-canvasCentreY)/-ratio) + containerMesh.position.y
+        }
+
+         if(mousePos.y > canvasCentreY){
+            sightMesh.position.y = ((canvasCentreY-mousePos.y)/ratio) + containerMesh.position.y;
+        }
+         sightMesh.position.z = containerMesh.position.z - 500; 
+ //  console.log('Mouse position: ' + mousePos.x.toFixed(0) + ',' + mousePos.y.toFixed(0));
+  // console.log('sight position' + sightMesh.position.x + ',' + sightMesh.position.y ); 
 }, false);
 
 
+
 });   
-
-
-
-
-
-
-
-
-
-
-
-//window.addEventListener('DOMContentLoaded', function() {
-//   console.log('DOM Content Loaded');
-//    var canvas = document.getElementById('renderCanvas');
-//    var engine = new BABYLON.Engine(canvas, true);
-//
-//    var createScene = function () {
-//
-//        // Set the scene and background color
-//        var scene = new BABYLON.Scene(engine);
-//        scene.enablePhysics(new BABYLON.Vector3(0, -10, 0), new BABYLON.OimoJSPlugin());
-//        scene.clearColor = new BABYLON.Color3(0,0,0.2);
-//
-//        // Create a camera
-//        var camera = new BABYLON.ArcRotateCamera("Camera", 1.0,
-//            1.0, 12, BABYLON.Vector3.Zero(), scene);
-//
-//        // Attach camera to canvas
-//        camera.attachControl(canvas, false);
-//
-//        // Add a light
-//        var light = new BABYLON.HemisphericLight("hemi",
-//            new BABYLON.Vector3(0, 1, 0), scene);
-//
-//        // Reflect the light off the ground to light the mesh bottom
-//        light.groundColor = new BABYLON.Color3(0.5, 0, 0.5);
-//        
-//        var ground = BABYLON.Mesh.CreateGround('ground', 20, 20, 2, scene);
-//        ground.physicsImpostor = new BABYLON.PhysicsImpostor(ground, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0, restitution: 0.9 }, scene);
-//        
-//
-//        // Create a builtin shape
-//        var box = BABYLON.Mesh.CreateBox("mesh", 2, scene);
-//        box.showBoundingBox = true;
-//       // scene.meshes[1].setPhysicsState(BABYLON.PhysicsEngine.BoxImposter, {mass: 0, friction: 0.5, restitution: 0.7});
-//         scene.meshes[1].setPhysicsState(BABYLON.PhysicsEngine.BoxImpostor, { mass: 0, friction: 0.5, restitution: 0.7 });
-//        
-//        box.scaling = new BABYLON.Vector3(1,1,1);
-//        box.position.y = 3;
-//
-//        // Define a material
-//        var material = new BABYLON.StandardMaterial("std", scene);
-//        material.diffuseColor = new BABYLON.Color3(0.5, 0, 0.5);
-//
-//        // Apply the material
-//        box.material = material;
-//        ground.material = material;
-//
-//    return scene;
-//    };
-//    
-//    scene = createScene();
-//    engine.runRenderLoop(function() {
-//        scene.render();
-//    });
-//    window.addEventListener('resize', function() {
-//        engine.resize();
-//    });
-//
-//});

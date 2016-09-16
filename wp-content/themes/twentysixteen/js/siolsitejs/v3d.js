@@ -36,7 +36,7 @@ V3D.View.prototype = {
         this.camera = new THREE.PerspectiveCamera( 60, this.w/this.h, 0.1, 10000 );
 
 
-        this.camera.position.z = 10;
+        this.camera.position.z = 100;
         
         
     	this.scene = new THREE.Scene();
@@ -59,6 +59,8 @@ V3D.View.prototype = {
 
         this.miniMap = null;
         this.player = null;
+
+        this.raycaster = new THREE.Raycaster(this.camera.position, [0,1,0], 1, 100);
 
         //this.projector = new THREE.Projector();
     	//this.raycaster = new THREE.Raycaster();
@@ -250,29 +252,30 @@ V3D.View.prototype = {
         return tx;
     },
     getPlayerDir : function (direction, containerMesh, sightMesh){
-        var playerPos = containerMesh.position;
-        var sightPos = sightMesh.position;
+      var playerPos = containerMesh.position;
+      //  var sightPos = sightMesh.position;
+      var sightPos = sightMesh.position;
  
       //  console.log('camp.x: ' + camPos.x + 'cam.y: ' + camPos.y + 'cam.y: ' + camPos.y); 
       //  console.log('playerPos.x: ' + playerPos.x + 'playerPos.y:' + playerPos.y + 'playerPos.y:' + playerPos.y); 
 
 
+        // var heading = new THREE.Vector3();
+        // if(direction == 'forward'){
+        //     heading = heading.subVectors( sightPos, playerPos );
+        // }
+        //  else {
+        //      heading = heading.subVectors(sightPos, playerPos);
+        //  }
         var heading = new THREE.Vector3();
         if(direction == 'forward'){
-            heading = heading.subVectors(sightPos, playerPos);
-            heading.normalize();
+            heading = heading.subVectors( sightPos, playerPos );
         }
         else {
-            heading = heading.subVectors(playerPos, sightPos);
+            heading = heading.subVectors( playerPos, sightPos );
         }
-
-
-        return heading;
-    },
-    getCam : function (){
-        return this.camera;
+        return heading.normalize();
     }
-
 
 }
 

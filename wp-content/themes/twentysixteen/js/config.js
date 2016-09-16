@@ -21,12 +21,20 @@ if (pageTitle == '3d game – siolsite'){
           
         }
     );
-};
+}
+
+if (pageTitle == 'game sand box – siolsite'){
+    requirejs(['oimo', 'three', 'v3d', 'gameSandBox'],
+        function (OIMO, THREE, V3D) {
+          
+        }
+    )
+}
 
 if (pageTitle == 'CBT Apps – siolsite'){
     requirejs(['calendar','bstrap/bootstrap','calendarinit','corejs/underscore.min'],
         function (calendar,bootstrap,calendarinit,underscore) {
         }
     );
-};
+}
 
