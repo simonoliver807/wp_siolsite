@@ -67,7 +67,7 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
     var planetMesh;
     var prevAngle;
     var prevCamVector;
-    var camAngle = 0.05;
+    var camAngle = 0.01;
     var tmpVCPprev = new v3d.getVec3(0,0,100);
     var tmpSMprev = new v3d.getVec3(0,0,-500);
     var axis = new v3d.getVec3(0,1,0);
@@ -133,13 +133,13 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
                      
 
 
-                        sightMesh.position.x += tmpPosX;
-                        sightMesh.position.y += tmpPosY; 
-                        sightMesh.position.z = containerMesh.position.z - 500;
+                        // sightMesh.position.x += tmpPosX;
+                        // sightMesh.position.y += tmpPosY; 
+                        // sightMesh.position.z = containerMesh.position.z - 500;
 
-                        v3d.camera.position.x = containerMesh.position.x;
-                        v3d.camera.position.y = containerMesh.position.y; 
-                        v3d.camera.position.z = containerMesh.position.z + 100;
+                        // v3d.camera.position.x = containerMesh.position.x;
+                        // v3d.camera.position.y = containerMesh.position.y; 
+                        // v3d.camera.position.z = containerMesh.position.z + 100;
                     }
 
                     // change material
@@ -159,33 +159,8 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
                 }
             }
 
-          //  var camRot = getSightPos(sightMesh); 
+           var camRot = getSightPos(); 
 
-           //  if(newForce){
-
-           //      var heading = v3d.getPlayerDir('forward', containerMesh, sightMesh);
-           //   // TODO only update vector if camera pos changes
-           //   //   if(lastCamPos.pos != v3d.getCam.position){
-
-           //          var headingMag = heading.length();
-           //          console.log('magnitude ' + headingMag); 
-           //          console.log('heading x: '+ heading.x + ' heading y: '+ heading.y + 'heading z: '+ heading.z); 
-           //          // headingMag /= 10;
-           //          // heading.x /= (headingMag);
-           //          // heading.y /= (headingMag);
-           //          // heading.z /= (headingMag);
-           //          var rb = bodys[0].body;
-           //          rb.linearVelocity.addTime(heading , world.timeStep );
-
-           //          console.log('magnitude limit ' + heading.length()); 
-           //          console.log('heading x: '+ heading.x + ' heading y: '+ heading.y + 'heading z: '+ heading.z); 
-
-           //  //        lastCamPos.setPos(v3d.get.position);
-           // //     }
-
-            //}
-            // oimo stat display
-            //  docu//ment.getElementById("info").innerHTML = world.performance.show();
         }
     }
 
@@ -195,62 +170,42 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
         var msePosL = ((sightMesh.position.x - containerMesh.position.x) * ratio) + (v3d.w/2);
         var canvasRight = (v3d.w -((v3d.w/100)*3)); 
         var canvasLeft = ((v3d.w/100)*3)
-        // if(msePosR > canvasRight/2){
-        //     if(v3d.camera.rotation.y <= 1.5708){
-
-
-
-
+       // if(msePosR > canvasRight/2){
+       //     if(v3d.camera.rotation.y <= 1.5708){
 
                 var tmpVCP = new v3d.getVec3();
                 tmpVCP.copy(tmpVCPprev);
                 var length = tmpVCP.length();
                 tmpVCP.normalize();
-               // axis.copy(containerMesh.position);
                 tmpVCP.applyAxisAngle( axis, camAngle );
                 tmpVCP.multiplyScalar( length );
-
-
                 tmpVCP.x -= tmpVCPprev.x;
                 tmpVCP.z -= tmpVCPprev.z;
-
                 tmpVCPprev.x += tmpVCP.x;
                 tmpVCPprev.z += tmpVCP.z
-
-
-               // tmpVCP.z -= v3d.camera.position.z;
-
-
                 v3d.camera.position.x += tmpVCP.x;
                 v3d.camera.position.z += tmpVCP.z;
-
-                // v3d.camera.position.copy(tmpVCP);
                 v3d.camera.lookAt ( containerMesh.position );
 
 
-                console.log( 'camera ' + v3d.camera.position.x + ', ' + v3d.camera.position.z ); 
 
+                // var tmpSM = new v3d.getVec3();
+                // tmpSM.copy(tmpSMprev);
+                // var length = tmpSM.length();
+                // tmpSM.normalize();
+                // tmpSM.applyAxisAngle( axis, camAngle );
+                // tmpSM.multiplyScalar( length );
+                // tmpSM.x -= tmpSMprev.x;
+                // tmpSM.z -= tmpSMprev.z;
+                // tmpSMprev.x += tmpSM.x;
+                // tmpSMprev.z += tmpSM.z;
+                // sightMesh.position.x += tmpSM.x;
+                // sightMesh.position.z += tmpSM.z;
+                // sightMesh.lookAt ( containerMesh.position );
 
-
-                var tmpSM = new v3d.getVec3();
-                tmpSM.copy(tmpSMprev);
-                var length = tmpSM.length();
-                tmpSM.normalize();
-                tmpSM.applyAxisAngle( axis, camAngle );
-                tmpSM.multiplyScalar( length );
-                tmpSM.x -= tmpSMprev.x;
-                tmpSM.z -= tmpSMprev.z;
-
-                tmpSMprev.x += tmpSM.x;
-                tmpSMprev.z += tmpSM.z
-
-
-                sightMesh.position.x += tmpSM.x;
-                sightMesh.position.z += tmpSM.z;
-
-               //  console.log('camera ' + v3d.camera.position.x + ', ' + v3d.camera.position.z); 
-                 console.log('sightMesh 2 ' + sightMesh.position.x + ', ' + sightMesh.position.z); 
-           // }
+                 console.log('camera ' + v3d.camera.position.x + ', ' + v3d.camera.position.z); 
+                  // console.log('sightMesh 2 ' + sightMesh.position.x + ', ' + sightMesh.position.z); 
+          //  }
 
 
 
@@ -269,7 +224,9 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
         //          v3d.camera.position.z -=0.63;
         //     }
         //    //  console.log('camera rotation: ' + v3d.camera.rotation.y); 
-         // }
+       
+
+       // }
     }
 
     /* add random object */
@@ -294,8 +251,8 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
             d = 60;
 
         var spheres = [{ "size":[7.5, 7.5, 7.5], "pos":[0,1,0], "move":"true", "name":"sph1", "color":'#66ff33', "image":'sph1.jpg'},
-                       { "size":[12, 12, 12], "pos":[0,0,-500], "move":"true", "name":"sight","color":'#ff00ff'},
-                       { "size":[1, 1, 1], "pos":[0,1,0], "move":"true", "name":"containerSphere", "color": ''},
+                       { "size":[12, 12, 12], "pos":[0, 0,-500], "move":"true", "name":"sight","color":'#ff00ff'},
+                       { "size":[0.1, 0.1, 0.1], "pos":[0,1,0], "move":"true", "name":"containerSphere", "color": ''},
                        { "size":[500, 500, 500], "pos":[500,10,-5000], "move":"true", "name":"planet","color":'#0000ff'}];
 
 
@@ -368,7 +325,7 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
                 heading.z *= 50;
                 var rb = bodys[0].body;
                 rb.linearVelocity.addTime(heading , world.timeStep);
-                // console.log('heading x: '+ rb.linearVelocity.x + ' heading y: '+ rb.linearVelocity.y + 'heading z: '+ rb.linearVelocity.z); 
+                console.log('heading x: '+ rb.linearVelocity.x + ' heading y: '+ rb.linearVelocity.y + 'heading z: '+ rb.linearVelocity.z); 
                 
                 break;
             case keys.BOTTOM:
@@ -446,41 +403,41 @@ function getMousePos(canvas, evt) {
         };
 }
 
-var canvas = document.getElementById('container');
-//  canvas.addEventListener('mousemove', function(evt) {
-//          mousePos = getMousePos(canvas, evt);
+ var canvas = document.getElementById('container');
+ canvas.addEventListener('mousemove', function(evt) {
+         mousePos = getMousePos(canvas, evt);
 
 
-//    //      console.log('mousePos.x 1: ' + mousePos.x); 
-//     //     console.log('containerMesh' + containerMesh.position.x +', '+ containerMesh.position.y )
+   //      console.log('mousePos.x 1: ' + mousePos.x); 
+    //     console.log('containerMesh' + containerMesh.position.x +', '+ containerMesh.position.y )
 
 
-//        //  mousePos.x += containerMesh.position.x;
-//        //  canvasCentre += containerMesh.position.x;
+       //  mousePos.x += containerMesh.position.x;
+       //  canvasCentre += containerMesh.position.x;
 
-//    //      console.log('canvas centre: ' + canvasCentre);
-//     //     console.log('mousPos.x 2: ' + mousePos.x);   
+   //      console.log('canvas centre: ' + canvasCentre);
+    //     console.log('mousPos.x 2: ' + mousePos.x);   
 
-//          if(mousePos.x > canvasCentreX){
-//             sightMesh.position.x = ((mousePos.x-canvasCentreX)/ratio) + containerMesh.position.x;
+         if(mousePos.x > canvasCentreX){
+            sightMesh.position.x = ((mousePos.x-canvasCentreX)/ratio) + containerMesh.position.x;
 
-//         }
+        }
 
-//          if(mousePos.x < canvasCentreX){
-//             sightMesh.position.x = ((canvasCentreX-mousePos.x)/-ratio) + containerMesh.position.x;
-//         }
+         if(mousePos.x < canvasCentreX){
+            sightMesh.position.x = ((canvasCentreX-mousePos.x)/-ratio) + containerMesh.position.x;
+        }
 
-//          if(mousePos.y < canvasCentreY){
-//             sightMesh.position.y = ((mousePos.y-canvasCentreY)/-ratio) + containerMesh.position.y
-//         }
+         if(mousePos.y < canvasCentreY){
+            sightMesh.position.y = ((mousePos.y-canvasCentreY)/-ratio) + containerMesh.position.y
+        }
 
-//          if(mousePos.y > canvasCentreY){
-//             sightMesh.position.y = ((canvasCentreY-mousePos.y)/ratio) + containerMesh.position.y;
-//         }
-//          sightMesh.position.z = containerMesh.position.z - 500; 
-//  //  console.log('Mouse position: ' + mousePos.x.toFixed(0) + ',' + mousePos.y.toFixed(0));
-//   // console.log('sight position' + sightMesh.position.x + ',' + sightMesh.position.y ); 
-// }, false);
+         if(mousePos.y > canvasCentreY){
+            sightMesh.position.y = ((canvasCentreY-mousePos.y)/ratio) + containerMesh.position.y;
+        }
+         sightMesh.position.z = containerMesh.position.z - 500; 
+ //  console.log('Mouse position: ' + mousePos.x.toFixed(0) + ',' + mousePos.y.toFixed(0));
+  // console.log('sight position' + sightMesh.position.x + ',' + sightMesh.position.y ); 
+}, false);
 
 
 
