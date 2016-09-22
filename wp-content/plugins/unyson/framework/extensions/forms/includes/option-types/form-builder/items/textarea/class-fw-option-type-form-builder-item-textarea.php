@@ -272,6 +272,9 @@ class FW_Option_Type_Form_Builder_Item_Textarea extends FW_Option_Type_Form_Buil
 	public function frontend_render( array $item, $input_value ) {
 		$options = $item['options'];
 
+		debug_to_console($options);
+		debug_to_console($items);
+
 		// prepare attributes
 		{
 			$attr = array(

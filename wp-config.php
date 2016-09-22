@@ -95,7 +95,17 @@ $table_prefix  = 'wp_';
  * @link https://codex.wordpress.org/Debugging_in_WordPress
  */
 //siolsite changed from define('WP_DEBUG', false);
-define('WP_DEBUG', true);
+
+
+// define('WP_DEBUG', true);
+// define( 'WP_DEBUG_LOG', true );
+// define( 'WP_DEBUG_DISPLAY', false );
+// @ini_set( 'display_errors', 0 );
+// @ini_set( 'error_log', '../php_error.log' );
+
+// trigger_error("Cannot divide by zero", E_USER_ERROR);
+
+
 
 /* That's all, stop editing! Happy blogging. */
 

@@ -448,7 +448,7 @@ function wptuts_scripts_basic()
 add_action( 'wp_enqueue_scripts', 'wpse47618_load_script_last', 99999 );
     
 }
-// siolsite added function to debug to console
+//siolsite added function to debug to console
 function debug_to_console( $data ) {
 
     if ( is_array( $data ) )
