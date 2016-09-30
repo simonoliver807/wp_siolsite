@@ -32,6 +32,7 @@ final class _Fw
 
 		$fw_dir = fw_get_framework_directory();
 
+
 		// manifest
 		{
 			require $fw_dir .'/core/class-fw-manifest.php';
@@ -81,6 +82,7 @@ final class _Fw
  * @return _FW Framework instance
  */
 function fw() {
+
 	static $FW = null; // cache
 
 	if ($FW === null) {

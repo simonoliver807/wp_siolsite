@@ -132,6 +132,7 @@ class FW_Option_Type_Form_Builder extends FW_Option_Type_Builder {
 	 * @return string HTML
 	 */
 	public function frontend_render( array $items, array $input_values ) {
+
 		return fw_render_view(
 			$this->locate_path( '/views/items.php', dirname( __FILE__ ) . '/views/items.php' ),
 			array(

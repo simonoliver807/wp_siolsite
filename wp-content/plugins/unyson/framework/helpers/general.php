@@ -1415,6 +1415,7 @@ function fw_id_to_title($id) {
  * @return FW_Extension|null
  */
 function fw_ext($extension_name) {
+
 	return fw()->extensions->get($extension_name);
 }
 

@@ -3,7 +3,7 @@
 }
 ?>
 
-<div id="<?php echo ($atts['div_id']); ?>" class="<?php echo ($atts['div_class']); ?>" >hello world</div>
+<div id="<?php echo ($atts['div_id']); ?>" class="<?php echo ($atts['div_class']); ?>" ><br></div>
 
 
 

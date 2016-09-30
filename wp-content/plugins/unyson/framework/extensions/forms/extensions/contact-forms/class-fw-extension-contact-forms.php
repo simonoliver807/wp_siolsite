@@ -2,6 +2,7 @@
 
 class FW_Extension_Contact_Forms extends FW_Extension_Forms_Form {
 
+
 	public function _init() {}
 
 	/**
@@ -61,7 +62,9 @@ class FW_Extension_Contact_Forms extends FW_Extension_Forms_Form {
 			return '';
 		}
 
+
 		$form_id = $data['id'];
+
 		$submit_button_text = empty( $data['submit_button_text'] )
 			? __( 'Submit', 'fw' )
 			: $data['submit_button_text'];

@@ -1654,6 +1654,7 @@ final class _FW_Component_Backend {
 			 * then the handler provides the option's value
 			 */
 			$data['value'] = $option['option_handler']->get_option_value($id, $option, $data);
+
 		}
 
 		$data = apply_filters(

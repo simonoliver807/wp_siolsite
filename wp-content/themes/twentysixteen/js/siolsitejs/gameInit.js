@@ -61,15 +61,22 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
     
     var thisPerf;
 
-    // my variables
+    // my variables GLOBAL
     var containerMesh;
     var sightMesh;
     var planetMesh;
+    var prevAngle;
+    var prevCamVector;
+    var camAngle = 0.01;
+    var tmpVCPprev = new v3d.getVec3(0,0,100);
+    var tmpSMprev = new v3d.getVec3(0,0,-500);
+    var axis = new v3d.getVec3(0,1,0);
 
     var mousePos;
-    var canvasCentreX = 398.5;
-    var canvasCentreY = 251.5;
-    var ratio = 0.7;
+    var canvasCentreX = v3d.w/2;
+    var canvasCentreY = v3d.h/2;
+    // ratio needs to be worked out canvasCentreX divided by camera width  
+    var ratio = 0.73;
 
     var newForce = 0;
 
@@ -103,74 +110,134 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
     /* oimo loop */
     function oimoLoop() 
     {  
-    if(!pause){  
-        world.step();// update world
+        if(!pause){  
+            world.step();// update world
 
-        var x, y, z, mesh, body;
-        var i = bodys.length;
-        while (i--){
-            body = bodys[i];
-            mesh = meshs[i];
-            
-            if(!body.getSleep()){ // if body didn't sleep
-                // apply rigidbody position and rotation to mesh
-                mesh.position.copy(body.getPosition());
-                mesh.quaternion.copy(body.getQuaternion());
+            var x, y, z, mesh, body;
+            var i = bodys.length;
+            while (i--){
+                body = bodys[i];
+                mesh = meshs[i];
 
-                if(body.name == 'sph1'){
-                    containerMeshPrev.copy(containerMesh.position);
-                    containerMesh.position.copy(body.getPosition());
-                   var tmpPosX = (containerMesh.position.x - containerMeshPrev.x);
-                   var tmpPosY = (containerMesh.position.y - containerMeshPrev.y);
-                    sightMesh.position.x += tmpPosX;
-                    sightMesh.position.y += tmpPosY; 
-                    sightMesh.position.z = containerMesh.position.z - 500; 
+                
+                if(!body.getSleep()){ // if body didn't sleep
+                    // apply rigidbody position and rotation to mesh
+                    mesh.position.copy(body.getPosition());
+                    mesh.quaternion.copy(body.getQuaternion());
 
+                    if(body.name == 'sph1'){
+                        containerMeshPrev.copy(containerMesh.position);
+                        containerMesh.position.copy(body.getPosition());
+                       var tmpPosX = (containerMesh.position.x - containerMeshPrev.x);
+                       var tmpPosY = (containerMesh.position.y - containerMeshPrev.y);
+                     
+
+
+                        sightMesh.position.x += tmpPosX;
+                        sightMesh.position.y += tmpPosY; 
+                        sightMesh.position.z = containerMesh.position.z - 500;
+
+                        v3d.camera.position.x = containerMesh.position.x;
+                        v3d.camera.position.y = containerMesh.position.y; 
+                        v3d.camera.position.z = containerMesh.position.z + 100;
+                    }
+
+                    // change material
+                    if(mesh.material.name === 'sbox') mesh.material = v3d.mats.box;
+                    if(mesh.material.name === 'ssph') mesh.material = v3d.mats.sph; 
+
+                    // reset position
+                    // if(mesh.position.y<-100){
+                    //     x = rand(-100,100);
+                    //     z = rand(-100,100);
+                    //     y = rand(100,1000);
+                    //     body.resetPosition(x,y,z);
+                    // }
+                } else {
+                //    if(mesh.material.name === 'box') mesh.material = v3d.mats.sbox;
+                 //   if(mesh.material.name === 'sph') mesh.material = v3d.mats.ssph;
                 }
-
-                // change material
-                if(mesh.material.name === 'sbox') mesh.material = v3d.mats.box;
-                if(mesh.material.name === 'ssph') mesh.material = v3d.mats.sph; 
-
-                // reset position
-                // if(mesh.position.y<-100){
-                //     x = rand(-100,100);
-                //     z = rand(-100,100);
-                //     y = rand(100,1000);
-                //     body.resetPosition(x,y,z);
-                // }
-            } else {
-            //    if(mesh.material.name === 'box') mesh.material = v3d.mats.sbox;
-             //   if(mesh.material.name === 'sph') mesh.material = v3d.mats.ssph;
             }
+
+           var camRot = getSightPos(); 
+
         }
-
-       //  if(newForce){
-
-       //      var heading = v3d.getPlayerDir('forward', containerMesh, sightMesh);
-       //   // TODO only update vector if camera pos changes
-       //   //   if(lastCamPos.pos != v3d.getCam.position){
-
-       //          var headingMag = heading.length();
-       //          console.log('magnitude ' + headingMag); 
-       //          console.log('heading x: '+ heading.x + ' heading y: '+ heading.y + 'heading z: '+ heading.z); 
-       //          // headingMag /= 10;
-       //          // heading.x /= (headingMag);
-       //          // heading.y /= (headingMag);
-       //          // heading.z /= (headingMag);
-       //          var rb = bodys[0].body;
-       //          rb.linearVelocity.addTime(heading , world.timeStep );
-
-       //          console.log('magnitude limit ' + heading.length()); 
-       //          console.log('heading x: '+ heading.x + ' heading y: '+ heading.y + 'heading z: '+ heading.z); 
-
-       //  //        lastCamPos.setPos(v3d.get.position);
-       // //     }
-
-        //}
-        // oimo stat display
-        //  docu//ment.getElementById("info").innerHTML = world.performance.show();
     }
+
+    function getSightPos () {
+
+        planetMesh.rotation.y += 0.01;
+
+        var msePosR = (sightMesh.position.x - containerMesh.position.x) * ratio;
+        var msePosL = ((sightMesh.position.x - containerMesh.position.x) * ratio) + (v3d.w/2);
+        var canvasRight = (v3d.w -((v3d.w/100)*3)); 
+        var canvasLeft = ((v3d.w/100)*3)
+       if(msePosR > canvasRight/2){
+           if(v3d.camera.rotation.y <= 1.5708){
+
+                var tmpVCP = new v3d.getVec3();
+                tmpVCP.copy(tmpVCPprev);
+                var length = tmpVCP.length();
+                tmpVCP.normalize();
+                tmpVCP.applyAxisAngle( axis, camAngle );
+                tmpVCP.multiplyScalar( length );
+                tmpVCP.x -= tmpVCPprev.x;
+                tmpVCP.z -= tmpVCPprev.z;
+                tmpVCPprev.x += tmpVCP.x;
+                tmpVCPprev.z += tmpVCP.z
+                v3d.camera.position.x += tmpVCP.x;
+                v3d.camera.position.z += tmpVCP.z;
+                v3d.camera.lookAt ( containerMesh.position );
+
+
+                //** tried to update the position of the cam with the rotation and the pos of the container mesh
+                var a = v3d.getVec3();
+                a.copy( containerMesh.position );
+                a.x += tmpVCP.x;
+                a.z += tmpVCP.z;
+                v3d.camera.position.x += a.x;
+                v3d.camera.position.z += a.z;
+
+
+
+                // var tmpSM = new v3d.getVec3();
+                // tmpSM.copy(tmpSMprev);
+                // var length = tmpSM.length();
+                // tmpSM.normalize();
+                // tmpSM.applyAxisAngle( axis, camAngle );
+                // tmpSM.multiplyScalar( length );
+                // tmpSM.x -= tmpSMprev.x;
+                // tmpSM.z -= tmpSMprev.z;
+                // tmpSMprev.x += tmpSM.x;
+                // tmpSMprev.z += tmpSM.z;
+                // sightMesh.position.x += tmpSM.x;
+                // sightMesh.position.z += tmpSM.z;
+                // sightMesh.lookAt ( containerMesh.position );
+
+                 console.log('camera ' + v3d.camera.position.x + ', ' + v3d.camera.position.z); 
+                  // console.log('sightMesh 2 ' + sightMesh.position.x + ', ' + sightMesh.position.z); 
+          }
+
+
+
+        //     if(v3d.camera.rotation.y > 1.5708){
+        //          v3d.camera.rotation.y +=0.01;
+        //          v3d.camera.position.x +=0.63;
+        //          v3d.camera.position.z +=0.63;
+        //     }
+        // };
+        // if(msePosL < canvasLeft){
+        //  //   console.log('canvasLeft' + canvasLeft + ' msePos' + msePosL);
+        //  //   console.log('sight mesh: ' + sightMesh.position.x);  
+        //     if(v3d.camera.rotation.y < 0.785){
+        //          v3d.camera.rotation.y -=0.01;
+        //          v3d.camera.position.x -=0.63;
+        //          v3d.camera.position.z -=0.63;
+        //     }
+        //    //  console.log('camera rotation: ' + v3d.camera.rotation.y); 
+       
+
+       }
     }
 
     /* add random object */
@@ -190,19 +257,19 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
             x = 500;
             z = -1500;
             y = 100;
-            w = 60;
-            h = 60;
-            d = 60;
+            w = 0.5;
+            h = 0.5;
+            d = 0.5;
 
-        var spheres = [{ "size":[7.5, 7.5, 7.5], "pos":[0,0,-100], "move":"true", "name":"sph1", "color":'#66ff33'},
-                       { "size":[2, 2, 2], "pos":[20,20,-500], "move":"true", "name":"sight","color":'#ff00ff'},
-                       { "size":[1, 1, 1], "pos":[0,0,-100], "move":"true", "name":"containerSphere", "color":'#ff0000'},
-                       { "size":[500, 500, 500], "pos":[500,10,-5000], "move":"true", "name":"planet","color":'#0000ff'}];
+        var spheres = [{ "size":[7.5, 7.5, 7.5], "pos":[0,1,0], "move":"true", "name":"sph1", "color":'#66ff33', "image":'sph1.jpg'},
+                       { "size":[2, 2, 2], "pos":[0, 0,-500], "move":"true", "name":"sight","color":'#ff00ff'},
+                       { "size":[0.1, 0.1, 0.1], "pos":[0,1,0], "move":"true", "name":"containerSphere", "color": ''},
+                       { "size":[500, 500, 500], "pos":[500,10,-5000], "move":"true", "name":"planet","color":'#0000ff', "image":'planet_1.png'}];
 
 
         addSphere(spheres);
 
-        for(var i=0;i<1;i++){
+        for(var i=0;i<10000;i++){
 
             var t = 2;
             if(t===2) obj = { type:'box', size:[w,h,d], pos:[x,y,z], move:true, world:world, name:'box1' };
@@ -225,10 +292,10 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
     function addSphere(spheres) {
         var target;
         for( var i in spheres){
-            var sphere =  {type: 'sphere', size:spheres[i].size, pos:spheres[i].pos, move:spheres[i].move, world:world, name:spheres[i].name, color: spheres[i].color}
+            var sphere =  {type: 'sphere', size:spheres[i].size, pos:spheres[i].pos, move:spheres[i].move, world:world, name:spheres[i].name, color: spheres[i].color, image: spheres[i].image};
             if(sphere.name != 'containerSphere' && sphere.name != 'sight'){
                 bodys[bodysNum] = new OIMO.Body(sphere);
-                meshs[meshNum] = v3d.add(sphere,target,sphere.color);
+                meshs[meshNum] = v3d.add(sphere,target,sphere.color,sphere.image);
                 if(sphere.name == 'planet'){
                     planetMesh = meshs[meshNum];
                 }
@@ -240,11 +307,11 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
             }
             if(sphere.name == 'containerSphere'){
                 containerMesh = v3d.add(sphere,target,sphere.color);
-                containerMesh.add(v3d.camera);
+              //  containerMesh.add(v3d.camera);
             }
             if(sphere.name == 'sight'){
                 sightMesh = v3d.add(sphere,target,sphere.color);
-               // v3d.camera.add(sightMesh);
+              //  v3d.camera.add(sightMesh);
             }
         }
     }
@@ -264,24 +331,13 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
                 console.log('up key pressed'); 
                 var heading = v3d.getPlayerDir('forward', containerMesh, sightMesh);
 
-                // console.log('sightMesh x: '+ sightMesh.position.x + ' sightMesh y: '+ sightMesh.position.y + 'sightMesh z: '+ sightMesh.position.z); 
-
-                // console.log('magnitude ' + heading.length()); 
-
-                // console.log('heading x: '+ heading.x + ' heading y: '+ heading.y + 'heading z: '+ heading.z); 
-
-                // console.log('magnitude limit ' + heading.length()); 
-
-                // console.log('heading x: '+ heading.x + ' heading y: '+ heading.y + 'heading z: '+ heading.z); 
-
                 heading.x *= 50;
                 heading.y *= 50;
                 heading.z *= 50;
                 var rb = bodys[0].body;
                 rb.linearVelocity.addTime(heading , world.timeStep);
                 console.log('heading x: '+ rb.linearVelocity.x + ' heading y: '+ rb.linearVelocity.y + 'heading z: '+ rb.linearVelocity.z); 
-                newForce = true;
-
+                
                 break;
             case keys.BOTTOM:
                 var heading = v3d.getPlayerDir('reverse',containerMesh, sightMesh);
@@ -299,11 +355,9 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
             //     newForce.x = 5;
             //     rb.linearVelocity.addTime(newForce , world.timeStep );
             //     break;
-            // case keys.RIGHT:
-            //     var rb = bodys[0].body;
-            //     newForce.x = -5;
-            //     rb.linearVelocity.addTime(newForce , world.timeStep );
-            //     break;
+            case keys.RIGHT:
+            
+                break;
                 // siolsite remove events if the ESC key is pressed
             case keys.SPC:
                 var heading = v3d.getPlayerDir('forward', containerMesh, sightMesh);
@@ -314,7 +368,6 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
                 var sphere = [{ "size":[1.5, 1.5, 1.5], "pos":[shootStart.x, shootStart.y, shootStart.z -1], "move":"true", "name":"shoot", "color":'#66ff33'}];
                 var ss = addSphere(sphere);
                 ss.body.linearVelocity.addTime(heading, world.timeStep);
-
                 break;
             case keys.ECS:
                 pause = (pause === 1) ? 0: 1;
@@ -343,6 +396,13 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
 // var camPos = OIMO.Vec3(0,0,0);
 // lastCamPos.setPos(camPos);
 
+
+function objLoop (obj) {
+     for (var i in obj){
+        console.log('key: ' + i + '\n value: ' + obj[i]); 
+    }
+}
+
 window.addEventListener( 'keydown', handleKeyDown, false );
 window.scrollTo(0, document.body.clientHeight);
 
@@ -354,8 +414,8 @@ function getMousePos(canvas, evt) {
         };
 }
 
-var canvas = document.getElementById('container');
-canvas.addEventListener('mousemove', function(evt) {
+ var canvas = document.getElementById('container');
+ canvas.addEventListener('mousemove', function(evt) {
          mousePos = getMousePos(canvas, evt);
 
 
@@ -370,7 +430,8 @@ canvas.addEventListener('mousemove', function(evt) {
     //     console.log('mousPos.x 2: ' + mousePos.x);   
 
          if(mousePos.x > canvasCentreX){
-              sightMesh.position.x = ((mousePos.x-canvasCentreX)/ratio) + containerMesh.position.x;
+            sightMesh.position.x = ((mousePos.x-canvasCentreX)/ratio) + containerMesh.position.x;
+
         }
 
          if(mousePos.x < canvasCentreX){

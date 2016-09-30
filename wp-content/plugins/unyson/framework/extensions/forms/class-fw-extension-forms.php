@@ -20,11 +20,31 @@ class FW_Extension_Forms extends FW_Extension {
 	 * @internal
 	 */
 	protected function _init() {
+
 		$this->frontend_form = new FW_Form( 'fw_form', array(
 			'render'   => array( $this, '_frontend_form_render' ),
 			'validate' => array( $this, '_frontend_form_validate' ),
 			'save'     => array( $this, '_frontend_form_save' ),
 		) );
+
+		//siolsite
+		// debug_to_console($this->frontend_form);
+
+//         $data = $this->frontend_form;
+
+
+// 		debug_to_console($data); 
+
+// echo '<br><br> NEXT <br><br>';
+
+// 	    // echo is_array($sdata) ? 'Array' : 'not an Array';
+
+// 		foreach($data as $key) {
+
+// 			echo $key;
+
+// 		}
+// 	exit();
 	}
 
 	/**
@@ -64,6 +84,7 @@ class FW_Extension_Forms extends FW_Extension {
 	 * @return array
 	 */
 	public function _frontend_form_render( $data ) {
+
 		$form_id              = $data['data']['form_id'];
 		$form_type            = $data['data']['form_type'];
 		$submit_button        = $data['data']['submit'];
@@ -75,6 +96,11 @@ class FW_Extension_Forms extends FW_Extension {
 
 		echo '<input type="hidden" name="' . $form_type_input_name . '" value="' . esc_attr( $form_type ) . '" />';
 		echo '<input type="hidden" name="' . $form_type_input_id . '" value="' . esc_attr( $form_id ) . '" />';
+
+
+		// siolsite change a var in the $data arrays
+		//$data['attr']['action'] = 'localhost:8887/website/db.php';
+		//var_dump($data); 
 
 		/**
 		 * @var FW_Ext_Forms_Type $form_type

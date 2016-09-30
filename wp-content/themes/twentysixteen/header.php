@@ -71,8 +71,6 @@
 								?>
 							</nav><!-- .social-navigation -->
 						<?php endif; ?>
-						<!-- siolsite add login var -->
-						<div><?php global $login; if( $login ) echo 'hi simon you are logged in'; ?></div>
 					</div><!-- .site-header-menu -->
 				<?php endif; ?>
 			</div><!-- .site-header-main -->

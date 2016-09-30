@@ -1,6 +1,6 @@
 <?php return array (
-  'created' => 1474579490,
-  'updated' => 1474579490,
+  'created' => 1475083783,
+  'updated' => 1475083783,
   'data' => 
   array (
     'core:ext:load:glob:/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions' => 
@@ -124,6 +124,12 @@
     array (
     ),
     'core:ext:glob:inc-all-php:update:/Applications/MAMP/htdocs/website/wordpress/wp-content/themes/twentysixteen/framework-customizations/extensions/update' => 
+    array (
+    ),
+    'core:ext:glob:inc-all-php:github-update:/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/update/extensions/github-update' => 
+    array (
+    ),
+    'core:ext:glob:inc-all-php:github-update:/Applications/MAMP/htdocs/website/wordpress/wp-content/themes/twentysixteen/framework-customizations/extensions/update/extensions/github-update' => 
     array (
     ),
     'core:theme:path:/options/posts/page.php' => false,

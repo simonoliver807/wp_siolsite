@@ -113,6 +113,8 @@ abstract class FW_Extension
 	 */
 	final protected function render_view($name, $view_variables = array(), $return = true)
 	{
+
+
 		$full_path = $this->locate_path('/views/'. $name .'.php');
 
 		if (!$full_path) {
@@ -158,7 +160,6 @@ abstract class FW_Extension
 			$result = false;
 			$locations = $this->customizations_locations;
 			$locations[$this->get_path()] = $this->get_uri();
-
 			foreach ($locations as $path => $uri) {
 				if (file_exists($path . $rel_path)) {
 					$result = $path . $rel_path;
@@ -343,8 +344,8 @@ abstract class FW_Extension
 	 */
 	final public function get_options($name, array $variables = array())
 	{
-		$path = $this->locate_path('/options/'. $name .'.php');
 
+		$path = $this->locate_path('/options/'. $name .'.php');
 		if (!$path) {
 			return array();
 		}
