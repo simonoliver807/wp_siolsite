@@ -165,7 +165,7 @@
 			],
 			[
 				"e",
-				"elseif	elseif …"
+				"elseif\telseif …"
 			],
 			[
 				"shor",
@@ -284,44 +284,8 @@
 	},
 	"expanded_folders":
 	[
-		"/Applications/MAMP/htdocs/website/wordpress",
-		"/Applications/MAMP/htdocs/website/wordpress/wp-content",
-		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins",
-		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson",
-		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework",
-		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/core",
-		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/core/components",
-		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/core/components/extensions",
-		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions",
-		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/forms",
-		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/forms/extensions",
-		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/forms/extensions/contact-forms",
-		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/forms/extensions/contact-forms/includes",
-		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/forms/extensions/contact-forms/includes/helper",
-		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/forms/extensions/contact-forms/shortcodes",
-		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/forms/extensions/contact-forms/shortcodes/contact-form",
-		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/forms/extensions/contact-forms/shortcodes/contact-form/includes",
-		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/forms/extensions/contact-forms/shortcodes/contact-form/includes/item",
-		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/forms/extensions/contact-forms/shortcodes/contact-form/includes/item/static",
-		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/forms/extensions/contact-forms/shortcodes/contact-form/static",
-		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/forms/extensions/contact-forms/views",
-		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/forms/includes",
-		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/forms/includes/extends",
-		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/forms/includes/option-types",
-		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/forms/includes/option-types/form-builder",
-		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/forms/includes/option-types/form-builder/extends",
-		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/forms/includes/option-types/form-builder/items",
-		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/forms/includes/option-types/form-builder/static",
-		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/forms/includes/option-types/form-builder/static/css",
-		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/forms/includes/option-types/form-builder/static/js",
-		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/forms/views",
-		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/forms/views/backend",
-		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/static",
-		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/static/js",
-		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/views",
-		"/Applications/MAMP/htdocs/website/wordpress/wp-content/themes",
-		"/Applications/MAMP/htdocs/website/wordpress/wp-content/themes/twentysixteen",
-		"/Applications/MAMP/htdocs/website/wordpress/wp-content/upgrade"
+		"/Applications/MAMP/htdocs/website",
+		"/Applications/MAMP/htdocs/website/wordpress"
 	],
 	"file_history":
 	[
@@ -711,12 +675,16 @@
 	},
 	"select_project":
 	{
-		"height": 0.0,
+		"height": 500.0,
 		"last_filter": "",
 		"selected_items":
 		[
+			[
+				"",
+				"/Applications/MAMP/htdocs/sublime text/website.sublime-project"
+			]
 		],
-		"width": 0.0
+		"width": 380.0
 	},
 	"select_symbol":
 	{

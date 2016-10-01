@@ -1236,8 +1236,11 @@ footer {
     width: 17%;
     float: left; }
 
-  #game-content {
+  #game-content1 {
     padding: 0; }
+  #game-content2 {
+    padding: 0;
+    display: none; }
 
   .greyOutClick {
     margin-left: 20px; }
@@ -1673,8 +1676,18 @@ footer {
     top: -12px; }
     .ui3 .tooltip1 .tooltip1-inner {
       padding: 35%; } }
+  .navbar-inverse .navbar-nav>.open>a, .navbar-inverse .navbar-nav>.open>a:hover, .navbar-inverse .navbar-nav>.open>a:focus {
+      color: #fff;
+      background-color: #1597a7;
+  }
 @media (max-width: 320px) {
   .col-xs-4 {
     width: 33.33333333%; } }
+@media (min-width: 768px){
+.navbar-right .dropdown-menu {
+    right: inherit;
+    left: auto;
+}}
+
 
 /*# sourceMappingURL=style.css.map */

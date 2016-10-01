@@ -63,24 +63,33 @@ module.exports = function (grunt) {
         ]
       }
     },
-
+    // add out 
      requirejs: {
           compile: {
             options: {
-              appDir: '/app/scripts/js/',
+              appDir: './app/scripts/',
               baseUrl: '.',
               dir: 'target/',
               optimize: 'uglify',
-              mainConfigFile: '/scripts/config.js',
+              mainConfigFile: './app/scripts/config.js',
+              paths: {
+                'ddUtil': './ddUtil',
+                'sMods': './sliderModjs',
+                'game': './game'
+              },
               modules:[
                 {
-                  name: 'gameInit'
+                  name: 'config'
                 }
               ],
               logLevel: 0,
               findNestedDependencies: true,
               fileExclusionRegExp: /^\./,
-              inlineText: true
+              inlineText: true,
+              error: function(done,err) {
+                grunt.log.warn(err);
+                done()
+              }
             }
           }
     },
@@ -349,6 +358,7 @@ module.exports = function (grunt) {
     }
   });
 
+  grunt.loadNpmTasks('grunt-contrib-requirejs');
 
   grunt.registerTask('serve', 'start the server and preview your app, --allow-remote for remote access', function (target) {
     if (grunt.option('allow-remote')) {

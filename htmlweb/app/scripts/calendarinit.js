@@ -1,1 +1,0 @@
-define(["calendar"],function(e){var n=document.getElementById("calCont"),t=jQuery;console.log("calCont"+n);t("#calCont").calendar({tmpl_path:"/website/wordpress/wp-content/themes/twentysixteen/views/",events_source:function(){return[]}})});

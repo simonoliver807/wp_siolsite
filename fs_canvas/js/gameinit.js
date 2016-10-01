@@ -250,10 +250,10 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
             h = 60;
             d = 60;
 
-        var spheres = [{ "size":[7.5, 7.5, 7.5], "pos":[0,1,0], "move":"true", "name":"sph1", "color":'#66ff33', "image":'sph1.jpg'},
+         var spheres = [{ "size":[7.5, 7.5, 7.5], "pos":[0,1,0], "move":"true", "name":"sph1", "color":'#66ff33', "image":'shp1.jpg'},
                        { "size":[12, 12, 12], "pos":[0, 0,-500], "move":"true", "name":"sight","color":'#ff00ff'},
                        { "size":[0.1, 0.1, 0.1], "pos":[0,1,0], "move":"true", "name":"containerSphere", "color": ''},
-                       { "size":[500, 500, 500], "pos":[500,10,-5000], "move":"true", "name":"planet","color":'#0000ff'}];
+                       { "size":[500, 500, 500], "pos":[500,10,-5000], "move":"true", "name":"planet","color":"#0000ff", "image":"planet_1.png"}];
 
 
         addSphere(spheres);

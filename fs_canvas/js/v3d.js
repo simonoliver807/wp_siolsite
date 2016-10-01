@@ -175,8 +175,9 @@ V3D.View.prototype = {
             if(color){ 
                 this.mats['sph'] = this.setMesh(color);
             }
-            if(image){
-                var texture = new THREE.TextureLoader().load('shp1.jpg');
+             if(image){
+                var setImage = '/images/'+image;
+                var texture = new THREE.TextureLoader().load(setImage);
                 this.mats['sph'] = new THREE.MeshBasicMaterial({map:texture});
             }
     		if(type=='box' && move) mesh = new THREE.Mesh( this.geos.box, this.mats.box, name );

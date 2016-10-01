@@ -820,6 +820,7 @@ a:active {
 .main-navigation a:hover,
 .main-navigation a:focus {
 	color: #007acc;
+	text-decoration: none;
 }
 
 .main-navigation .current-menu-item > a,
