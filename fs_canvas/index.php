@@ -12,7 +12,11 @@
 
 <!-- 	<script type="text/javascript" data-main="target/config.js" src="target/require.js"></script> -->
 
+
+<script   src="https://code.jquery.com/jquery-3.1.1.js"   integrity="sha256-16cdPddA6VdVInumRGo6IbivbERE8p7CQR3HzTBuELA="   crossorigin="anonymous"></script>
+
 <script type="text/javascript" data-main="js/config.js" src="target/require.js"></script>
+
 
 </body>
 </html>

@@ -15,8 +15,8 @@ V3D.View = function(h,v,d){
     var container = document.getElementById('container');
 
 
-    container.style.width = "100%";
-    container.style.height = "500px";
+    container.style.width = "1351px";
+    container.style.height = "987px";
 	this.w = container.clientWidth;
 	this.h = container.clientHeight;
 	this.id = 'container';
@@ -39,7 +39,7 @@ V3D.View.prototype = {
         this.camera.useQuarternion = true;
 
         this.camera.position.z = 100;
-        this.camera.position.y = 1;
+        this.camera.position.y = 0;
         
         
     	this.scene = new THREE.Scene();
@@ -175,11 +175,11 @@ V3D.View.prototype = {
             if(color){ 
                 this.mats['sph'] = this.setMesh(color);
             }
-             if(image){
-                var setImage = '/images/'+image;
-                var texture = new THREE.TextureLoader().load(setImage);
-                this.mats['sph'] = new THREE.MeshBasicMaterial({map:texture});
-            }
+            //  siolsite put back to load images if(image){
+            //     var setImage = 'http://localhost:8887/fs_canvas/images/'+image;
+            //     var texture = new THREE.TextureLoader().load(setImage);
+            //     this.mats['sph'] = new THREE.MeshBasicMaterial({map:texture});
+            // }
     		if(type=='box' && move) mesh = new THREE.Mesh( this.geos.box, this.mats.box, name );
 	    	if(type=='box' && !move) mesh = new THREE.Mesh( this.geos.box, this.mats.static, name);
 	    	if(type=='plane' && !move) mesh = new THREE.Mesh( this.geos.plane, this.mats.static2, name );

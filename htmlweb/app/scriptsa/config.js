@@ -49,10 +49,9 @@ if (pageTitle == 'Drag And Drop Utility'){
 }
 
 if (pageTitle == 'SOMYMU'){
-    requirejs(['sMods/SetUI','sMods/TemplateModule','sMods/UIModule','sMods/TooltipModulesto','sMods/ButtonModule','sMods/Custom',
-               'sMods/DoughNutModule','sMods/HighLight','sMods/Main','sMods/ScorerModule','sMods/SliderModule','sMods/SliderModuleYN',
-               'jquery','niceScroll'],
-        function (SetUI,TemplateModule,UIModule,TooltipModulesto,ButtonModule,Custom,DoughNutModule,HighLight,Main,ScorerModule,
+    requirejs(['sMods/SetUI','sMods/TemplateModule','sMods/UIModule','sMods/TooltipModulesto','sMods/ButtonModule',
+               'sMods/DoughNutModule','sMods/HighLight','sMods/Main','sMods/ScorerModule','sMods/SliderModule','sMods/SliderModuleYN'],
+        function (SetUI,TemplateModule,UIModule,TooltipModulesto,ButtonModule,DoughNutModule,HighLight,Main,ScorerModule,
                   SliderModule,SliderModuleYN) {
 
         }
