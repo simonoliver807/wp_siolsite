@@ -36,9 +36,13 @@ define(['sMods/Main'], function(Main){
         //     $("#home").removeAttr("style")
         // }
 
-	
 	 var uiType = window.location.search.substring(1);
-	 uiType = uiType.charAt(uiType.length-1);
+         if(uiType){
+	       uiType = uiType.charAt(uiType.length-1);
+        }
+        else {
+                uiType = 1;
+        }
 
 	var ui = new Main();
 	ui.init(uiType);
