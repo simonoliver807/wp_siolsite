@@ -40,6 +40,7 @@ V3D.View.prototype = {
 
     	// siolsite this.camera = new THREE.PerspectiveCamera( 60, this.w/this.h, 0.1, 2000 );
         this.camera = new THREE.PerspectiveCamera( 60, this.w/this.h, 0.1, 10000 );
+        // this.camhelp = new THREE.CameraHelper( this.camera );
         this.camera.useQuarternion = true;
 
         this.camera.position.z = 100;
@@ -48,7 +49,7 @@ V3D.View.prototype = {
         
     	this.scene = new THREE.Scene();
         this.scene.background = new THREE.Color( 0x000000 );
-
+        // this.scene.add( this.camhelp )
         
         
         
@@ -70,7 +71,7 @@ V3D.View.prototype = {
        // this.raycaster = new THREE.Raycaster(this.camera.position, [0,1,0], 1, 100);
 
         this.raycaster = new THREE.Raycaster();
-        container.addEventListener('mousemove', this.hmm, false);
+        container.addEventListener('mousemove', this.handleMouseMove, false);
 
         //this.projector = new THREE.Projector();
     	//this.raycaster = new THREE.Raycaster();
@@ -150,23 +151,34 @@ V3D.View.prototype = {
     },
     render : function(){
        
-        // update the picking ray with the camera and mouse position    
+       // update the picking ray with the camera and mouse position    
         this.raycaster.setFromCamera( V3D.msePos, this.camera );   
 
         // calculate objects intersecting the picking ray
         var intersects = this.raycaster.intersectObjects( this.scene.children );
 
-        for ( var i = 0; i < intersects.length; i++ ) {
+        for ( let i = 0; i < intersects.length; i++ ) {
 
             if(intersects[ i ].object.name == 'proBox') {
-                intersects[ i ].object.material.color.set( 0xff0000 );
-                var sight = this.scene.children[3];
-                sight.position.x = intersects[i].point.x;
-                sight.position.y = intersects[i].point.y;
-                sight.position.z = intersects[i].object.position.z
+                
+                for(let i=0;i<this.scene.children.length;i++){
+                    if(this.scene.children[i].name == 'sight'){
+                        var sight = this.scene.children[i];
+                    }
+                }
+                // this.sight.position.x = intersects[i].point.x;
+                // this.sight.position.y = intersects[i].point.y;
+                // this.sight.position.z = intersects[i].point.z
+                this.gs_mse_pos('set', intersects[i].point);
             }
         
         }
+
+
+        //this.camhelp.update();
+
+
+
 
     	this.renderer.render( this.scene, this.camera );
     },
@@ -217,10 +229,10 @@ V3D.View.prototype = {
 	        mesh.rotation.set( rot[0]*V3D.ToRad, rot[1]*V3D.ToRad, rot[2]*V3D.ToRad );
 	        if(target)target.add( mesh );
 	        else this.scene.add( mesh );
-            // siolsite first person controls, camera follows sphere
-            // if(obj.name=='containerSphere'){
-            //     this.camera.lookAt(mesh);
-            // }
+           
+            if(mesh.name == 'sight'){
+                this.sight = mesh;
+            }
 
 	        return mesh;
     	}
@@ -234,10 +246,6 @@ V3D.View.prototype = {
     initKeyboard:function(){
     	this.nav.bindKeys();
     },
-
-
-
-
     customShader:function(shader){
     	var material = new THREE.ShaderMaterial({
 			uniforms: shader.uniforms,
@@ -247,7 +255,6 @@ V3D.View.prototype = {
 		});
 		return material;
     },
-
     gradTexture : function(color) {
         var c = document.createElement("canvas");
         var ct = c.getContext("2d");
@@ -284,28 +291,34 @@ V3D.View.prototype = {
         tx.needsUpdate = true;
         return tx;
     },
-    getPlayerDir : function (direction, containerMesh, sightMesh){
-      var playerPos = containerMesh.position;
-      //  var sightPos = sightMesh.position;
-      var sightPos = sightMesh.position;
- 
-      //  console.log('camp.x: ' + camPos.x + 'cam.y: ' + camPos.y + 'cam.y: ' + camPos.y); 
-      //  console.log('playerPos.x: ' + playerPos.x + 'playerPos.y:' + playerPos.y + 'playerPos.y:' + playerPos.y); 
-
-
-        // var heading = new THREE.Vector3();
-        // if(direction == 'forward'){
-        //     heading = heading.subVectors( sightPos, playerPos );
-        // }
-        //  else {
-        //      heading = heading.subVectors(sightPos, playerPos);
-        //  }
-        var heading = new THREE.Vector3();
-        if(direction == 'forward'){
-            heading = heading.subVectors( sightPos, playerPos );
+    // gs_mse_pos : function (gs, pos) {
+    //     if(gs == 'set'){
+    //         this.sight.position.x = pos.x;
+    //         this.sight.position.y = pos.y;
+    //     }
+    //     if(gs == 'get'){
+    //         return this.sight.position;
+    //     }
+    // },
+    gs_mse_pos: function (gs, pos){
+        if(gs == 'get'){
+            return this.sight.position;
         }
         else {
-            heading = heading.subVectors( playerPos, sightPos );
+            this.sight.position.x = pos.x;
+            this.sight.position.y = pos.y;
+            this.sight.position.z = pos.z;
+
+            
+        }
+    },
+    getPlayerDir : function (direction, playerPos){
+        var heading = new THREE.Vector3();
+        if(direction == 'forward'){
+            heading = heading.subVectors( this.gs_mse_pos('get'), playerPos );
+        }
+        else {
+            heading = heading.subVectors( playerPos, this.gs_mse_pos('get') );
         }
         return heading.normalize();
     },
@@ -313,7 +326,7 @@ V3D.View.prototype = {
         var newVec = new THREE.Vector3(a,b,c);
         return newVec;
     },
-    hmm: function(event){
+    handleMouseMove: function(event){
         var mp = {x:0,y:0};
         V3D.msePos.x = ( event.clientX / 1351 ) * 2 - 1;
         V3D.msePos.y = - ( event.clientY / 978 ) * 2 + 1;  
