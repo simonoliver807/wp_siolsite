@@ -1,5 +1,4 @@
-define(['three','orbitControls'], function(THREE) {
-    
+define(['three'], function(THREE) {
 'use strict';
 var THREE;
 var V3D = {};
@@ -26,6 +25,14 @@ V3D.View = function(h,v,d){
 
 	this.init(h,v,d);
 	this.initBasic();
+    this.sight;
+
+    this.arrCamX = [];
+    this.arrCamY = [];
+    this.pbX = [];
+    this.pbY = [];
+
+    this.startRot = 0;
 
 }
 
@@ -57,21 +64,21 @@ V3D.View.prototype = {
         this.container = document.getElementById(this.id)
         this.container.appendChild( this.renderer.domElement );
 
-        // siolsite abandoned the nav controls and loaded Orbit Controls 020916
-       // this.nav = new V3D.Navigation(this);
-       // this.nav.initCamera( h,v,d );
-        // this.controls = new THREE.OrbitControls( this.camera, this.renderer.domElement );
-        // this.controls.enableDamping = true;
-        // this.controls.dampingFactor = 0.25;
-        // this.controls.enableZoom = false;
-
         this.miniMap = null;
         this.player = null;
 
        // this.raycaster = new THREE.Raycaster(this.camera.position, [0,1,0], 1, 100);
 
         this.raycaster = new THREE.Raycaster();
-        container.addEventListener('mousemove', this.handleMouseMove, false);
+
+
+        this.camAngle = 0.01;
+        this.tmpVCPprev = new THREE.Vector3(0,0,100);
+        this.tmppbprev = new THREE.Vector3(0,0,-100);
+        this.axis = new THREE.Vector3(0,1,0);
+
+        this.containerMesh;
+        this.proBox;
 
         //this.projector = new THREE.Projector();
     	//this.raycaster = new THREE.Raycaster();
@@ -150,6 +157,9 @@ V3D.View.prototype = {
 	    this.geos = geos;
     },
     render : function(){
+
+
+        if(this.startRot){ this.applyRot() };
        
        // update the picking ray with the camera and mouse position    
         this.raycaster.setFromCamera( V3D.msePos, this.camera );   
@@ -161,15 +171,8 @@ V3D.View.prototype = {
 
             if(intersects[ i ].object.name == 'proBox') {
                 
-                for(let i=0;i<this.scene.children.length;i++){
-                    if(this.scene.children[i].name == 'sight'){
-                        var sight = this.scene.children[i];
-                    }
-                }
-                // this.sight.position.x = intersects[i].point.x;
-                // this.sight.position.y = intersects[i].point.y;
-                // this.sight.position.z = intersects[i].point.z
-                this.gs_mse_pos('set', intersects[i].point);
+                this.sight.position.copy(intersects[i].point);
+             //   this.gs_mse_pos('set', intersects[i].point);
             }
         
         }
@@ -227,11 +230,19 @@ V3D.View.prototype = {
 	    	mesh.scale.set( size[0], size[1], size[2] );
 	        mesh.position.set( pos[0], pos[1], pos[2] );
 	        mesh.rotation.set( rot[0]*V3D.ToRad, rot[1]*V3D.ToRad, rot[2]*V3D.ToRad );
-	        if(target)target.add( mesh );
-	        else this.scene.add( mesh );
+	        if(target) {target.add( mesh ); }
+	        else {
+                this.scene.add( mesh ); }
            
             if(mesh.name == 'sight'){
                 this.sight = mesh;
+            };
+            if(mesh.name == 'containerSphere'){
+                this.containerMesh = mesh;
+            };
+            if(mesh.name == 'proBox'){
+                this.proBox = mesh;
+
             }
 
 	        return mesh;
@@ -291,15 +302,6 @@ V3D.View.prototype = {
         tx.needsUpdate = true;
         return tx;
     },
-    // gs_mse_pos : function (gs, pos) {
-    //     if(gs == 'set'){
-    //         this.sight.position.x = pos.x;
-    //         this.sight.position.y = pos.y;
-    //     }
-    //     if(gs == 'get'){
-    //         return this.sight.position;
-    //     }
-    // },
     gs_mse_pos: function (gs, pos){
         if(gs == 'get'){
             return this.sight.position;
@@ -309,7 +311,7 @@ V3D.View.prototype = {
             this.sight.position.y = pos.y;
             this.sight.position.z = pos.z;
 
-            
+
         }
     },
     getPlayerDir : function (direction, playerPos){
@@ -322,15 +324,50 @@ V3D.View.prototype = {
         }
         return heading.normalize();
     },
-    getVec3 : function(a,b,c){
-        var newVec = new THREE.Vector3(a,b,c);
-        return newVec;
-    },
-    handleMouseMove: function(event){
-        var mp = {x:0,y:0};
-        V3D.msePos.x = ( event.clientX / 1351 ) * 2 - 1;
-        V3D.msePos.y = - ( event.clientY / 978 ) * 2 + 1;  
 
+    applyRot: function () {
+
+
+            // var tmpVCP = new OIMO.Vec3();
+            // tmpVCP.copy(tmpVCPprev);
+            // var length = tmpVCP.length();
+            // tmpVCP.normalize();
+            // tmpVCP.applyAxisAngle( axis, camAngle );
+            // tmpVCP.multiplyScalar( length );
+            // tmpVCP.x -= tmpVCPprev.x;
+            // tmpVCP.z -= tmpVCPprev.z;
+            // tmpVCPprev.x += tmpVCP.x;
+            // tmpVCPprev.z += tmpVCP.z;
+            // v3d.camera.position.x += tmpVCP.x;
+            // v3d.camera.position.z += tmpVCP.z;
+            // v3d.camera.lookAt ( containerMesh.position );
+
+            var tmpVCP = new THREE.Vector3();
+            tmpVCP.copy(this.tmpVCPprev);
+
+            tmpVCP.applyAxisAngle( this.axis, this.camAngle );
+            this.tmpVCPprev.copy(tmpVCP)
+
+            this.camera.position.x = tmpVCP.x;
+            this.camera.position.z = tmpVCP.z;
+            this.camera.lookAt ( this.containerMesh.position );
+
+            this.arrCamX.push(tmpVCP.x);
+
+
+
+
+            var tmpVCP = new THREE.Vector3(0,0,0);
+            tmpVCP.copy(this.tmppbprev);
+            tmpVCP.applyAxisAngle( this.axis, this.camAngle );
+            this.tmppbprev.copy(tmpVCP);
+
+            this.proBox.position.x = tmpVCP.x;
+            this.proBox.position.z = tmpVCP.z;
+            this.proBox.lookAt(this.containerMesh.position);
+            
+            this.pbX.push(tmpVCP.x);
+            console.log(this.pbx);
     }
 
 }

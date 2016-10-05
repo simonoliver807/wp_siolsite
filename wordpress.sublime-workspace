@@ -285,7 +285,24 @@
 	"expanded_folders":
 	[
 		"/Applications/MAMP/htdocs/website",
-		"/Applications/MAMP/htdocs/website/wordpress"
+		"/Applications/MAMP/htdocs/website/wordpress",
+		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins",
+		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson",
+		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework",
+		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions",
+		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/forms",
+		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/forms/extensions",
+		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/forms/extensions/contact-forms",
+		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/forms/extensions/contact-forms/shortcodes",
+		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/forms/extensions/contact-forms/shortcodes/contact-form",
+		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/forms/extensions/contact-forms/shortcodes/contact-form/includes",
+		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/forms/extensions/contact-forms/shortcodes/contact-form/includes/item",
+		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/forms/extensions/contact-forms/shortcodes/contact-form/includes/item/static",
+		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/forms/extensions/contact-forms/shortcodes/contact-form/includes/item/static/js",
+		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/forms/extensions/contact-forms/shortcodes/contact-form/static",
+		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/forms/includes",
+		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/forms/includes/option-types",
+		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/forms/includes/option-types/form-builder"
 	],
 	"file_history":
 	[
@@ -703,7 +720,7 @@
 	"show_open_files": false,
 	"show_tabs": true,
 	"side_bar_visible": true,
-	"side_bar_width": 170.0,
+	"side_bar_width": 459.0,
 	"status_bar_visible": true,
 	"template_settings":
 	{
