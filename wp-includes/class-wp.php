@@ -175,6 +175,7 @@ class WP {
 			$error = '404';
 			$this->did_permalink = true;
 
+
 			$pathinfo = isset( $_SERVER['PATH_INFO'] ) ? $_SERVER['PATH_INFO'] : '';
 			list( $pathinfo ) = explode( '?', $pathinfo );
 			$pathinfo = str_replace( "%", "%25", $pathinfo );
@@ -201,6 +202,7 @@ class WP {
 
 			// The requested permalink is in $pathinfo for path info requests and
 			//  $req_uri for other requests.
+
 			if ( ! empty($pathinfo) && !preg_match('|^.*' . $wp_rewrite->index . '$|', $pathinfo) ) {
 				$request = $pathinfo;
 			} else {

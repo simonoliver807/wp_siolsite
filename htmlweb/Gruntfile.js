@@ -34,6 +34,9 @@ module.exports = function (grunt) {
         files: ['bower.json'],
         tasks: ['wiredep']
       },
+      css: {
+        files: ['app/styles/*.css']
+      },
       js: {
         files: ['<%= config.app %>/scripts/{,*/}*.js'],
         // tasks: ['jshint'],
@@ -73,9 +76,28 @@ module.exports = function (grunt) {
               optimize: 'uglify',
               mainConfigFile: './app/scripts/config.js',
               paths: {
-                'ddUtil': './ddUtil',
-                'sMods': './sliderModjs',
-                'game': './game'
+                ddUtil: './ddUtil',
+                sMods: './sliderModjs',
+                game: './game',
+                wpFunc: './wp',
+                jquery: './lib/jquery/jquery-2.1.3',
+                jqueryUI: './lib/jquery-ui/jquery-ui',
+                jqueryTP: './lib/jqueryUItouchPunch/jquery.ui.touch-punch',
+                //jqueryMobile: '/website/wordpress/htmlweb/app/scripts/lib/jqueryMobile/jquery.mobile-1.4.5',
+                tinysort: './lib/tinysort/tinysort',
+                chartjs: './lib/chartjs/Chart.min',
+                niceScroll: './lib/niceScroll/niceScroll',
+                bstrap: './bootstrapjs/bootstrap',
+                bstrapCol: './bootstrapjs/bootstrap/collapse',
+                bstrapTran: './bootstrapjs/bootstrap/transition',
+                bstrapCaro: './bootstrapjs/bootstrap/carousel'
+              },
+              shim: {
+                'bstrap' : { 'deps' :['jquery'] },
+                'bstrapCol' : { 'deps' :['jquery'] },
+                'bstrapTran' : { 'deps' :['jquery'] },
+                'bstrapCaro' : { 'deps' :['jquery'] },
+                'niceScroll': { 'deps' :['jquery'] }
               },
               modules:[
                 {

@@ -97,9 +97,9 @@ $table_prefix  = 'wp_';
 //siolsite changed from define('WP_DEBUG', false);
 
 
-// define('WP_DEBUG', true);
-// define( 'WP_DEBUG_LOG', true );
-// define( 'WP_DEBUG_DISPLAY', false );
+define('WP_DEBUG', true);
+define( 'WP_DEBUG_LOG', true );
+//define( 'WP_DEBUG_DISPLAY', true );
 // @ini_set( 'display_errors', 0 );
 // @ini_set( 'error_log', '../php_error.log' );
 

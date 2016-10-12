@@ -11,7 +11,7 @@ module.exports = function(grunt) {
             files: ['**/*.js']
           },
           php: {
-              files: ['../index.php','/wp-config.php','wp-admin/**/*.php','wp-content/**/*.php','!wp-content/uploads/**/*.php']
+              files: ['../index.php','/wp-includes/*.php','/wp-config.php','wp-admin/**/*.php','wp-content/**/*.php','!wp-content/uploads/**/*.php']
           },
           css: {
             files: ['app/sass/*.scss'],

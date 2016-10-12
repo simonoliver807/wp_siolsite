@@ -118,12 +118,17 @@ class FW_Shortcode_Calendar extends FW_Shortcode
 	{
 		$this->load_data();
 		$data_provider = FW_Request::POST('data_provider');
+
 		$result = call_user_func($this->data[$data_provider]['callback'], FW_Request::POST());
 		wp_send_json_success($result);
 	}
 
 	protected function _render($atts, $content = null, $tag = '')
 	{
+		
+		//siotlsite
+		xdebug_break();
+
 		if (!isset($atts['data_provider']['population_method'])) {
 			trigger_error(
 				__('No events provider specified for calendar shortcode', 'fw')
@@ -133,6 +138,8 @@ class FW_Shortcode_Calendar extends FW_Shortcode
 
 		$this->load_data();
 		$provider = $atts['data_provider']['population_method'];
+
+
 		if (!isset($this->data[$provider])) {
 			trigger_error(
 				sprintf(__('Unknown events provider "%s" specified for calendar shortcode', 'fw'), $provider)
@@ -141,6 +148,9 @@ class FW_Shortcode_Calendar extends FW_Shortcode
 		}
 
 		$ajax_params = apply_filters('fw_shortcode_calendar_ajax_params', array(), $provider, fw_akg( 'data_provider/' . $provider, $atts ) );
+
+
+
 		if (is_array($ajax_params)) {
 			$ajax_params = array_merge($ajax_params, array('data_provider' => $provider));
 		} else {
@@ -155,8 +165,10 @@ class FW_Shortcode_Calendar extends FW_Shortcode
 			'data-first-day'            => $atts['first_week_day'],
 		);
 
+
 		if ($provider === 'custom'){
 			$rows = fw_akg('data_provider/custom/custom_events', $atts, array());
+
 			$event_sources = array();
 
 			if (empty($rows) === false) {
