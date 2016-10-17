@@ -4,6 +4,18 @@
 		"selected_items":
 		[
 			[
+				"function",
+				"function_exists"
+			],
+			[
+				"data",
+				"data_provider"
+			],
+			[
+				"path",
+				"pathinfo"
+			],
+			[
 				"abs",
 				"ABSPATH"
 			],
@@ -252,69 +264,11 @@
 	"buffers":
 	[
 		{
-			"file": "wp-content/plugins/unyson/framework/extensions/forms/static.php",
+			"file": "wp-includes/load.php",
 			"settings":
 			{
-				"buffer_size": 298,
+				"buffer_size": 26399,
 				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "wp-content/plugins/unyson/framework/extensions/forms/class-fw-extension-forms.php",
-			"settings":
-			{
-				"buffer_size": 6713,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "wp-content/plugins/unyson/framework/extensions/forms/views/backend/submit-box-edit.php",
-			"settings":
-			{
-				"buffer_size": 1034,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "wp-content/plugins/unyson/framework/extensions/forms/includes/sub-includes.php",
-			"settings":
-			{
-				"buffer_size": 105,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "wp-content/plugins/unyson/framework/extensions/forms/includes/option-types/option-types.php",
-			"settings":
-			{
-				"buffer_size": 127,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "wp-content/plugins/unyson/framework/extensions/forms/includes/option-types/form-builder/class-fw-option-type-form-builder.php",
-			"settings":
-			{
-				"buffer_size": 8068,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "wp-content/plugins/unyson/framework/extensions/forms/includes/option-types/form-builder/views/items.php",
-			"settings":
-			{
-				"buffer_size": 140,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"contents": "Searching 807 files for \"extends FW_Extension\"\n\n/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/core/components/extensions/class-fw-extension-default.php:\n    4   * Instances of this class will be created for extensions without class\n    5   */\n    6: class FW_Extension_Default extends FW_Extension\n    7  {\n    8  \tprotected function _init()\n\n/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/blog/class-fw-extension-blog.php:\n    3  }\n    4  \n    5: class FW_Extension_Blog extends FW_Extension {\n    6  \tprivate $post_type = 'post';\n    7  \n\n/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/builder/class-fw-extension-builder.php:\n    1  <?php if (!defined('FW')) die('Forbidden');\n    2  \n    3: class FW_Extension_Builder extends FW_Extension\n    4  {\n    5  \t/**\n\n/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/forms/class-fw-extension-forms.php:\n    9   * Build frontend forms\n   10   */\n   11: class FW_Extension_Forms extends FW_Extension {\n   12  \n   13  \t/**\n\n/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/forms/extensions/contact-forms/class-fw-extension-contact-forms.php:\n    1  <?php if ( ! defined( 'FW' ) ) die( 'Forbidden' );\n    2  \n    3: class FW_Extension_Contact_Forms extends FW_Extension_Forms_Form {\n    4  \n    5  \n\n/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/forms/includes/extends/class-fw-extension-forms-form.php:\n    6   * Forms sub extensions should extend this class\n    7   */\n    8: abstract class FW_Extension_Forms_Form extends FW_Extension {\n    9  \n   10  \t/**\n\n/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/mailer/class-fw-extension-mailer.php:\n    1  <?php if (!defined('FW')) die('Forbidden');\n    2  \n    3: class FW_Extension_Mailer extends FW_Extension\n    4  {\n    5  \tprivate $is_configured_cache = null;\n\n/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/shortcodes/class-fw-extension-shortcodes.php:\n    1  <?php if (!defined('FW')) die('Forbidden');\n    2  \n    3: class FW_Extension_Shortcodes extends FW_Extension\n    4  {\n    5  \t/**\n\n/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/shortcodes/extensions/page-builder/class-fw-extension-page-builder.php:\n    3  }\n    4  \n    5: class FW_Extension_Page_Builder extends FW_Extension {\n    6  \tprivate $builder_option_key = 'page-builder';\n    7  \tprivate $supports_feature_name = 'fw-page-builder';\n\n/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/shortcodes/extensions/page-builder/extensions/editor-shortcodes/class-fw-extension-editor-shortcodes.php:\n   12   * Editor Shortcodes V2 will do it's job next.\n   13   */\n   14: class FW_Extension_Editor_Shortcodes extends FW_Extension {\n   15  \tprivate $meta_key = 'fw-shortcode-settings';\n   16  \tprivate $meta_key_defaults = 'fw-shortcode-default-values';\n\n/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/sidebars/class-fw-extension-sidebars.php:\n    3  }\n    4  \n    5: class FW_Extension_Sidebars extends FW_Extension {\n    6  \t/** @var _FW_Extension_Sidebars_Backend */\n    7  \tprivate $backend;\n\n/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/update/class-fw-extension-update.php:\n    3  require dirname(__FILE__) .'/includes/extends/class-fw-ext-update-service.php';\n    4  \n    5: class FW_Extension_Update extends FW_Extension\n    6  {\n    7  \t/**\n\n/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/update/includes/extends/class-fw-ext-update-service.php:\n    4   * Extend this class if you want to create a new update service\n    5   */\n    6: abstract class FW_Ext_Update_Service extends FW_Extension\n    7  {\n    8  \t/**\n\n13 matches across 13 files\n\n\nSearching 807 files for \"FW_Request\"\n\n/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/core/components/backend.php:\n 1143  \t\t) { /* ok */ } else { return; }\n 1144  \n 1145: \t\tif (intval(FW_Request::POST('tag_ID')) != $term_id) {\n 1146  \t\t\t// the $_POST values belongs to another term, do not save them into this one\n 1147  \t\t\treturn;\n ....\n 1233  \t\t\t}\n 1234  \n 1235: \t\t\t$options = json_decode( FW_Request::POST( 'options' ), true );\n 1236  \n 1237  \t\t\tif ( ! $options ) {\n ....\n 1245  \t\t{\n 1246  \t\t\tif ( isset( $_POST['values'] ) ) {\n 1247: \t\t\t\t$values = FW_Request::POST( 'values' );\n 1248  \n 1249  \t\t\t\tif (is_string($values)) {\n ....\n 1260  \t\t{\n 1261  \t\t\tif ( isset( $_POST['data'] ) ) {\n 1262: \t\t\t\t$data = FW_Request::POST( 'data' );\n 1263  \t\t\t} else {\n 1264  \t\t\t\t$data = array();\n ....\n 1289  \t\t\t}\n 1290  \n 1291: \t\t\t$options = json_decode( FW_Request::POST( 'options' ), true );\n 1292  \n 1293  \t\t\tif ( ! $options ) {\n ....\n 1301  \t\t{\n 1302  \t\t\tif ( isset( $_POST['name_prefix'] ) ) {\n 1303: \t\t\t\t$name_prefix = FW_Request::POST( 'name_prefix' );\n 1304  \t\t\t} else {\n 1305  \t\t\t\t$name_prefix = FW_Option_Type::get_default_name_prefix();\n ....\n 1310  \t\t\t'values' => fw_get_options_values_from_input(\n 1311  \t\t\t\t$options,\n 1312: \t\t\t\tFW_Request::POST( fw_html_attr_name_to_array_multi_key( $name_prefix ), array() )\n 1313  \t\t\t)\n 1314  \t\t) );\n ....\n 1328  \t\t}\n 1329  \n 1330: \t\tif ( $values = FW_Request::POST( FW_Option_Type::get_default_name_prefix() ) ) {\n 1331  \t\t\t// This is form submit, extract correct values from $_POST values\n 1332  \t\t\t$values = fw_get_options_values_from_input( $options, $values );\n\n/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/core/components/extensions/manager/class--fw-extensions-manager.php:\n  327  \t\t}\n  328  \n  329: \t\t$extension = (string)FW_Request::POST('extension');\n  330  \n  331  \t\t$install_result = $this->install_extensions(array(\n  ...\n  356  \t\t}\n  357  \n  358: \t\t$extension = (string)FW_Request::POST('extension');\n  359  \n  360  \t\t$install_result = $this->uninstall_extensions(array(\n  ...\n  831  \tpublic function _display_page()\n  832  \t{\n  833: \t\t$page = FW_Request::GET('sub-page');\n  834  \n  835  \t\tswitch ($page) {\n  ...\n  978  \n  979  \t\t\t$extensions = array_fill_keys(\n  980: \t\t\t\tarray_map( 'trim', explode( ',', FW_Request::GET( 'extension', '' ) )),\n  981  \t\t\t\tarray()\n  982  \t\t\t);\n  ...\n 1494  \t\t}\n 1495  \n 1496: \t\t$extensions = array_fill_keys(array_map('trim', explode(',', FW_Request::GET('extension', ''))), array());\n 1497  \n 1498  \t\t{\n ....\n 1781  \t\t// note: static is enqueued in 'admin_enqueue_scripts' action\n 1782  \n 1783: \t\t$extension_name = trim(FW_Request::GET('extension', ''));\n 1784  \n 1785  \t\t$installed_extensions = $this->get_installed_extensions();\n ....\n 1925  \t\t\t$nonce = $this->get_nonce('activate');\n 1926  \n 1927: \t\t\tif (!wp_verify_nonce(FW_Request::POST($nonce['name']), $nonce['action'])) {\n 1928  \t\t\t\t$error = __('Invalid nonce.', 'fw');\n 1929  \t\t\t\tbreak;\n ....\n 2142  \t\t\t$nonce = $this->get_nonce('deactivate');\n 2143  \n 2144: \t\t\tif (!wp_verify_nonce(FW_Request::POST($nonce['name']), $nonce['action'])) {\n 2145  \t\t\t\t$error = __('Invalid nonce.', 'fw');\n 2146  \t\t\t\tbreak;\n ....\n 2390  \t\t\t}\n 2391  \n 2392: \t\t\t$extension = fw()->extensions->get(FW_Request::POST('fw_extension_name'));\n 2393  \n 2394  \t\t\tif (!$extension) {\n ....\n 2413  \tpublic function _extension_settings_form_save($data)\n 2414  \t{\n 2415: \t\t$extension = fw()->extensions->get(FW_Request::POST('fw_extension_name'));\n 2416  \n 2417  \t\t$options_before_save = (array)fw_get_db_ext_settings_option($extension->get_name());\n\n/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/builder/includes/option-types/builder/includes/fullscreen.php:\n   36  \t\t\t\tarray_merge(\n   37  \t\t\t\t\tself::get_storage_items(),\n   38: \t\t\t\t\tarray( (int)FW_Request::POST('post_id') )\n   39  \t\t\t\t)\n   40  \t\t\t)\n   ..\n   52  \t\t$storage_items = self::get_storage_items();\n   53  \t\t$key = array_search(\n   54: \t\t\t(int)FW_Request::POST('post_id'),\n   55  \t\t\t$storage_items\n   56  \t\t);\n\n/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/builder/includes/option-types/builder/includes/templates/class-fw-ext-builder-templates.php:\n   46  \t\t}\n   47  \n   48: \t\t$builder_type = (string)FW_Request::POST('builder_type');\n   49  \n   50  \t\tif (!fw()->backend->option_type($builder_type)) {\n\n/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/builder/includes/option-types/builder/includes/templates/components/full/class-fw-ext-builder-templates-component-full.php:\n  153  \t\t}\n  154  \n  155: \t\t$builder_type = (string)FW_Request::POST('builder_type');\n  156  \n  157  \t\tif (!$this->builder_type_is_valid($builder_type)) {\n  ...\n  161  \t\t$templates = $this->get_templates($builder_type);\n  162  \n  163: \t\t$template_id = (string)FW_Request::POST('template_id');\n  164  \n  165  \t\tif (!isset($templates[$template_id])) {\n  ...\n  181  \t\t}\n  182  \n  183: \t\t$builder_type = (string)FW_Request::POST('builder_type');\n  184  \n  185  \t\tif (!$this->builder_type_is_valid($builder_type)) {\n  ...\n  188  \n  189  \t\t$template = array(\n  190: \t\t\t'title' => trim((string)FW_Request::POST('template_name')),\n  191: \t\t\t'json' => trim((string)FW_Request::POST('builder_json')),\n  192  \t\t\t'created' => time(),\n  193  \t\t);\n  ...\n  240  \t\t}\n  241  \n  242: \t\t$builder_type = (string)FW_Request::POST('builder_type');\n  243  \n  244  \t\tif (!$this->builder_type_is_valid($builder_type)) {\n  ...\n  246  \t\t}\n  247  \n  248: \t\t$template_id = (string)FW_Request::POST('template_id');\n  249  \n  250  \t\tdelete_option($this->get_wp_option_prefix($builder_type) . $template_id);\n\n/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/forms/class-fw-extension-forms.php:\n  113  \t\t$builder = fw()->backend->option_type( $form_type->get_form_builder_type() );\n  114  \n  115: \t\techo $builder->frontend_render( $data['data']['builder_value'], FW_Request::POST() );\n  116  \n  117  \t\tif ( ! is_null( $submit_button ) ) {\n  ...\n  131  \t */\n  132  \tpublic function _frontend_form_validate( $errors ) {\n  133: \t\t$form_id   = FW_Request::POST( 'fw_ext_forms_form_id' );\n  134: \t\t$form_type = FW_Request::POST( 'fw_ext_forms_form_type' );\n  135  \n  136  \t\tif ( empty( $form_id ) || empty( $form_type ) ) {\n  ...\n  172  \t\t$items_errors = $builder->frontend_validate(\n  173  \t\t\tjson_decode( $form['json'], true ),\n  174: \t\t\tFW_Request::POST()\n  175  \t\t);\n  176  \n  ...\n  190  \t */\n  191  \tpublic function _frontend_form_save( $fw_form_data ) {\n  192: \t\t$form_id   = FW_Request::POST( 'fw_ext_forms_form_id' );\n  193: \t\t$form_type = FW_Request::POST( 'fw_ext_forms_form_type' );\n  194  \n  195  \t\t/**\n  ...\n  235  \t\t\t$builder->frontend_get_value_from_items(\n  236  \t\t\t\t$builder_value_json_array,\n  237: \t\t\t\tFW_Request::POST()\n  238  \t\t\t),\n  239  \t\t\tarray(\n\n/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/forms/extensions/contact-forms/class-fw-extension-contact-forms.php:\n  110  \t\t}\n  111  \n  112: \t\t$form_id = FW_Request::POST( 'fw_ext_forms_form_id' );\n  113  \n  114  \t\tif ( empty( $form_id ) ) {\n\n/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/forms/includes/option-types/form-builder/items/recaptcha/class-fw-option-type-form-builder-item-recaptcha.php:\n  159  \t\t\t(function_exists('ini_get') && ini_get('allow_url_fopen')) ? null : new ReCaptchaSocketPost()\n  160  \t\t);\n  161: \t\t$gRecaptchaResponse = FW_Request::POST( 'g-recaptcha-response' );\n  162  \n  163  \t\tif ( empty( $gRecaptchaResponse ) ) {\n\n/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/shortcodes/extensions/page-builder/class-fw-extension-page-builder.php:\n   88  \t\t\tDOING_AJAX === true &&\n   89  \t\t\t(\n   90: \t\t\t\tFW_Request::POST( 'action', '' ) === 'fw_backend_options_render' ||\n   91: \t\t\t\tFW_Request::POST( 'action', '' ) === 'fw_backend_options_get_values'\n   92  \t\t\t)\n   93  \t\t) {\n\n/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/shortcodes/shortcodes/calendar/class-fw-shortcode-calendar.php:\n  118  \t{\n  119  \t\t$this->load_data();\n  120: \t\t$data_provider = FW_Request::POST('data_provider');\n  121: \t\t$result = call_user_func($this->data[$data_provider]['callback'], FW_Request::POST());\n  122  \t\twp_send_json_success($result);\n  123  \t}\n\n/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/shortcodes/shortcodes/column/includes/template-component/class-fw-ext-builder-templates-component-column.php:\n  131  \t\t}\n  132  \n  133: \t\t$builder_type = (string)FW_Request::POST('builder_type');\n  134  \n  135  \t\tif (!$this->builder_type_is_valid($builder_type)) {\n  ...\n  139  \t\t$templates = $this->get_templates($builder_type);\n  140  \n  141: \t\t$template_id = (string)FW_Request::POST('template_id');\n  142  \n  143  \t\tif (!isset($templates[$template_id])) {\n  ...\n  159  \t\t}\n  160  \n  161: \t\t$builder_type = (string)FW_Request::POST('builder_type');\n  162  \n  163  \t\tif (!$this->builder_type_is_valid($builder_type)) {\n  ...\n  166  \n  167  \t\t$template = array(\n  168: \t\t\t'title' => trim((string)FW_Request::POST('template_name')),\n  169: \t\t\t'json' => trim((string)FW_Request::POST($this->get_type() .'_json')),\n  170  \t\t\t'created' => time(),\n  171  \t\t);\n  ...\n  222  \t\t}\n  223  \n  224: \t\t$builder_type = (string)FW_Request::POST('builder_type');\n  225  \n  226  \t\tif (!$this->builder_type_is_valid($builder_type)) {\n  ...\n  228  \t\t}\n  229  \n  230: \t\t$template_id = (string)FW_Request::POST('template_id');\n  231  \n  232  \t\tdelete_option($this->get_wp_option_prefix($builder_type) . $template_id);\n\n/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/shortcodes/shortcodes/section/includes/template-component/class-fw-ext-builder-templates-component-section.php:\n  131  \t\t}\n  132  \n  133: \t\t$builder_type = (string)FW_Request::POST('builder_type');\n  134  \n  135  \t\tif (!$this->builder_type_is_valid($builder_type)) {\n  ...\n  139  \t\t$templates = $this->get_templates($builder_type);\n  140  \n  141: \t\t$template_id = (string)FW_Request::POST('template_id');\n  142  \n  143  \t\tif (!isset($templates[$template_id])) {\n  ...\n  159  \t\t}\n  160  \n  161: \t\t$builder_type = (string)FW_Request::POST('builder_type');\n  162  \n  163  \t\tif (!$this->builder_type_is_valid($builder_type)) {\n  ...\n  166  \n  167  \t\t$template = array(\n  168: \t\t\t'title' => trim((string)FW_Request::POST('template_name')),\n  169: \t\t\t'json' => trim((string)FW_Request::POST($this->get_type() .'_json')),\n  170  \t\t\t'created' => time(),\n  171  \t\t);\n  ...\n  222  \t\t}\n  223  \n  224: \t\t$builder_type = (string)FW_Request::POST('builder_type');\n  225  \n  226  \t\tif (!$this->builder_type_is_valid($builder_type)) {\n  ...\n  228  \t\t}\n  229  \n  230: \t\t$template_id = (string)FW_Request::POST('template_id');\n  231  \n  232  \t\tdelete_option($this->get_wp_option_prefix($builder_type) . $template_id);\n\n/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/sidebars/class-fw-extension-sidebars.php:\n  169  \t */\n  170  \tpublic function _admin_action_delete_sidebar_ajax() {\n  171: \t\t$sidebar_id = FW_Request::POST( 'sidebar' );\n  172  \t\t$result     = $this->backend->delete_sidebar( $sidebar_id );\n  173  \t\t$this->ajax_response( $result );\n  ...\n  178  \t */\n  179  \tpublic function _admin_action_load_sidebar_preset_ajax() {\n  180: \t\t$params = FW_Request::POST( 'params' );\n  181  \t\t$result = $this->backend->get_preset( $params );\n  182  \t\t$this->ajax_response( $result );\n  ...\n  187  \t */\n  188  \tpublic function _admin_action_remove_sidebar_preset_ajax() {\n  189: \t\t$args   = FW_Request::POST( 'data' );\n  190  \t\t$result = $this->backend->remove_preset( $args );\n  191  \t\t$this->ajax_response( $result );\n  ...\n  196  \t */\n  197  \tpublic function _admin_action_save_sidebar_preset_ajax() {\n  198: \t\t$settings = FW_Request::POST( 'settings' );\n  199  \t\t$result   = $this->backend->save_sidebar_settings( $settings );\n  200  \t\t$this->ajax_response( $result );\n  ...\n  205  \t */\n  206  \tpublic function _admin_action_sidebar_autocomplete_ajax() {\n  207: \t\t$search_type = FW_Request::POST( 'searchType' );\n  208: \t\t$search_term = FW_Request::POST( 'searchTerm' );\n  209  \n  210  \t\t$result = $this->backend->get_autocomplete_results( $search_type, $search_term );\n  ...\n  278  \t */\n  279  \tpublic function _admin_action_add_new_sidebar_ajax() {\n  280: \t\t$name   = FW_Request::POST( 'name' );\n  281  \t\t$result = $this->backend->save_new_sidebar( $name );\n  282  \t\t$this->ajax_response( $result );\n\n/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/sidebars/includes/option-type/sidebar-picker/class-fw-sidebar-picker-option-handler.php:\n   10  \n   11  \tfunction save_option_value( $option_id, $option, $value, $data = array() ) {\n   12: \t\t$settings = FW_Request::POST( 'fw_options/' . $option_id );\n   13  \t\tif( $settings['position'] === 'default' ) {\n   14  \t\t\t$args = array(\n\n/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/update/class-fw-extension-update.php:\n  822  \n  823  \t\t$form_input_name = 'extensions';\n  824: \t\t$extensions_list = FW_Request::POST($form_input_name);\n  825  \n  826  \t\tif (empty($extensions_list)) {\n\n/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/helpers/class-fw-form.php:\n  477  \t\t\t\t\tisset( $_POST[ self::$id_input_name ] )\n  478  \t\t\t\t\t&&\n  479: \t\t\t\t\tFW_Request::POST( self::$id_input_name ) === $this->id\n  480  \t\t\t\t);\n  481  \n  ...\n  484  \t\t\t\t\tisset( $_GET[ self::$id_input_name ] )\n  485  \t\t\t\t\t&&\n  486: \t\t\t\t\tFW_Request::GET( self::$id_input_name ) === $this->id\n  487  \t\t\t\t);\n  488  \t\t\t} else {\n\n/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/helpers/class-fw-request.php:\n   14   *\n   15   * If value can contain some user input and can have quotes or json from some option, then use this helper:\n   16:  * $foo = json_decode(FW_Request::POST('bar')); // json_decode($_POST('bar')) will not work if json will contain quotes\n   17   *\n   18   * You can test that problem.\n   ..\n   21          $_GET['test'],\n   22          json_decode($_GET['test']),\n   23:         FW_Request::GET('test'),\n   24:         json_decode(FW_Request::GET('test'))\n   25      ));\n   26   * and access: http://your-site.com/?test={'a':1}\n   27   */\n   28: class FW_Request\n   29  {\n   30  \tprotected static function prepare_key($key)\n\n/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/helpers/general.php:\n  933  function fw_get_options_values_from_input(array $options, $input_array = null) {\n  934  \tif (!is_array($input_array)) {\n  935: \t\t$input_array = FW_Request::POST(FW_Option_Type::get_default_name_prefix());\n  936  \t}\n  937  \n\n/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/includes/option-types/icon-v2/includes/class-fw-icon-v2-favorites.php:\n   22  \tpublic function set_favorites_action()\n   23  \t{\n   24: \t\t$favorites = json_decode(FW_Request::POST( 'favorites' ), true);\n   25  \n   26  \t\t$this->set_favorites($favorites);\n\n/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/includes/option-types/multi-select/class-fw-option-type-multi-select.php:\n   78  \t\t\tglobal $wpdb;\n   79  \n   80: \t\t\t$type  = FW_Request::POST( 'data/type' );\n   81: \t\t\t$names = json_decode( FW_Request::POST( 'data/names' ), true );\n   82: \t\t\t$title = FW_Request::POST( 'data/string' );\n   83  \n   84  \t\t\t$items = array();\n\n/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/includes/option-types/oembed/class-fw-option-type-oembed.php:\n   99  \tpublic static function _action_get_oembed_response() {\n  100  \n  101: \t\tif ( wp_verify_nonce( FW_Request::POST( '_nonce' ), '_action_get_oembed_response' ) ) {\n  102  \n  103: \t\t\t$url        = FW_Request::POST( 'url' );\n  104: \t\t\t$width      = FW_Request::POST( 'preview/width' );\n  105: \t\t\t$height     = FW_Request::POST( 'preview/height' );\n  106: \t\t\t$keep_ratio = ( FW_Request::POST( 'preview/keep_ratio' ) === 'true' );\n  107  \n  108  \t\t\t$iframe = empty( $keep_ratio ) ?\n\n80 matches across 21 files\n\n\nSearching 807 files for \"$items_html\"\n\n/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/forms/includes/option-types/form-builder/views/items.php:\n    1  <?php if (!defined('FW')) die('Forbidden');\n    2  /**\n    3:  * @var string $items_html\n    4   */\n    5  ?>\n    6  <div class=\"wrap-forms\">\n    7: \t<?php echo $items_html ?>\n    8  </div>\n\n2 matches in 1 file\n\n\nSearching 807 files for \"wrap-forms\"\n\n/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/forms/includes/option-types/form-builder/views/items.php:\n    4   */\n    5  ?>\n    6: <div class=\"wrap-forms\">\n    7  \t<?php echo $items_html ?>\n    8  </div>\n\n/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/forms/static/css/frontend.css:\n    1  /* Step Style */\n    2: .wrap-forms .wrap-step {\n    3  \twidth: 100%;\n    4  \tdisplay: block;\n    .\n   10  }\n   11  \n   12: .wrap-forms .wrap-step .steps {\n   13  \tlist-style: none;\n   14  \ttext-align: justify;\n   ..\n   17  }\n   18  \n   19: .wrap-forms .wrap-step .steps:after {\n   20  \twidth: 100%;\n   21  \theight: 0;\n   ..\n   24  }\n   25  \n   26: .wrap-forms .wrap-step .steps li {\n   27  \tdisplay: inline-block;\n   28  }\n   29  \n   30: .wrap-forms .wrap-step .steps .step {\n   31  \tcolor: #0f6ab8;\n   32  \tfont-weight: 700;\n   ..\n   35  }\n   36  \n   37: .wrap-forms .wrap-step .steps .step span {\n   38  \tbackground: #0f6ab8;\n   39  \tcolor: #fff;\n   ..\n   48  }\n   49  \n   50: .wrap-forms .wrap-step .steps li.active-step .step span {\n   51  \tbackground: #2b2b2b;\n   52  }\n   53  \n   54: .wrap-forms .wrap-step .steps li.active-step .step,\n   55: .wrap-forms .wrap-step .steps .step:hover,\n   56: .wrap-forms .wrap-step .steps .step:hover strong {\n   57  \tcolor: #2b2b2b;\n   58  \tborder-color: #2b2b2b;\n   59  }\n   60  \n   61: .wrap-forms .wrap-step .steps .step:hover span {\n   62  \tbackground: #2b2b2b;\n   63  }\n   64  \n   65: .wrap-forms .wrap-step .steps .step strong {\n   66  \tborder-bottom: 1px solid #0f6ab8;\n   67  }\n   68  \n   69: .wrap-forms .wrap-step .steps li.active-step .step strong {\n   70  \tborder: none;\n   71  }\n   72  \n   73: .wrap-forms .field-text,\n   74: .wrap-forms .field-gap,\n   75: .wrap-forms .field-textarea,\n   76: .wrap-forms .field-select,\n   77: .wrap-forms .field-upload,\n   78: .wrap-forms .field-date,\n   79: .wrap-forms .field-time,\n   80: .wrap-forms .field-multiple,\n   81: .wrap-forms .field-rating,\n   82: .wrap-forms .field-table {\n   83  \tmargin-bottom: 23px;\n   84  \twidth: 100%;\n   85  }\n   86  \n   87: .wrap-forms .field-checkbox,\n   88: .wrap-forms .field-radio {\n   89  \tmargin-bottom: 15px;\n   90  }\n   91  \n   92: .wrap-forms .field-text.field-address {\n   93  \tmargin-bottom: -8px;\n   94  }\n   95  \n   96: .wrap-forms .field-multiple div[class*='field-'] {\n   97  \twidth: 48%;\n   98  \tdisplay: inline-block;\n   ..\n  100  }\n  101  \n  102: .wrap-forms .wrap-rating .rating span {\n  103  \tfont-size: 19px;\n  104  }\n  105  \n  106: .wrap-forms .wrap-rating .rating-title {\n  107  \tmargin-bottom: 19px;\n  108  }\n  109  \n  110: .wrap-forms label,\n  111: .wrap-forms input,\n  112: .wrap-forms select {\n  113  \twidth: 100%;\n  114  }\n  115  \n  116: .wrap-forms .field-text.field-address input,\n  117: .wrap-forms .field-text.field-address textarea,\n  118: .wrap-forms .field-text.field-address select {\n  119  \tmargin-bottom: 31px;\n  120  }\n  121  \n  122: .wrap-forms .field-text.field-address input:last-child {\n  123  \tmargin-bottom: 0;\n  124  }\n  125  \n  126: .wrap-forms label {\n  127  \tfont-size: 15px;\n  128  \tmargin-bottom: 8px;\n  ...\n  131  }\n  132  \n  133: .wrap-forms sup {\n  134  \tfont-size: 16px;\n  135  \tcolor: #c0392b;\n  ...\n  138  }\n  139  \n  140: .wrap-forms input,\n  141: .wrap-forms select {\n  142  \tfont-size: 14px;\n  143  \theight: 41px;\n  ...\n  145  }\n  146  \n  147: .wrap-forms textarea {\n  148  \tpadding: 8px 15px;\n  149  \theight: 162px;\n  ...\n  152  }\n  153  \n  154: .wrap-forms select {\n  155  \tborder-color: #e5e5e5;\n  156  }\n  157  \n  158: .wrap-forms .field-gap input.fill-gap {\n  159  \tmargin: 0;\n  160  \tpadding: 0;\n  ...\n  169  }\n  170  \n  171: .wrap-forms .field-gap input.fill-gap:hover,\n  172: .wrap-forms .field-gap input.fill-gap:focus {\n  173  \toutline: none;\n  174  \tborder: none;\n  ...\n  177  }\n  178  \n  179: .wrap-forms div[class*='field-'] .omega {\n  180  \twidth: 48%;\n  181  \tdisplay: inline-block;\n  182  }\n  183  \n  184: .wrap-forms div[class*='field-'] .omega.omega-right,\n  185: .wrap-forms div[class*='field-'] .omega-right {\n  186  \tfloat: right;\n  187  }\n  188  \n  189: .wrap-forms .field-time .time {\n  190  \twidth: 82%;\n  191  \tdisplay: inline-block;\n  192  }\n  193  \n  194: .wrap-forms .field-time .time-format {\n  195  \twidth: 16%;\n  196  \tfloat: right;\n  ...\n  198  }\n  199  \n  200: .wrap-forms .field-upload .upload-file-input,\n  201: .wrap-forms .field-upload .upload-file-button {\n  202  \tdisplay: inline-block;\n  203  \twidth: auto;\n  204  }\n  205  \n  206: .wrap-forms .field-upload .upload-file-input {\n  207  \twidth: 86%;\n  208  }\n  209  \n  210: .wrap-forms .field-upload .upload-file-button {\n  211  \tfloat: right;\n  212  \tfont-size: 12px;\n  ...\n  214  }\n  215  \n  216: .wrap-forms .field-table table, th, td {\n  217  \tborder-color: #e5e5e5;\n  218  }\n  219  \n  220: .wrap-forms .field-table table thead tr td {\n  221  \ttext-align: center;\n  222  \tbackground: #f7f7f7;\n  ...\n  226  }\n  227  \n  228: .wrap-forms .field-table table thead tr td span {\n  229  \tdisplay: inline-block;\n  230  \tvertical-align: middle;\n  ...\n  232  }\n  233  \n  234: .wrap-forms .field-table table tbody tr td {\n  235  \tpadding: 15px;\n  236  \tline-height: 20px;\n  237  }\n  238  \n  239: .wrap-forms .field-table table tbody tr td.input-styled {\n  240  \ttext-align: center;\n  241  \tpadding: 0;\n  242  }\n  243  \n  244: .wrap-forms .field-table table tbody tr td.input-styled .custom-radio {\n  245  \tdisplay: inline-block;\n  246  \tvertical-align: middle;\n  ...\n  248  }\n  249  \n  250: .wrap-forms input:-moz-placeholder,\n  251: .wrap-forms textarea:-moz-placeholder {\n  252  \tfont-size: 14px;\n  253  \tfont-weight: 400;\n  ...\n  257  }\n  258  \n  259: .wrap-forms input::-moz-placeholder,\n  260: .wrap-forms textarea::-moz-placeholder {\n  261  \tfont-size: 14px;\n  262  \tfont-weight: 400;\n  ...\n  266  }\n  267  \n  268: .wrap-forms input:-ms-input-placeholder,\n  269: .wrap-forms textarea:-ms-input-placeholder {\n  270  \tfont-size: 14px;\n  271  \tfont-weight: 400;\n  ...\n  275  }\n  276  \n  277: .wrap-forms input::-webkit-input-placeholder,\n  278: .wrap-forms textarea::-webkit-input-placeholder {\n  279  \tfont-size: 14px;\n  280  \tfont-weight: 400;\n  ...\n  284  }\n  285  \n  286: .wrap-forms input:focus::-webkit-input-placeholder {\n  287  \tcolor: transparent;\n  288  }\n  289  \n  290: .wrap-forms textarea:focus::-webkit-input-placeholder {\n  291  \tcolor: transparent;\n  292  }\n  ...\n  294  /* Custom CheckBox  & Radio */\n  295  /*-----------------------------------*/\n  296: .wrap-forms .custom-checkbox,\n  297: .wrap-forms .custom-radio {\n  298  \tposition: relative;\n  299  }\n  300  \n  301: .wrap-forms .custom-checkbox input,\n  302: .wrap-forms .custom-radio input {\n  303  \theight: auto;\n  304  \twidth: auto;\n  ...\n  306  }\n  307  \n  308: .wrap-forms .custom-checkbox::selection,\n  309: .wrap-forms .custom-radio::selection {\n  310  \tbackground: transparent;\n  311  \tcolor: inherit;\n  312  }\n  313  \n  314: .wrap-forms .custom-checkbox label,\n  315: .wrap-forms .custom-radio label {\n  316  \tposition: relative;\n  317  \twidth: auto;\n  ...\n  325  }\n  326  \n  327: .wrap-forms .custom-checkbox label::selection,\n  328: .wrap-forms .custom-radio label::selection {\n  329  \tbackground: transparent;\n  330  \tcolor: inherit;\n  331  }\n  332  \n  333: .wrap-forms .custom-checkbox label.focus,\n  334: .wrap-forms .custom-radio label.focus {\n  335  \toutline: none;\n  336  }\n  337  \n  338  /* Section Break */\n  339: .wrap-forms .section-break {\n  340  \tborder-top: 1px solid #e5e5e5;\n  341  \tmargin: 42px auto 39px;\n  ...\n  343  }\n  344  \n  345: .wrap-forms .section-break .title {\n  346  \ttext-transform: uppercase;\n  347  \tfont-size: 32px;\n  ...\n  352  }\n  353  \n  354: .wrap-forms .section-break .sub-title {\n  355  \tfont-size: 13px;\n  356  \tfont-family: 'Arial';\n  ...\n  359  }\n  360  \n  361: .wrap-forms .nav-form {\n  362  \twidth: 100%;\n  363  \ttext-align: center;\n  ...\n  367  }\n  368  \n  369: .wrap-forms .nav-form .button.button-nav-form,\n  370: .wrap-forms .nav-form .number-pages-form {\n  371  \tdisplay: inline-block;\n  372  }\n  373  \n  374: .wrap-forms .nav-form .button.button-nav-form {\n  375  \tborder-top-left-radius: 0;\n  376  \tpadding: 10px 20px;\n  ...\n  378  }\n  379  \n  380: .wrap-forms .nav-form .number-pages-form {\n  381  \tcolor: #333333;\n  382  \ttext-transform: uppercase;\n  ...\n  385  }\n  386  \n  387: .wrap-forms .nav-form .button.button-nav-form.next {\n  388  \tfloat: right;\n  389  }\n  390  \n  391: .wrap-forms .nav-form .button.button-nav-form.prev {\n  392  \tfloat: left;\n  393  }\n  ...\n  395  /* layout */\n  396  \n  397: .wrap-forms .field-columns-0:after,\n  398: .wrap-forms .field-columns-2:after,\n  399: .wrap-forms .field-columns-3:after {\n  400  \twidth: 100%;\n  401  \theight: 0;\n  ...\n  404  }\n  405  \n  406: .wrap-forms .field-columns-0 .options,\n  407: .wrap-forms .field-columns-2 .field-column,\n  408: .wrap-forms .field-columns-3 .field-column {\n  409  \tfloat: left;\n  410  \tpadding-right: 5px;\n  ...\n  415  }\n  416  \n  417: .wrap-forms .field-columns-0 .options {\n  418  \tpadding-right: 15px;\n  419  }\n  420  \n  421: .wrap-forms .field-columns-2 .field-column {\n  422  \twidth: 50%;\n  423  }\n  424  \n  425: .wrap-forms .field-columns-3 .field-column {\n  426  \twidth: 33.3333%;\n  427  }\n\n102 matches across 2 files\n\n\nSearching 807 files for \"items_html\"\n\n/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/forms/includes/option-types/form-builder/class-fw-option-type-form-builder.php:\n  137  \t\t\t$this->locate_path( '/views/items.php', dirname( __FILE__ ) . '/views/items.php' ),\n  138  \t\t\tarray(\n  139: \t\t\t\t'items_html' => $this->render_items( $items, $input_values )\n  140  \t\t\t)\n  141  \t\t);\n\n/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/forms/includes/option-types/form-builder/views/items.php:\n    1  <?php if (!defined('FW')) die('Forbidden');\n    2  /**\n    3:  * @var string $items_html\n    4   */\n    5  ?>\n    6  <div class=\"wrap-forms\">\n    7: \t<?php echo $items_html ?>\n    8  </div>\n\n3 matches across 2 files\n",
-			"settings":
-			{
-				"buffer_size": 30880,
-				"line_ending": "Unix",
-				"name": "Find Results",
-				"scratch": true
 			}
 		}
 	],
@@ -352,25 +306,51 @@
 	[
 		"/Applications/MAMP/htdocs/website",
 		"/Applications/MAMP/htdocs/website/wordpress",
-		"/Applications/MAMP/htdocs/website/wordpress/wp-content",
-		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins",
-		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson",
-		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework",
-		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/core/components",
-		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions",
-		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/builder/static",
-		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/forms",
-		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/forms/extensions",
-		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/forms/includes",
-		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/forms/includes/option-types",
-		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/forms/includes/option-types/form-builder",
-		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/forms/includes/option-types/form-builder/static",
-		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/forms/static/css",
-		"/Applications/MAMP/htdocs/website/wordpress/wp-content/themes/twentysixteen",
-		"/Applications/MAMP/htdocs/website/wordpress/wp-includes/SimplePie"
+		"/Applications/MAMP/htdocs/website/wordpress/wp-includes"
 	],
 	"file_history":
 	[
+		"/Applications/MAMP/htdocs/website/wordpress/wp-includes/plugin.php",
+		"/Applications/MAMP/htdocs/website/wordpress/wp-settings.php",
+		"/Applications/MAMP/bin/php/php5.6.10/conf/php.ini",
+		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/shortcodes/shortcodes/calendar/class-fw-shortcode-calendar.php",
+		"/Applications/MAMP/htdocs/node_modules/angular-1.2.9/docs/partials/tutorial/step_03.html",
+		"/Applications/MAMP/conf/php5.6.10/php.ini",
+		"/Applications/MAMP/htdocs/website/wordpress/Gruntfile.js",
+		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/shortcodes/shortcodes/calendar/static.php",
+		"/Applications/MAMP/htdocs/website/wordpress/wp-content/themes/twentysixteen/js/config.js",
+		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/helpers/class-fw-request.php",
+		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/helpers/general.php",
+		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/forms/extensions/contact-forms/includes/helper/class--fw-ext-contact-form-db-data.php",
+		"/Applications/MAMP/htdocs/website/wordpress/wp-includes/rest-api.php",
+		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/forms/static.php",
+		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/forms/includes/option-types/option-types.php",
+		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/forms/includes/option-types/form-builder/class-fw-option-type-form-builder.php",
+		"/Applications/MAMP/htdocs/website/db.php",
+		"/Applications/MAMP/htdocs/website/wordpress/wp-blog-header.php",
+		"/Applications/MAMP/htdocs/website/wordpress/wp-load.php",
+		"/Applications/MAMP/htdocs/website/wordpress/wp-config.php",
+		"/Applications/MAMP/htdocs/website/wordpress/wp-includes/class-wp.php",
+		"/Applications/MAMP/htdocs/website/wordpress/wp-includes/load.php",
+		"/Applications/MAMP/htdocs/website/wordpress/wp-includes/wp-db.php",
+		"/Applications/MAMP/htdocs/website/index.php",
+		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/builder/class-fw-extension-builder.php",
+		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/builder/helpers.php",
+		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/forms/includes/option-types/form-builder/items/number/class-fw-option-type-form-builder-item-number.php",
+		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/core/Fw.php",
+		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/core/components/extensions.php",
+		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/core/extends/class-fw-extension.php",
+		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/builder/config.php",
+		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/forms/includes/option-types/form-builder/items/select/view.php",
+		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/forms/includes/option-types/form-builder/items/textarea/class-fw-option-type-form-builder-item-textarea.php",
+		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/builder/includes/option-types/builder/static/js/qtips.js",
+		"/Applications/MAMP/htdocs/website/wordpress/wp-content/themes/twentysixteen/inc/customizer.php",
+		"/Applications/MAMP/htdocs/website/wordpress/wp-includes/functions.php",
+		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/includes/option-types/icon-v2/static/img/sauron.png",
+		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/forms/class-fw-extension-forms.php",
+		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/forms/views/backend/submit-box-edit.php",
+		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/forms/includes/sub-includes.php",
+		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/forms/includes/option-types/form-builder/views/items.php",
 		"/Applications/MAMP/htdocs/website/wordpress/wp-content/themes/twentysixteen/index.php",
 		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/builder/static/css/frontend-grid.css",
 		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/builder/static.php",
@@ -381,21 +361,14 @@
 		"/Applications/MAMP/htdocs/website/wordpress/wp-includes/class-wp-error.php",
 		"/Applications/MAMP/htdocs/website/wordpress/wp-content/themes/twentysixteen/header.php",
 		"/Applications/MAMP/htdocs/website/wordpress/wp-includes/SimplePie/Parser.php",
-		"/Applications/MAMP/htdocs/website/wordpress/wp-config.php",
 		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/forms/manifest.php",
-		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/forms/class-fw-extension-forms.php",
 		"/Applications/MAMP/htdocs/website/wordpress/wp-admin/post.php",
-		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/core/extends/class-fw-extension.php",
 		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/views/backend-settings-form.php",
-		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/core/Fw.php",
 		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/forms/includes/option-types/form-builder/extends/class-fw-option-type-form-builder-item.php",
 		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/forms/includes/extends/class-fw-extension-forms-form.php",
 		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/forms/extensions/contact-forms/views/form.php",
 		"/Applications/MAMP/htdocs/website/wordpress/wp-content/themes/twentysixteen/functions.php",
-		"/Applications/MAMP/htdocs/website/wordpress/wp-includes/wp-db.php",
-		"/Applications/MAMP/htdocs/website/wordpress/wp-includes/functions.php",
 		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/helpers/database.php",
-		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/helpers/class-fw-request.php",
 		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/helpers/class-fw-wp-list-table.php",
 		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/static/js/fw-form-helpers.js",
 		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/manifest.php",
@@ -405,54 +378,38 @@
 		"/Applications/MAMP/htdocs/website/wordpress/wp-admin/edit.php",
 		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/mailer/hooks.php",
 		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/mailer/includes/option-type-mailer/static/js/scripts.js",
-		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/forms/static.php",
 		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/helpers/class-fw-form.php",
 		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/helpers/class-fw-flash-messages.php",
 		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/shortcodes/extensions/page-builder/class-fw-extension-page-builder.php",
-		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/forms/includes/option-types/form-builder/class-fw-option-type-form-builder.php",
 		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/builder/includes/option-types/builder/extends/class-fw-option-type-builder.php",
-		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/forms/extensions/contact-forms/includes/helper/class--fw-ext-contact-form-db-data.php",
-		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/forms/includes/option-types/form-builder/items/textarea/class-fw-option-type-form-builder-item-textarea.php",
 		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/forms/includes/option-types/form-builder/items/website/class-fw-option-type-form-builder-item-website.php",
 		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/forms/includes/option-types/form-builder/items/form-builder-items.php",
-		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/forms/includes/option-types/option-types.php",
 		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/forms/includes/option-types/form-builder/items/textarea/view.php",
 		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/forms/includes/option-types/form-builder/items/website/static/css/styles.css",
 		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/forms/includes/option-types/form-builder/items/website/static/js/scripts.js",
 		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/forms/includes/option-types/form-builder/items/website/static/images/icon.png",
-		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/forms/includes/option-types/form-builder/views/items.php",
 		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/forms/includes/option-types/form-builder/static/js/helpers.js",
-		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/forms/includes/sub-includes.php",
 		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/shortcodes/shortcodes/div/static.php",
 		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/forms/extensions/contact-forms/manifest.php",
 		"/Applications/MAMP/htdocs/website/wordpress/wp-includes/compat.php",
 		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/shortcodes/shortcodes/div/options.php",
 		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/forms/views/backend/submit-box-add.php",
-		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/forms/views/backend/submit-box-edit.php",
 		"/Applications/MAMP/htdocs/php_error.log",
 		"/Applications/MAMP/htdocs/website/wordpress/wp-admin/my-sites.php",
 		"/Applications/MAMP/htdocs/website/wordpress/wp-admin/includes/template.php",
 		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/shortcodes/shortcodes/canvas/static.php",
 		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/forms/extensions/contact-forms/class-fw-extension-contact-forms.php",
-		"/Applications/MAMP/htdocs/website/wordpress/Gruntfile.js",
 		"/Applications/MAMP/htdocs/website/wordpress/php_error.log",
 		"/Applications/MAMP/htdocs/website/php_error.log",
-		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/builder/class-fw-extension-builder.php",
-		"/Applications/MAMP/htdocs/website/wordpress/wp-content/themes/twentysixteen/inc/customizer.php",
-		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/helpers/general.php",
 		"/Users/simon_oliver807/Desktop/php_error.log",
-		"/Applications/MAMP/htdocs/website/wordpress/wp-load.php",
 		"/Applications/MAMP/htdocs/website/wordpress/wp-admin/admin-ajax.php",
 		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/shortcodes/extensions/page-builder/hooks.php",
 		"/Applications/MAMP/htdocs/website/wordpress/wp-includes/rest-api/class-wp-rest-server.php",
-		"/Applications/MAMP/htdocs/website/index.php",
 		"/Applications/MAMP/htdocs/website/.htaccess",
 		"/Applications/MAMP/htdocs/website/wordpress/.htaccess",
-		"/Applications/MAMP/htdocs/website/wordpress/wp-blog-header.php",
 		"/Applications/MAMP/htdocs/website/wordpress/wp-includes/pomo/entry.php",
 		"/Applications/MAMP/htdocs/website/wordpress/wp-includes/class-snoopy.php",
 		"/Users/simon_oliver807/Desktop/wordpress_2016-09-12.sql",
-		"/Applications/MAMP/htdocs/website/wordpress/wp-includes/plugin.php",
 		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/forms/static/css/frontend.css",
 		"/Applications/MAMP/htdocs/website/wordpress/wp-includes/general-template.php",
 		"/Applications/MAMP/htdocs/website/wordpress/wp-includes/pomo/translations.php",
@@ -470,7 +427,6 @@
 		"/Users/simon_oliver807/Documents/workspace/SliderModule/js/main.js",
 		"/Users/simon_oliver807/Documents/workspace/SliderModule/js/custom.js",
 		"/Applications/MAMP/htdocs/website/wordpress/wp-content/themes/twentysixteen/js/html5.js",
-		"/Applications/MAMP/htdocs/website/wordpress/wp-content/themes/twentysixteen/js/config.js",
 		"/Applications/MAMP/htdocs/website/wordpress/wp-content/themes/twentysixteen/js/siolsitejs/camDemo.html",
 		"/Users/simon_oliver807/Downloads/wordpress/wp-config-sample.php",
 		"/Applications/MAMP/htdocs/website/wordpress/readme.html",
@@ -481,24 +437,7 @@
 		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/shortcodes/shortcodes/section/views/view.php",
 		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/forms/extensions/contact-forms/shortcodes/contact-form/includes/item/class-page-builder-contact-form-item.php",
 		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/shortcodes/extensions/page-builder/extensions/editor-shortcodes/class-fw-extension-editor-shortcodes.php",
-		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/shortcodes/extensions/page-builder/includes/page-builder/includes/item-types/class-page-builder-item.php",
-		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/forms/extensions/contact-forms/shortcodes/contact-form/includes/item/static/js/scripts.js",
-		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/builder/includes/option-types/builder/static/js/builder.js",
-		"/Applications/MAMP/htdocs/website/wordpress/wp-admin/admin-post.php",
-		"/Applications/MAMP/htdocs/website/wordpress/wp-admin/comment.php",
-		"/Applications/MAMP/htdocs/website/wordpress/wp-admin/edit-comments.php",
-		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/includes/option-types/icon/static/js/backend.js",
-		"/Applications/MAMP/htdocs/website/wordpress/wp-login.php",
-		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/forms/extensions/contact-forms/shortcodes/contact-form/class-fw-shortcode-contact-form.php",
-		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/forms/extensions/contact-forms/shortcodes/contact-form/config.php",
-		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/forms/config.php",
-		"/Applications/MAMP/htdocs/website/wordpress/wp-content/themes/twentysixteen/search.php",
-		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/forms/extensions/contact-forms/views/submit.php",
-		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/forms/extensions/contact-forms/helpers.php",
-		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/forms/includes/option-types/form-builder/items/checkboxes/view.php",
-		"/Applications/MAMP/htdocs/website/wordpress/ssa.sh",
-		"/Applications/MAMP/htdocs/website/wordpress/wp-content/themes/twentyfourteen/author.php",
-		"/Applications/MAMP/htdocs/website/wordpress/wp-content/themes/twentysixteen/single.php"
+		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/shortcodes/extensions/page-builder/includes/page-builder/includes/item-types/class-page-builder-item.php"
 	],
 	"find":
 	{
@@ -509,6 +448,13 @@
 		"height": 93.0,
 		"where_history":
 		[
+			"/Applications/MAMP/htdocs/website/wordpress",
+			"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson",
+			"/Applications/MAMP/htdocs/website/wordpress/wp-content/unyson/",
+			"/Applications/MAMP/htdocs/website/wordpress/wp-content/themes",
+			"/Applications/MAMP/htdocs/website/wordpress",
+			"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson",
+			"/Applications/MAMP/htdocs/website/wordpress",
 			"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson",
 			"/Applications/MAMP/htdocs/website/wordpress/",
 			"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson",
@@ -542,6 +488,51 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"function do_action",
+			"wp_fix_server_vars",
+			"wp_maintenance",
+			"zend",
+			"screenReaderText",
+			"fw_shortcode_calendar_ajax_params",
+			"function load_data(",
+			"function fw_akg",
+			"FW_Request",
+			"class FW_Request",
+			"login_head",
+			"excerpt_more",
+			"add_filter",
+			"apply_filter",
+			"apply_fi",
+			"fwShortcodeCalendar",
+			"items_html",
+			"__get",
+			"__get(",
+			"$wpdb->__get",
+			"require_wp_db(",
+			"function wp_fix_server_vars",
+			"function wp_get_current_user",
+			"wp_get_current_user",
+			"@ini_set(",
+			"function ini_set(",
+			"ini_set",
+			"fw_get_options_values_from_input",
+			"filter_theme_custom_page_builder_columns",
+			"function get_config(",
+			"$active_extensions",
+			"function get(",
+			"function get_config",
+			"class FW_Extension",
+			"main(",
+			"main",
+			"wp()=>main",
+			"wp()->main",
+			"register_globals",
+			"wp_get_nocache_headers",
+			"$wp_rewrite",
+			"parse_request",
+			"debug_to_console",
+			"wp(",
+			"function wp(",
 			"items_html",
 			"wrap-forms",
 			"$items_html",
@@ -624,52 +615,7 @@
 			"get_supports_feature_name(",
 			"get_supports_feature_name();",
 			"fw(",
-			"fw_ext",
-			"debug",
-			"8887",
-			"localhost",
-			"localhost:8887\\\\/website",
-			"localhost",
-			"wp_query",
-			"ArrayAccess",
-			"get_header",
-			"calender_week_mod",
-			"function do_action",
-			"function get_header(",
-			"raycast",
-			"3.182",
-			"heading",
-			"sight",
-			"random",
-			"containerMesh",
-			"containerMeshPrev",
-			"sightMesh",
-			"containerMesh",
-			"copy",
-			"lastPos",
-			"lastCam",
-			"sightMesh",
-			".add",
-			"heading",
-			"add",
-			"look",
-			"v3d",
-			"lookat",
-			"look",
-			"camera",
-			"lookat",
-			"this.divideScalar",
-			"Vector3.distanceTo",
-			"distance",
-			"distanceTo",
-			"distanceVector",
-			"vector3.prototype",
-			"vec3.prototype",
-			"vec3",
-			"camPos",
-			"cam",
-			"updateTarget",
-			"camera"
+			"fw_ext"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -700,81 +646,24 @@
 	"groups":
 	[
 		{
-			"selected": 5,
+			"selected": 0,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "wp-content/plugins/unyson/framework/extensions/forms/static.php",
+					"file": "wp-includes/load.php",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 298,
+						"buffer_size": 26399,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/PHP/PHP.sublime-syntax"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 7,
-					"type": "text"
-				},
-				{
-					"buffer": 1,
-					"file": "wp-content/plugins/unyson/framework/extensions/forms/class-fw-extension-forms.php",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 6713,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								5493,
-								5503
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/PHP/PHP.sublime-syntax",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 2438.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 6,
-					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"file": "wp-content/plugins/unyson/framework/extensions/forms/views/backend/submit-box-edit.php",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 1034,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
+								1388,
+								1388
 							]
 						],
 						"settings":
@@ -784,964 +673,9 @@
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 5,
-					"type": "text"
-				},
-				{
-					"buffer": 3,
-					"file": "wp-content/plugins/unyson/framework/extensions/forms/includes/sub-includes.php",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 105,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/PHP/PHP.sublime-syntax"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 4,
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": "wp-content/plugins/unyson/framework/extensions/forms/includes/option-types/option-types.php",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 127,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/PHP/PHP.sublime-syntax"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 3,
-					"type": "text"
-				},
-				{
-					"buffer": 5,
-					"file": "wp-content/plugins/unyson/framework/extensions/forms/includes/option-types/form-builder/class-fw-option-type-form-builder.php",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 8068,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/PHP/PHP.sublime-syntax",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 2763.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 0,
-					"type": "text"
-				},
-				{
-					"buffer": 6,
-					"file": "wp-content/plugins/unyson/framework/extensions/forms/includes/option-types/form-builder/views/items.php",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 140,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/PHP/PHP.sublime-syntax"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 2,
-					"type": "text"
-				},
-				{
-					"buffer": 7,
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 30880,
-						"regions":
-						{
-							"match":
-							{
-								"flags": 112,
-								"regions":
-								[
-									[
-										311,
-										331
-									],
-									[
-										550,
-										570
-									],
-									[
-										843,
-										863
-									],
-									[
-										1087,
-										1107
-									],
-									[
-										1397,
-										1417
-									],
-									[
-										1710,
-										1730
-									],
-									[
-										1975,
-										1995
-									],
-									[
-										2284,
-										2304
-									],
-									[
-										2546,
-										2566
-									],
-									[
-										2990,
-										3010
-									],
-									[
-										3320,
-										3340
-									],
-									[
-										3678,
-										3698
-									],
-									[
-										3995,
-										4015
-									],
-									[
-										4283,
-										4293
-									],
-									[
-										4491,
-										4501
-									],
-									[
-										4651,
-										4661
-									],
-									[
-										4805,
-										4815
-									],
-									[
-										4940,
-										4950
-									],
-									[
-										5110,
-										5120
-									],
-									[
-										5327,
-										5337
-									],
-									[
-										5484,
-										5494
-									],
-									[
-										5900,
-										5910
-									],
-									[
-										6054,
-										6064
-									],
-									[
-										6228,
-										6238
-									],
-									[
-										6390,
-										6400
-									],
-									[
-										6556,
-										6566
-									],
-									[
-										6738,
-										6748
-									],
-									[
-										6943,
-										6953
-									],
-									[
-										7160,
-										7170
-									],
-									[
-										7352,
-										7362
-									],
-									[
-										7550,
-										7560
-									],
-									[
-										7934,
-										7944
-									],
-									[
-										8093,
-										8103
-									],
-									[
-										8396,
-										8406
-									],
-									[
-										8765,
-										8775
-									],
-									[
-										8973,
-										8983
-									],
-									[
-										9121,
-										9131
-									],
-									[
-										9300,
-										9310
-									],
-									[
-										9369,
-										9379
-									],
-									[
-										9505,
-										9515
-									],
-									[
-										9665,
-										9675
-									],
-									[
-										10085,
-										10095
-									],
-									[
-										10262,
-										10272
-									],
-									[
-										10328,
-										10338
-									],
-									[
-										10557,
-										10567
-									],
-									[
-										10699,
-										10709
-									],
-									[
-										10765,
-										10775
-									],
-									[
-										10938,
-										10948
-									],
-									[
-										11187,
-										11197
-									],
-									[
-										11625,
-										11635
-									],
-									[
-										11944,
-										11954
-									],
-									[
-										12023,
-										12033
-									],
-									[
-										12338,
-										12348
-									],
-									[
-										12448,
-										12458
-									],
-									[
-										12773,
-										12783
-									],
-									[
-										12981,
-										12991
-									],
-									[
-										13129,
-										13139
-									],
-									[
-										13308,
-										13318
-									],
-									[
-										13377,
-										13387
-									],
-									[
-										13525,
-										13535
-									],
-									[
-										13685,
-										13695
-									],
-									[
-										14065,
-										14075
-									],
-									[
-										14273,
-										14283
-									],
-									[
-										14421,
-										14431
-									],
-									[
-										14600,
-										14610
-									],
-									[
-										14669,
-										14679
-									],
-									[
-										14817,
-										14827
-									],
-									[
-										14977,
-										14987
-									],
-									[
-										15332,
-										15342
-									],
-									[
-										15579,
-										15589
-									],
-									[
-										15815,
-										15825
-									],
-									[
-										16050,
-										16060
-									],
-									[
-										16307,
-										16317
-									],
-									[
-										16365,
-										16375
-									],
-									[
-										16598,
-										16608
-									],
-									[
-										17025,
-										17035
-									],
-									[
-										17359,
-										17369
-									],
-									[
-										17630,
-										17640
-									],
-									[
-										17791,
-										17801
-									],
-									[
-										18143,
-										18153
-									],
-									[
-										18382,
-										18392
-									],
-									[
-										18434,
-										18444
-									],
-									[
-										18555,
-										18565
-									],
-									[
-										18880,
-										18890
-									],
-									[
-										19202,
-										19212
-									],
-									[
-										19499,
-										19509
-									],
-									[
-										19564,
-										19574
-									],
-									[
-										19625,
-										19635
-									],
-									[
-										19941,
-										19951
-									],
-									[
-										20039,
-										20049
-									],
-									[
-										20090,
-										20100
-									],
-									[
-										20151,
-										20161
-									],
-									[
-										20215,
-										20225
-									],
-									[
-										20623,
-										20634
-									],
-									[
-										20707,
-										20718
-									],
-									[
-										20986,
-										20996
-									],
-									[
-										21202,
-										21212
-									],
-									[
-										21302,
-										21312
-									],
-									[
-										21419,
-										21429
-									],
-									[
-										21527,
-										21537
-									],
-									[
-										21617,
-										21627
-									],
-									[
-										21735,
-										21745
-									],
-									[
-										21858,
-										21868
-									],
-									[
-										21969,
-										21979
-									],
-									[
-										22028,
-										22038
-									],
-									[
-										22078,
-										22088
-									],
-									[
-										22208,
-										22218
-									],
-									[
-										22310,
-										22320
-									],
-									[
-										22421,
-										22431
-									],
-									[
-										22527,
-										22537
-									],
-									[
-										22559,
-										22569
-									],
-									[
-										22590,
-										22600
-									],
-									[
-										22626,
-										22636
-									],
-									[
-										22660,
-										22670
-									],
-									[
-										22694,
-										22704
-									],
-									[
-										22726,
-										22736
-									],
-									[
-										22758,
-										22768
-									],
-									[
-										22794,
-										22804
-									],
-									[
-										22828,
-										22838
-									],
-									[
-										22929,
-										22939
-									],
-									[
-										22965,
-										22975
-									],
-									[
-										23045,
-										23055
-									],
-									[
-										23138,
-										23148
-									],
-									[
-										23270,
-										23280
-									],
-									[
-										23359,
-										23369
-									],
-									[
-										23453,
-										23463
-									],
-									[
-										23479,
-										23489
-									],
-									[
-										23505,
-										23515
-									],
-									[
-										23571,
-										23581
-									],
-									[
-										23623,
-										23633
-									],
-									[
-										23678,
-										23688
-									],
-									[
-										23778,
-										23788
-									],
-									[
-										23885,
-										23895
-									],
-									[
-										23988,
-										23998
-									],
-									[
-										24085,
-										24095
-									],
-									[
-										24111,
-										24121
-									],
-									[
-										24209,
-										24219
-									],
-									[
-										24312,
-										24322
-									],
-									[
-										24388,
-										24398
-									],
-									[
-										24497,
-										24507
-									],
-									[
-										24549,
-										24559
-									],
-									[
-										24670,
-										24680
-									],
-									[
-										24787,
-										24797
-									],
-									[
-										24847,
-										24857
-									],
-									[
-										24941,
-										24951
-									],
-									[
-										25048,
-										25058
-									],
-									[
-										25159,
-										25169
-									],
-									[
-										25212,
-										25222
-									],
-									[
-										25336,
-										25346
-									],
-									[
-										25427,
-										25437
-									],
-									[
-										25552,
-										25562
-									],
-									[
-										25648,
-										25658
-									],
-									[
-										25780,
-										25790
-									],
-									[
-										25923,
-										25933
-									],
-									[
-										26042,
-										26052
-									],
-									[
-										26172,
-										26182
-									],
-									[
-										26337,
-										26347
-									],
-									[
-										26380,
-										26390
-									],
-									[
-										26501,
-										26511
-									],
-									[
-										26545,
-										26555
-									],
-									[
-										26667,
-										26677
-									],
-									[
-										26715,
-										26725
-									],
-									[
-										26841,
-										26851
-									],
-									[
-										26894,
-										26904
-									],
-									[
-										27025,
-										27035
-									],
-									[
-										27130,
-										27140
-									],
-									[
-										27321,
-										27331
-									],
-									[
-										27358,
-										27368
-									],
-									[
-										27438,
-										27448
-									],
-									[
-										27481,
-										27491
-									],
-									[
-										27588,
-										27598
-									],
-									[
-										27636,
-										27646
-									],
-									[
-										27756,
-										27766
-									],
-									[
-										27799,
-										27809
-									],
-									[
-										27912,
-										27922
-									],
-									[
-										27966,
-										27976
-									],
-									[
-										28092,
-										28102
-									],
-									[
-										28141,
-										28151
-									],
-									[
-										28255,
-										28265
-									],
-									[
-										28385,
-										28395
-									],
-									[
-										28511,
-										28521
-									],
-									[
-										28636,
-										28646
-									],
-									[
-										28739,
-										28749
-									],
-									[
-										28793,
-										28803
-									],
-									[
-										28891,
-										28901
-									],
-									[
-										29032,
-										29042
-									],
-									[
-										29164,
-										29174
-									],
-									[
-										29263,
-										29273
-									],
-									[
-										29387,
-										29397
-									],
-									[
-										29430,
-										29440
-									],
-									[
-										29473,
-										29483
-									],
-									[
-										29580,
-										29590
-									],
-									[
-										29626,
-										29636
-									],
-									[
-										29677,
-										29687
-									],
-									[
-										29801,
-										29811
-									],
-									[
-										29894,
-										29904
-									],
-									[
-										29983,
-										29993
-									],
-									[
-										30423,
-										30433
-									],
-									[
-										30742,
-										30752
-									],
-									[
-										30826,
-										30836
-									]
-								],
-								"scope": ""
-							}
-						},
-						"selection":
-						[
-							[
-								30280,
-								30280
-							]
-						],
-						"settings":
-						{
-							"detect_indentation": false,
-							"line_numbers": false,
-							"output_tag": 5,
-							"result_base_dir": "",
-							"result_file_regex": "^([^ \t].*):$",
-							"result_line_regex": "^ +([0-9]+):",
-							"scroll_past_end": true,
-							"syntax": "Packages/Default/Find Results.hidden-tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 12077.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 1,
 					"type": "text"
 				}
 			]
@@ -1828,7 +762,7 @@
 	"show_open_files": false,
 	"show_tabs": true,
 	"side_bar_visible": true,
-	"side_bar_width": 266.0,
+	"side_bar_width": 170.0,
 	"status_bar_visible": true,
 	"template_settings":
 	{

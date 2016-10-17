@@ -4,7 +4,7 @@ var THREE;
 var V3D = {};
 V3D.ToRad = Math.PI/180;
 V3D.ToDeg = 180 / Math.PI;
-V3D.msePos = {x:0,y:0};
+V3D.msePos = new THREE.Vector3(0,0,0);
 
 
 V3D.View = function(h,v,d){
@@ -17,22 +17,23 @@ V3D.View = function(h,v,d){
     var container = document.getElementById('container');
 
 
-    container.style.width = "1351px";
-    container.style.height = "987px";
+    container.style.width = "100%";
+    container.style.height = "500px";
 	this.w = container.clientWidth;
 	this.h = container.clientHeight;
 	this.id = 'container';
+    this.initialcamz = 100;
 
 	this.init(h,v,d);
 	this.initBasic();
     this.sight;
 
-    this.arrCamX = [];
-    this.arrCamY = [];
-    this.pbX = [];
-    this.pbY = [];
-
-    this.startRot = 0;
+    // this.arrCamX = [];
+    // this.arrCamY = [];
+    // this.pbX = [];
+    // this.pbY = [];
+    // this.axis = new THREE.Vector3();
+    this.startRot = { issleeping: 1, rot: 0, camAngle: 0.5, axis: new THREE.Vector3() };
 
 }
 
@@ -50,8 +51,9 @@ V3D.View.prototype = {
         // this.camhelp = new THREE.CameraHelper( this.camera );
         this.camera.useQuarternion = true;
 
-        this.camera.position.z = 100;
+        this.camera.position.z = this.initialcamz;
         this.camera.position.y = 0;
+        this.camera.matrixAutoUpdate = true;
         
         
     	this.scene = new THREE.Scene();
@@ -68,17 +70,22 @@ V3D.View.prototype = {
         this.player = null;
 
        // this.raycaster = new THREE.Raycaster(this.camera.position, [0,1,0], 1, 100);
-
         this.raycaster = new THREE.Raycaster();
 
-
         this.camAngle = 0.01;
+        
+        this.tmpVCPprev1 = new THREE.Vector3(0,0,100);
+
         this.tmpVCPprev = new THREE.Vector3(0,0,100);
         this.tmppbprev = new THREE.Vector3(0,0,-100);
-        this.axis = new THREE.Vector3(0,1,0);
+      //  this.axis = new THREE.Vector3(0,1,0);
 
         this.containerMesh;
         this.proBox;
+        this.camrot = new THREE.Vector3();
+        this.pbrot = new THREE.Vector3();
+        this.newsightpos = new THREE.Vector3();
+        this.dir = new THREE.Vector3();
 
         //this.projector = new THREE.Projector();
     	//this.raycaster = new THREE.Raycaster();
@@ -139,7 +146,8 @@ V3D.View.prototype = {
 
 
 	    //mats['box'] = new THREE.MeshLambertMaterial( { map: this.basicTexture(2), name:'box' } );
-        mats['box'] = new THREE.MeshLambertMaterial( { color: 0x66ff33, wireframe: true, name:'box'} );
+        mats['box'] = new THREE.MeshLambertMaterial( { color: 0x66ff33, wireframe: false, name:'box'} );
+        mats['transbox'] = new THREE.MeshLambertMaterial( { color: 0x0000ff, wireframe: true, name:'transbox', transparent:true, opacity: 0.0} );
 
 
 	    mats['sbox'] = new THREE.MeshLambertMaterial( { map: this.basicTexture(3), name:'sbox' } );
@@ -159,31 +167,66 @@ V3D.View.prototype = {
     render : function(){
 
 
-        if(this.startRot){ this.applyRot() };
+
+            // var m = new THREE.Matrix4();
+            // var q = new THREE.Quaternion();
+            // q.setFromAxisAngle( new THREE.Vector3(1,0,0), this.camAngle);
+
+            // var cmq = this.camera.quaternion;
+            // cmq.multiplyQuaternions(q, cmq);
+            // cmq.normalize;
+            // this.camera.matrix.makeRotationFromQuaternion(cmq);
+         //   this.containerMesh.matrixAutoUpdate = false;
+//            var d = m.makeRotationFromQuaternion( q );
+
+
+        if(this.startRot.rot){ this.applyRot() };
        
        // update the picking ray with the camera and mouse position    
-        this.raycaster.setFromCamera( V3D.msePos, this.camera );   
+        // this.raycaster.setFromCamera( V3D.msePos, this.camera );  
+
+        // var objArr = [];
+        // objArr[0] = this.scene.children[0];
+        // objArr[1] = this.scene.children[1];
 
         // calculate objects intersecting the picking ray
-        var intersects = this.raycaster.intersectObjects( this.scene.children );
+        // var intersects = this.raycaster.intersectObjects( objArr );
 
-        for ( let i = 0; i < intersects.length; i++ ) {
+        // for ( let i = 0; i < intersects.length; i++ ) {
 
-            if(intersects[ i ].object.name == 'proBox') {
+        //     if(intersects[ i ].object.name == 'proBox') {
                 
-                this.sight.position.copy(intersects[i].point);
-             //   this.gs_mse_pos('set', intersects[i].point);
-            }
+        //         this.sight.position.copy(intersects[i].point);
+        //      //   this.gs_mse_pos('set', intersects[i].point);
+        //     }
         
-        }
+        // }
 
+        // this.raycaster.setFromCamera( V3D.msePos, this.camera );  
+        // this.newsightpos.addVectors ( this.raycaster.ray.origin, this.raycaster.ray.direction.multiplyScalar( 200 ));
+        // this.sight.position.copy(this.newsightpos);
 
-        //this.camhelp.update();
+        // this.origin.setFromMatrixPosition( this.camera.matrixWorld );
+        // this.dir.set( V3D.msePos.x, V3D.msePos.y, 0.5 ).unproject( this.camera ).sub( this.origin ).normalize();
+        // this.newsightpos.addVectors ( this.origin, this.dir.multiplyScalar( 200 ));
+        // this.sight.position.copy(this.newsightpos);
 
 
 
 
     	this.renderer.render( this.scene, this.camera );
+
+                // this.origin.setFromMatrixPosition( this.camera.matrixWorld );
+        this.dir.set( V3D.msePos.x, V3D.msePos.y, 0.5 ).unproject( this.camera ).sub( this.camera.position ).normalize();
+        this.newsightpos.addVectors ( this.camera.position, this.dir.multiplyScalar( 200 ));
+
+       // var distance = this.camera.position.distanceTo(this.newsightpos);
+
+
+
+        this.sight.position.copy(this.newsightpos);
+        this.sight.lookAt(this.containerMesh.position);
+
     },
     setMesh : function(color) {
         var mats = {};
@@ -215,13 +258,20 @@ V3D.View.prototype = {
             if(color){ 
                 this.mats['sph'] = this.setMesh(color);
             }
-            //  siolsite put back to load images if(image){
-            //     var setImage = 'http://localhost:8887/fs_canvas/images/'+image;
-            //     var texture = new THREE.TextureLoader().load(setImage);
-            //     this.mats['sph'] = new THREE.MeshBasicMaterial({map:texture});
-            // }
+             //siolsite put back to load images 
+             if(image){
+                var setImage = 'http://localhost:8887/fs_canvas/images/'+image;
+                var texture = new THREE.TextureLoader().load(setImage);
+                if(type == 'sphere'){
+                    this.mats['sph'] = new THREE.MeshBasicMaterial({map:texture});
+                }
+                else {
+                    this.mats['box'] = new THREE.MeshBasicMaterial({map:texture});
+                }
+            }
     		if(type=='box' && move) mesh = new THREE.Mesh( this.geos.box, this.mats.box, name );
 	    	if(type=='box' && !move) mesh = new THREE.Mesh( this.geos.box, this.mats.static, name);
+            if(type=='transbox' && move) mesh = new THREE.Mesh( this.geos.box, this.mats.transbox, name);
 	    	if(type=='plane' && !move) mesh = new THREE.Mesh( this.geos.plane, this.mats.static2, name );
 	    	if(type=='sphere' && move) mesh = new THREE.Mesh( this.geos.sph, this.mats.sph, name );
 	    	if(type=='sphere' && !move) mesh = new THREE.Mesh( this.geos.sph, this.mats.static, name);
@@ -315,59 +365,127 @@ V3D.View.prototype = {
         }
     },
     getPlayerDir : function (direction, playerPos){
+
         var heading = new THREE.Vector3();
         if(direction == 'forward'){
+
+            var retMse = this.gs_mse_pos('get');
+         //   this.log('forward sight pos ', retMse);
+         //   this.log('cm: ' , playerPos);
+         //   this.log('gpd cam', this.camera.position);
+
+
             heading = heading.subVectors( this.gs_mse_pos('get'), playerPos );
         }
         else {
+
+
+            var retMse = this.gs_mse_pos('get');
+            this.log('reverse sight pos ', retMse);
+
+
             heading = heading.subVectors( playerPos, this.gs_mse_pos('get') );
         }
         return heading.normalize();
     },
 
-    applyRot: function () {
+    applyRot: function (issleeping) {
 
 
-            // var tmpVCP = new OIMO.Vec3();
-            // tmpVCP.copy(tmpVCPprev);
-            // var length = tmpVCP.length();
-            // tmpVCP.normalize();
-            // tmpVCP.applyAxisAngle( axis, camAngle );
-            // tmpVCP.multiplyScalar( length );
-            // tmpVCP.x -= tmpVCPprev.x;
-            // tmpVCP.z -= tmpVCPprev.z;
-            // tmpVCPprev.x += tmpVCP.x;
-            // tmpVCPprev.z += tmpVCP.z;
-            // v3d.camera.position.x += tmpVCP.x;
-            // v3d.camera.position.z += tmpVCP.z;
-            // v3d.camera.lookAt ( containerMesh.position );
+
+            // var q = new THREE.Quaternion();
+            // q.setFromAxisAngle( this.startRot.axis, this.startRot.camAngle);
+
+            // var cmq = this.camera.quaternion;
+            // cmq.multiplyQuaternions(q, cmq);
+            // cmq.normalize;
+            // this.camera.matrix.makeRotationFromQuaternion(cmq);
+
+
 
             var tmpVCP = new THREE.Vector3();
             tmpVCP.copy(this.tmpVCPprev);
+            tmpVCP.applyAxisAngle( this.startRot.axis, this.startRot.camAngle );
 
-            tmpVCP.applyAxisAngle( this.axis, this.camAngle );
-            this.tmpVCPprev.copy(tmpVCP)
+            tmpVCP.x -= this.tmpVCPprev.x;
+            tmpVCP.y -= this.tmpVCPprev.y;
+            tmpVCP.z -= this.tmpVCPprev.z;
 
-            this.camera.position.x = tmpVCP.x;
-            this.camera.position.z = tmpVCP.z;
-            this.camera.lookAt ( this.containerMesh.position );
+            this.tmpVCPprev.x += tmpVCP.x;
+            this.tmpVCPprev.y += tmpVCP.y;
+            this.tmpVCPprev.z += tmpVCP.z;
 
-            this.arrCamX.push(tmpVCP.x);
+            if ( this.startRot.issleeping ) {
+                this.camera.position.x += tmpVCP.x;
+                this.camera.position.y += tmpVCP.y;
+                this.camera.position.z += tmpVCP.z;
+                this.camera.lookAt( this.containerMesh.position );
+            }
+            else {
+                this.camrot.x = tmpVCP.x;
+                this.camrot.y = tmpVCP.y;
+                this.camrot.z = tmpVCP.z;
+            }
 
 
 
+            // var tmpVCP = new THREE.Vector3();
+            // tmpVCP.copy(this.tmppbprev);
+            // tmpVCP.applyAxisAngle( this.startRot.axis, this.startRot.camAngle );
 
-            var tmpVCP = new THREE.Vector3(0,0,0);
-            tmpVCP.copy(this.tmppbprev);
-            tmpVCP.applyAxisAngle( this.axis, this.camAngle );
-            this.tmppbprev.copy(tmpVCP);
+            // tmpVCP.x -= this.tmppbprev.x;
+            // tmpVCP.y -= this.tmppbprev.y;
+            // tmpVCP.z -= this.tmppbprev.z;
 
-            this.proBox.position.x = tmpVCP.x;
-            this.proBox.position.z = tmpVCP.z;
-            this.proBox.lookAt(this.containerMesh.position);
+            // this.tmppbprev.x += tmpVCP.x;
+            // this.tmppbprev.y += tmpVCP.y;
+            // this.tmppbprev.z += tmpVCP.z;
+
+
+
+            // if( this.startRot.issleeping) {
+            //     this.proBox.position.x += tmpVCP.x;
+            //     this.proBox.position.y += tmpVCP.y;
+            //     this.proBox.position.z += tmpVCP.z; 
+            //     this.proBox.lookAt( this.containerMesh.position );
+            // }
+
+            // else {
+            //     this.pbrot.x = tmpVCP.x;
+            //     this.pbrot.y = tmpVCP.y;
+            //     this.pbrot.z = tmpVCP.z;
+            // }
             
-            this.pbX.push(tmpVCP.x);
-            console.log(this.pbx);
+
+
+         
+            
+    },
+    tvec: function() {
+        return new THREE.Vector3();
+    },
+    whcam: function() {
+        var vFOV = this.camera.fov * Math.PI / 180;        // convert vertical fov to radians
+        var height = 2 * Math.tan( vFOV / 2 ) * 300; // visible height
+
+        var aspect = this.w / this.h;
+        var width = height * aspect;   
+
+        return {h: height,w: width};
+
+    },
+    log: function(name, output){
+            
+        if( typeof output == 'object' ){   
+            console.log(`output ${name}  x ${output.x} , y ${output.y} , z ${output.z} `);
+        }
+        else if( typeof output === undefined ) {
+            console.log(`string is ${name} `);
+        }
+        else {
+            console.log(`name ${name} and output ${output}`);
+        }
+
     }
 
 }
