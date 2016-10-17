@@ -216,16 +216,10 @@ V3D.View.prototype = {
 
     	this.renderer.render( this.scene, this.camera );
 
-                // this.origin.setFromMatrixPosition( this.camera.matrixWorld );
-        this.dir.set( V3D.msePos.x, V3D.msePos.y, 0.5 ).unproject( this.camera ).sub( this.camera.position ).normalize();
-        this.newsightpos.addVectors ( this.camera.position, this.dir.multiplyScalar( 200 ));
-
-       // var distance = this.camera.position.distanceTo(this.newsightpos);
-
-
-
-        this.sight.position.copy(this.newsightpos);
-        this.sight.lookAt(this.containerMesh.position);
+        // this.dir.set( V3D.msePos.x, V3D.msePos.y, 0.5 ).unproject( this.camera ).sub( this.camera.position ).normalize();
+        // this.newsightpos.addVectors ( this.camera.position, this.dir.multiplyScalar( 200 ));
+        // this.sight.position.copy(this.newsightpos);
+        // this.sight.lookAt(this.containerMesh.position);
 
     },
     setMesh : function(color) {
@@ -266,11 +260,12 @@ V3D.View.prototype = {
                     this.mats['sph'] = new THREE.MeshBasicMaterial({map:texture});
                 }
                 else {
-                    this.mats['box'] = new THREE.MeshBasicMaterial({map:texture});
+                    this.mats['boxImage'] = new THREE.MeshBasicMaterial({map:texture, wireframe: true, name:'boxImage', transparent:true, opacity: 0.0});
                 }
             }
     		if(type=='box' && move) mesh = new THREE.Mesh( this.geos.box, this.mats.box, name );
 	    	if(type=='box' && !move) mesh = new THREE.Mesh( this.geos.box, this.mats.static, name);
+            if(type=='boxImage' && move) mesh = new THREE.Mesh( this.geos.box, this.mats.boxImage, name );
             if(type=='transbox' && move) mesh = new THREE.Mesh( this.geos.box, this.mats.transbox, name);
 	    	if(type=='plane' && !move) mesh = new THREE.Mesh( this.geos.plane, this.mats.static2, name );
 	    	if(type=='sphere' && move) mesh = new THREE.Mesh( this.geos.sph, this.mats.sph, name );
@@ -290,10 +285,9 @@ V3D.View.prototype = {
             if(mesh.name == 'containerSphere'){
                 this.containerMesh = mesh;
             };
-            if(mesh.name == 'proBox'){
-                this.proBox = mesh;
-
-            }
+            // if(mesh.name == 'proBox'){
+            //     this.proBox = mesh;
+            // }
 
 	        return mesh;
     	}
@@ -375,12 +369,10 @@ V3D.View.prototype = {
          //   this.log('gpd cam', this.camera.position);
 
 
-            heading = heading.subVectors( this.gs_mse_pos('get'), playerPos );
+            heading = heading.subVectors( retMse, playerPos );
         }
         else {
 
-
-            var retMse = this.gs_mse_pos('get');
             this.log('reverse sight pos ', retMse);
 
 
@@ -388,7 +380,14 @@ V3D.View.prototype = {
         }
         return heading.normalize();
     },
+    updateSightPos: function () {
 
+            this.dir.set( V3D.msePos.x, V3D.msePos.y, 0.5 ).unproject( this.camera ).sub( this.camera.position ).normalize();
+            this.newsightpos.addVectors ( this.camera.position, this.dir.multiplyScalar( 200 ));
+            this.sight.position.copy(this.newsightpos);
+            this.sight.lookAt(this.containerMesh.position);
+
+    },
     applyRot: function (issleeping) {
 
 

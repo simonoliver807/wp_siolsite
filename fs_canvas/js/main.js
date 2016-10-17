@@ -5,10 +5,11 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 		var gameinit = new GAMEINIT;
 		var container = document.getElementById('container');    
 		var timestep = 1/60;
-		var keys = { LEFT: 37, UP: 38, RIGHT: 39, DOWN: 40, ECS: 27, SPC: 32 };
+		var keys = { LEFT: 37, UP: 48, RIGHT: 39, DOWN: 40, ECS: 27, SPC: 32 };
 		var render;
 		var v3d;
 		var velocity;
+		var shootStart;
 
 
 		return {
@@ -18,12 +19,13 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 				v3d = gameinit.getObj('v3d');
 				this.loadEvents();
 				gameinit.createWorld(timestep);
-				gameinit.populate(1);
+				gameinit.populate(15);
 			    v3d.initLight();
 			    render = this.render;
 		        this.render();
 				setInterval(gameinit.oimoLoop, timestep*1000);
 				velocity = 1;
+				shootStart = v3d.tvec();
 
 
 			},
@@ -58,8 +60,6 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 
 				        case keys.UP:
 
-				        	v3d.log('cam but push: ' , v3d.camera.position);
-
 				            var heading = v3d.getPlayerDir('forward', containerMesh.position);
 				            heading.multiplyScalar( 25 );
 				            var rb = bodys[0].body;
@@ -69,7 +69,7 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 				            	gameinit.reverse = false;
 				            }
 
-				            velocity += 0.1;
+				            velocity = 1 + rb.linearVelocity.length() / 10;
 
 				            break;
 
@@ -94,7 +94,10 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 				        		if(lenghtlv < 1) {
 				        			gameinit.reverse = true;
 				        		}
-				        		velocity -= 0.1;
+				        	}
+
+				        	if(velocity < 3){
+				        		velocity = 1 + rb.linearVelocity.length() / 10;
 				        	}
 
 				            break;
@@ -109,16 +112,20 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 
 				        case keys.SPC:
 				            var heading = v3d.getPlayerDir('forward', containerMesh.position);
-				            var mag = 500 * velocity;
+				            var mag = 1000 * velocity;
 				            heading.x *= mag;
 				            heading.y *= mag;
 				            heading.z *= mag;
-				            var shootStart = containerMesh.position;
-				            var sphere = [{ "size":[1.5, 1.5, 1.5], "pos":[shootStart.x, shootStart.y, v3d.camera.position.z -  v3d.initialcamz - gameinit.getObj('shp1r')], "move":"true", "name":"shoot", "color":'#66ff33'}];
+				            shootStart.copy(containerMesh.position);
+				            shootStart = shootStart.sub( v3d.camera.position );
+				            shootStart = shootStart.normalize();
+				            shootStart.add(containerMesh.position);
+				            //shootStart.multiplyScalar(8);
+				            var sphere = [{ "size":[1.5, 1.5, 1.5], "pos":[shootStart.x, shootStart.y, shootStart.z], "move":"true", "name":"shoot", "color":'#66ff33'}];
 				            var ss = gameinit.addSphere(sphere);
 				            var rb = ss.body;
 				            rb.linearVelocity.addTime(heading, world.timeStep);
-				            console.log('heading x: '+ rb.linearVelocity.x + ' heading y: '+ rb.linearVelocity.y + 'heading z: '+ rb.linearVelocity.z); 
+				            console.log('velocity: ' + velocity);
 				            break;
 
 				        case keys.ECS:

@@ -127,17 +127,13 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
                                 v3d.camera.position.x += tmpPosX;
                                 v3d.camera.position.y += tmpPosY; 
                                 v3d.camera.position.z += tmpPosZ;
-                                v3d.camera.matrixWorld.elements[12] += tmpPosX;
-                                v3d.camera.matrixWorld.elements[13] += tmpPosY;
-                                v3d.camera.matrixWorld.elements[14] += tmpPosZ;
-
                                 if(v3d.startRot.rot){
                                     v3d.camera.position.x += v3d.camrot.x;
                                     v3d.camera.position.y += v3d.camrot.y;
                                     v3d.camera.position.z += v3d.camrot.z;
                                     v3d.camera.lookAt( containerMesh.position );
                                 };
-                                v3d.scene.updateMatrixWorld();
+                                v3d.camera.updateMatrixWorld();
 
 
                                 // proBox.position.x += tmpPosX;
@@ -165,6 +161,7 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
                          //   if(mesh.material.name === 'sph') mesh.material = v3d.mats.ssph;
                         }
                     }
+                    v3d.updateSightPos();
                 }
             },
 
@@ -183,9 +180,9 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
                     x = 500;
                     z = -1500;
                     y = 100;
-                    w = 0.5;
-                    h = 0.5;
-                    d = 0.5;
+                    w = 15;
+                    h = 15;
+                    d = 15;
 
 
                // var whcam = v3d.whcam();
@@ -194,23 +191,23 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
                // meshs[meshNum] = v3d.add(proBox);
                // proBox = meshs[meshNum];
 
-                var spheres = [{ "size":[shp1r, shp1r, shp1r], "pos":[0,0,0], "move":"true", "name":"shp1", "color":'#66ff33', "image":'shp1.jpg'},
+                var spheres = [{ "size":[shp1r, shp1r, shp1r], "pos":[0,0,0], "move":"true", "name":"shp1", "color":'#66ff33'},
                                // { "size":[2, 2, 2], "pos":[0, 0, -100], "move":"true", "name":"sight","color":'#ff00ff', "image":'basic_gunsight.gif'},
-                               { "size":[2, 2, 2], "pos":[0,0,0], "move":"true", "name":"containerSphere", "color": '#ff0000'},
-                               { "size":[500, 500, 500], "pos":[500,10,-5000], "move":"true", "name":"planet","color":"#0000ff", "image":"planet_1.png"},
-                               { "size":[500, 500, 500], "pos":[500,10,5000], "move":"true", "name":"planet","color":"#ff0000", "image":"planet_2.jpg"}];
+                               { "size":[8, 8, 8], "pos":[0,0,0], "move":"true", "name":"containerSphere", "color": '#ff0000',  "image":'shp1.jpg'},
+                               { "size":[500, 500, 500], "pos":[500,10,-10000], "move":"true", "name":"planet","color":"#0000ff", "image":"planet_1.png"},
+                               { "size":[500, 500, 500], "pos":[500,10,10000], "move":"true", "name":"planet","color":"#ff0000", "image":"planet_2.jpg"}];
 
 
                 this.addSphere(spheres);
 
-                sightMesh = { type: 'box', size:[15, 15, 0.5], pos:[0, 0, -100], move:'false', name:'sight', image:'basic_gunsight.gif'};
+                sightMesh = { type: 'boxImage', size:[15, 15, 0.5], pos:[0, 0, -100], move:'false', name:'sight', image:'basic_gunsight.gif'};
                 sightMesh = v3d.add(sightMesh,'','',sightMesh.image);
 
-
+                var t = 2;
 
                for(var i=0;i<n;i++){
 
-                   var t = 2;
+                   t === 2 ? t=3 : t=2 ;
                    if(t===2) obj = { type:'box', size:[w,h,d], pos:[x,y,z], move:true,world:world, name:'box1' };
                    if(t===3) obj = { type:'cylinder', size:[w,h,w, w,h,w, w,h,w, w,h,w], pos:[x,y,z], rot:[0,0,0, 0,45,0, 0,22.5,0, 0,-22.5,0], move:true,world:world };
 
@@ -242,7 +239,7 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
                         }
                     }
                     if(sphere.name == 'containerSphere'){
-                        containerMesh = v3d.add(sphere,target,sphere.color);
+                        containerMesh = v3d.add(sphere,target,sphere.color, sphere.image);
                     }
                     // if(sphere.name == 'sight'){
                     //     sightMesh = v3d.add(sphere,target,sphere.color,sphere.image);
