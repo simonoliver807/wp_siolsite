@@ -58,7 +58,6 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
     //var proBox;
     var tmp;
 
-    var planetMesh;
     var prevAngle;
     var prevCamVector;
     var camAngle = 0.01;
@@ -169,10 +168,6 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
                 var obj;
 
                 perf = new OIMO.Performance(world);
-                //add static ground
-                // obj = { size:[400, 40, 390], pos:[0,-20,0],world:world, name:'ground', flat:true }
-                // new OIMO.Body(obj);
-                // v3d.add(obj);
 
                 //add random objects
                 var x, y, z, w, h, d, t;
@@ -184,67 +179,52 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
                     h = 15;
                     d = 15;
 
-
-               // var whcam = v3d.whcam();
-             //   proBox = { type:'transbox', size:[whcam.w, whcam.h, 0.5], pos:[0,0,-100], move:true, world:world, name:'proBox'  };
-                //proBox = { type:'box', size:[whcam.w, whcam.h,  0.5], pos:[0,0,-100], move:true, world:world, name:'proBox' };
-               // meshs[meshNum] = v3d.add(proBox);
-               // proBox = meshs[meshNum];
-
-                var spheres = [{ "size":[shp1r, shp1r, shp1r], "pos":[0,0,0], "move":"true", "name":"shp1", "color":'#66ff33'},
-                               // { "size":[2, 2, 2], "pos":[0, 0, -100], "move":"true", "name":"sight","color":'#ff00ff', "image":'basic_gunsight.gif'},
-                               { "size":[8, 8, 8], "pos":[0,0,0], "move":"true", "name":"containerSphere", "color": '#ff0000',  "image":'shp1.jpg'},
-                               { "size":[500, 500, 500], "pos":[500,10,-10000], "move":"true", "name":"planet","color":"#0000ff", "image":"planet_1.png"},
-                               { "size":[500, 500, 500], "pos":[500,10,10000], "move":"true", "name":"planet","color":"#ff0000", "image":"planet_2.jpg"}];
+                var spheres = [{ type: 'sphere', size: [shp1r, shp1r, shp1r], pos:[0,0,0], move: 'true', world: world, color:'#66ff33', wireframe: 'false', name:"shp1", transparent: 'false', opacity: 1},
+                               { type: 'sphere', size:[8, 8, 8], pos:[0,0,0], move: 'true', world: world, color: '#ff0000', wireframe: 'false',  name: 'containerMesh', transparent: 'false', opacity: 1, image:'shp1.jpg'},
+                               { type: 'sphere', size:[500, 500, 500], pos:[500,10,-10000], move: 'true', world: world, color: '#0000ff', wireframe: 'false',  name: 'planet', transparent: 'false', opacity: 1, image:'planet_1.png'},
+                               { type: 'sphere', size:[500, 500, 500], pos:[500,10,10000], move: 'true', world: world, color: '#0000ff', wireframe: 'false',  name: 'planet', transparent: 'false', opacity: 1, image:'planet_2.jpg'}];
 
 
-                this.addSphere(spheres);
-
-                sightMesh = { type: 'boxImage', size:[15, 15, 0.5], pos:[0, 0, -100], move:'false', name:'sight', image:'basic_gunsight.gif'};
-                sightMesh = v3d.add(sightMesh,'','',sightMesh.image);
-
-                var t = 2;
-
-               for(var i=0;i<n;i++){
-
-                   t === 2 ? t=3 : t=2 ;
-                   if(t===2) obj = { type:'box', size:[w,h,d], pos:[x,y,z], move:true,world:world, name:'box1' };
-                   if(t===3) obj = { type:'cylinder', size:[w,h,w, w,h,w, w,h,w, w,h,w], pos:[x,y,z], rot:[0,0,0, 0,45,0, 0,22.5,0, 0,-22.5,0], move:true,world:world };
-
-                    bodys[bodysNum] = new OIMO.Body(obj);
-                    meshs[meshNum] = v3d.add(obj);
-                    bodysNum += 1;
-                    meshNum +=1
-
-                    x = this.randMinMax(-5000,5000);
-                    y = this.randMinMax(-5000,5000);
-                    z = this.randMinMax(-5000,5000);
-               }
-            },
-
-            addSphere: function(spheres) {
                 var target;
-                for( var i in spheres){
-                    var sphere =  {type: 'sphere', size:spheres[i].size, pos:spheres[i].pos, move:spheres[i].move,world:world, name:spheres[i].name, color: spheres[i].color, image: spheres[i].image};
-                    if(sphere.name != 'containerSphere' && sphere.name != 'sight'){
-                        bodys[bodysNum] = new OIMO.Body(sphere);
-                        meshs[meshNum] = v3d.add(sphere,target,sphere.color,sphere.image);
-                        if(sphere.name == 'planet'){
-                            planetMesh = meshs[meshNum];
-                        }
+                for( var i=0; i<spheres.length; i++) {
+                    //var sphere =  {size:spheres[i].size, pos:spheres[i].pos, move:spheres[i].move,world:world, name:spheres[i].name, image: spheres[i].image};
+                    if(spheres[i].name != 'containerMesh'){
+                        bodys[bodysNum] = new OIMO.Body(spheres[i]);
+                        meshs[meshNum] = v3d.addSphere(spheres[i]);
                         bodysNum += 1;
                         meshNum +=1;
-                         if(sphere.name == 'shoot') {
-                            return bodys[bodysNum - 1];
-                        }
                     }
-                    if(sphere.name == 'containerSphere'){
-                        containerMesh = v3d.add(sphere,target,sphere.color, sphere.image);
+                    if(spheres[i].name == 'containerMesh'){
+                        containerMesh = v3d.addSphere(spheres[i]);
                     }
-                    // if(sphere.name == 'sight'){
-                    //     sightMesh = v3d.add(sphere,target,sphere.color,sphere.image);
-                    // }
                 }
+                sightMesh = { type: 'box', size: [15, 15, 0.5], pos:[0,0,-100], move: 'true', world: world, color:'#66ff33', wireframe: 'false', name: 'sight', transparent: 'false', opacity: 1, image:'basic_gunsight.gif'};
+                sightMesh = v3d.addBox(sightMesh);
+
+               // var t = 2;
+               // for(var i=0;i<n;i++){
+               //     t === 2 ? t=3 : t=2 ;
+               //     if(t===2) obj = { type:'box', size:[w,h,d], pos:[x,y,z], move:true,world:world, name:'box1' };
+               //     if(t===3) obj = { type:'cylinder', size:[w,h,w, w,h,w, w,h,w, w,h,w], pos:[x,y,z], rot:[0,0,0, 0,45,0, 0,22.5,0, 0,-22.5,0], move:true,world:world };
+
+               //      bodys[bodysNum] = new OIMO.Body(obj);
+               //      meshs[meshNum] = v3d.add(obj);
+               //      bodysNum += 1;
+               //      meshNum +=1
+
+               //      x = this.randMinMax(-5000,5000);
+               //      y = this.randMinMax(-5000,5000);
+               //      z = this.randMinMax(-5000,5000);
+               // }
+            },
+            addPhaser: function(body, sphere){
+
+                bodys[bodysNum] = new OIMO.Body(body);
+                meshs[meshNum] = sphere
+                bodysNum += 1;
+                meshNum +=1;
+                return bodys[bodysNum -1];
+                
             },
             getObj: function(el) {
 

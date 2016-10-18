@@ -124,46 +124,6 @@ V3D.View.prototype = {
 	    light.shadowMapWidth = light.shadowMapHeight = 1024;
 	    this.scene.add( light );
     },
-    initBasic:function(){
-    	var geos = {};
-		geos['sph'] = new THREE.BufferGeometry();
-		geos['box'] = new THREE.BufferGeometry();
-		geos['cyl'] = new THREE.BufferGeometry();
-	    geos['sph'].fromGeometry( new THREE.SphereGeometry(1,12,10)); 
-	    geos['cyl'].fromGeometry( new THREE.CylinderGeometry(0.5,0.5,1,12,1));  
-	    geos['box'].fromGeometry( new THREE.BoxGeometry(1,1,1));
-	    geos['plane'] = new THREE.PlaneBufferGeometry(1,1, 100, 100);
-	    geos['plane'].applyMatrix(new THREE.Matrix4().makeRotationX(-90*V3D.ToRad));
-
-
-
-
-	    var mats = {};
-	   // mats['sph'] = new THREE.MeshLambertMaterial( { map: this.basicTexture(0), name:'sph', wireframe:'true'} );
-        // mats['sph'] = new THREE.MeshLambertMaterial( { color: 0x66ff33, wireframe: true, name:'sph'} );
-
-	    mats['ssph'] = new THREE.MeshLambertMaterial( { map: this.basicTexture(1), name:'ssph' } );
-
-
-	    //mats['box'] = new THREE.MeshLambertMaterial( { map: this.basicTexture(2), name:'box' } );
-        mats['box'] = new THREE.MeshLambertMaterial( { color: 0x66ff33, wireframe: false, name:'box'} );
-        mats['transbox'] = new THREE.MeshLambertMaterial( { color: 0x0000ff, wireframe: true, name:'transbox', transparent:true, opacity: 0.0} );
-
-
-	    mats['sbox'] = new THREE.MeshLambertMaterial( { map: this.basicTexture(3), name:'sbox' } );
-	    mats['cyl'] = new THREE.MeshLambertMaterial( { map: this.basicTexture(5), name:'cyl' } );
-	    mats['scyl'] = new THREE.MeshLambertMaterial( { map: this.basicTexture(6), name:'scyl' } );
-	    mats['static'] = new THREE.MeshLambertMaterial( { map: this.basicTexture(4), name:'static' } );
-	   
-
-       // mats['static2'] = new THREE.MeshLambertMaterial( { map: this.basicTexture(4, 6), name:'static2' } );
-        mats['static2'] = new THREE.MeshLambertMaterial( { color: 0xff0000, wireframe: true, name:'static2' } );
-
-	    mats['joint']  = new THREE.LineBasicMaterial( { color: 0x00ff00 } );
-
-	    this.mats = mats;
-	    this.geos = geos;
-    },
     render : function(){
 
 
@@ -222,76 +182,81 @@ V3D.View.prototype = {
         // this.sight.lookAt(this.containerMesh.position);
 
     },
-    setMesh : function(color) {
-        var mats = {};
-        return mats['sph'] = new THREE.MeshLambertMaterial( { color: color, wireframe: true, name:'sph'} );
+    initBasic:function(){
+        var geos = {};
+        geos['planet'] = new THREE.SphereBufferGeometry(500, 16, 12);
+        geos['shp1'] = new THREE.SphereGeometry(7.5)
+        geos['containerMesh'] = new THREE.SphereGeometry(8);
+        geos['phaser'] = new THREE.SphereGeometry(1.5, 3, 2);
+
+        geos['sight'] = new THREE.BoxGeometry(15,15,0.5);
+        
+
+        this.geos = geos;
+
+
+        // geos['box'] = new THREE.SphereBufferGeometry();
+        // geos['cyl'] = new THREE.BufferGeometry();
+        // geos['sph'].fromGeometry( new THREE.SphereGeometry(1,12,10)); 
+        // geos['cyl'].fromGeometry( new THREE.CylinderGeometry(0.5,0.5,1,12,1));  
+        // geos['box'].fromGeometry( new THREE.BoxGeometry(1,1,1));
+        // geos['plane'] = new THREE.PlaneBufferGeometry(1,1, 100, 100);
+        // geos['plane'].applyMatrix(new THREE.Matrix4().makeRotationX(-90*V3D.ToRad));
+
+        // var mats = {};
+
+        // mats['box'] = new THREE.MeshLambertMaterial( { color: 0x66ff33, wireframe: false, name:'box'} );
+        // mats['transbox'] = new THREE.MeshLambertMaterial( { color: 0x0000ff, wireframe: true, name:'transbox', transparent:true, opacity: 0.0} );
+
+        // this.mats = mats;
+        // this.geos = geos;
+    },
+    addSphere : function(sphere){
+    
+        // this.mats['sph'] = this.setMesh(color);
+         if(sphere.image){
+            var setImage = 'http://localhost:8887/fs_canvas/images/'+sphere.image;
+            var texture = new THREE.TextureLoader().load(setImage);
+            var material = new THREE.MeshBasicMaterial({map:texture});
+        }
+        else {
+            var material = new THREE.MeshBasicMaterial({ color: sphere.color, wireframe: sphere.wireframe, name: sphere.name, transparent: sphere.transparent, opacity: sphere.opacity });
+        }
+
+        var mesh = new THREE.Mesh( this.geos[sphere.name], material, sphere.name );
+        mesh.position.set( sphere.pos[0], sphere.pos[1], sphere.pos[2] );
+        this.scene.add( mesh );
+
+        if(mesh.name == 'containerMesh'){
+            this.containerMesh = mesh;
+        };
+
+        return mesh;
+    	
+    },
+    addBox: function(box){
+
+        if(box.image){
+            var setImage = 'http://localhost:8887/fs_canvas/images/'+box.image;
+            var texture = new THREE.TextureLoader().load(setImage);
+            var material = new THREE.MeshBasicMaterial({map:texture, wireframe: box.wireframe, name: box.name, transparent: box.transparent, opacity: box.opacity});
+        }
+        else {
+             var material = new THREE.MeshBasicMaterial({ color: box.color, wireframe: box.wireframe, name: box.name, transparent: box.transparent, opacity: box.opacity });
+        }
+
+        var mesh = new THREE.Mesh( this.geos[box.name], material, box.name );
+        mesh.position.set( box.pos[0], box.pos[1], box.pos[2] );
+        this.scene.add( mesh );
+
+        if(mesh.name == 'sight'){
+            this.sight = mesh;
+        };
 
     },
-    add : function(obj, target, color, image){
-    	var type = obj.type || 'box';
-    	var size = obj.size || [10,10,10];
-    	var pos = obj.pos || [0,0,0];
-    	var rot = obj.rot || [0,0,0];
-    	var move = obj.move || false;
-        var name = obj.name || '';
-    	if(obj.flat){ type = 'plane'; pos[1]+=size[1]*0.5; }
-    	
-    	if(type.substring(0,5) === 'joint'){//_____________ Joint
-    		var joint;
-    		var pos1 = obj.pos1 || [0,0,0];
-    		var pos2 = obj.pos2 || [0,0,0];
-			var geo = new THREE.Geometry();
-			geo.vertices.push( new THREE.Vector3( pos1[0], pos1[1], pos1[2] ) );
-			geo.vertices.push( new THREE.Vector3( pos2[0], pos2[1], pos2[2] ) );
-			joint = new THREE.Line( geo, this.mats.joint, THREE.LinePieces );
-			if(target) target.add( mesh );
-			else this.scene.add( joint );
-			return joint;
-    	} else {//_____________ Object
-    		var mesh;
-            if(color){ 
-                this.mats['sph'] = this.setMesh(color);
-            }
-             //siolsite put back to load images 
-             if(image){
-                var setImage = 'http://localhost:8887/fs_canvas/images/'+image;
-                var texture = new THREE.TextureLoader().load(setImage);
-                if(type == 'sphere'){
-                    this.mats['sph'] = new THREE.MeshBasicMaterial({map:texture});
-                }
-                else {
-                    this.mats['boxImage'] = new THREE.MeshBasicMaterial({map:texture, wireframe: true, name:'boxImage', transparent:true, opacity: 0.0});
-                }
-            }
-    		if(type=='box' && move) mesh = new THREE.Mesh( this.geos.box, this.mats.box, name );
-	    	if(type=='box' && !move) mesh = new THREE.Mesh( this.geos.box, this.mats.static, name);
-            if(type=='boxImage' && move) mesh = new THREE.Mesh( this.geos.box, this.mats.boxImage, name );
-            if(type=='transbox' && move) mesh = new THREE.Mesh( this.geos.box, this.mats.transbox, name);
-	    	if(type=='plane' && !move) mesh = new THREE.Mesh( this.geos.plane, this.mats.static2, name );
-	    	if(type=='sphere' && move) mesh = new THREE.Mesh( this.geos.sph, this.mats.sph, name );
-	    	if(type=='sphere' && !move) mesh = new THREE.Mesh( this.geos.sph, this.mats.static, name);
-	    	if(type=='cylinder' && move) mesh = new THREE.Mesh( this.geos.cyl, this.mats.cyl, name );
-	    	if(type=='cylinder' && !move) mesh = new THREE.Mesh( this.geos.cyl, this.mats.static, name);
-	    	mesh.scale.set( size[0], size[1], size[2] );
-	        mesh.position.set( pos[0], pos[1], pos[2] );
-	        mesh.rotation.set( rot[0]*V3D.ToRad, rot[1]*V3D.ToRad, rot[2]*V3D.ToRad );
-	        if(target) {target.add( mesh ); }
-	        else {
-                this.scene.add( mesh ); }
-           
-            if(mesh.name == 'sight'){
-                this.sight = mesh;
-            };
-            if(mesh.name == 'containerSphere'){
-                this.containerMesh = mesh;
-            };
-            // if(mesh.name == 'proBox'){
-            //     this.proBox = mesh;
-            // }
-
-	        return mesh;
-    	}
-    	
+    addCylinder: function(){
+        if(type=='cylinder' && move) mesh = new THREE.Mesh( this.geos.cyl, this.mats.cyl, name );
+        if(type=='cylinder' && !move) mesh = new THREE.Mesh( this.geos.cyl, this.mats.static, name);
     },
     moveLink:function(line, p1, p2){
     	line.geometry.vertices[0].copy( p1 );

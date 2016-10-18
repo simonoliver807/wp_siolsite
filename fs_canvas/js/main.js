@@ -120,11 +120,11 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 				            shootStart = shootStart.sub( v3d.camera.position );
 				            shootStart = shootStart.normalize();
 				            shootStart.add(containerMesh.position);
-				            //shootStart.multiplyScalar(8);
-				            var sphere = [{ "size":[1.5, 1.5, 1.5], "pos":[shootStart.x, shootStart.y, shootStart.z], "move":"true", "name":"shoot", "color":'#66ff33'}];
-				            var ss = gameinit.addSphere(sphere);
-				            var rb = ss.body;
-				            rb.linearVelocity.addTime(heading, world.timeStep);
+				            
+				            var phaser = { type: 'sphere', size: [1.5,1.5,1.5], pos: [shootStart.x, shootStart.y, shootStart.z], move: 'true', world: world, color:'#66ff33', wireframe: 'false', name:'phaser', transparent: 'false', opacity: 1};
+				            var sphere = v3d.addSphere(phaser);
+				            var rb = gameinit.addPhaser(phaser, sphere);
+				            rb.body.linearVelocity.addTime(heading, world.timeStep);
 				            console.log('velocity: ' + velocity);
 				            break;
 
