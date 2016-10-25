@@ -3,7 +3,8 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 
 	return function(){
 		var gameinit = new GAMEINIT;
-		var container = document.getElementById('container');    
+		var container = document.getElementById('container'); 
+		var accel;
 		var timestep = 1/60;
 		var keys = { LEFT: 37, UP: 48, RIGHT: 39, DOWN: 40, ECS: 27, SPC: 32 };
 		var render;
@@ -12,31 +13,40 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 		var shootStart;
 
 
+
 		return {
 			init: function(){
 				
 
+				accel = document.getElementById('accel');
+				var ac = document.getElementById('accelCont');
+				var ach = ac.clientHeight/2;
+				var acw = ac.clientWidth * 0.01;
+				accel.style.top = ach+'px';
+				accel.style.right = acw + 'px';
+
+
+
 				v3d = gameinit.getObj('v3d');
 				this.loadEvents();
 				gameinit.createWorld(timestep);
-				gameinit.populate(15);
+				gameinit.populate(150);
 			    v3d.initLight();
 			    render = this.render;
-		        this.render();
 				setInterval(gameinit.oimoLoop, timestep*1000);
 				velocity = 1;
 				shootStart = v3d.tvec();
 
 
 			},
-			 render: function () {
+			 // render: function () {
 
 		        // requestAnimationFrame( render );
 		        // 	if(!pause){ 
 		        //     v3d.render();
 		        // }
 
-		    },
+		    // },
 			handleKeyDown: function( event ) {
 
 				var hkd = false;
@@ -60,10 +70,29 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 
 				        case keys.UP:
 
+				        	var rb = bodys[0].body;
 				            var heading = v3d.getPlayerDir('forward', containerMesh.position);
-				            heading.multiplyScalar( 25 );
-				            var rb = bodys[0].body;
+
+				            if (v3d.startRot.rot !== 0) { 
+				            	heading.multiplyScalar( 35 ); 
+
+				            	}
+				            else { 
+				            	if (rb.linearVelocity.length() < 21) { 
+				            		heading.multiplyScalar( 49 ); 
+				            	}
+				            	else {
+				            		heading.multiplyScalar( 25 ); 
+				            	}
+				            }
 				            rb.linearVelocity.addTime(heading , world.timeStep);
+
+				            v3d.log('linearVelocity: ', rb.linearVelocity.length());
+
+				            var perlv = 30 / rb.linearVelocity.length();
+
+				            accel.style.width = perlv + '%';
+
 
 				            if( rb.linearVelocity.length < 1 && gameinit.reverse){
 				            	gameinit.reverse = false;
@@ -160,29 +189,41 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 				var perhu = v3d.h - perh;
 				var perhd = perh
 
-				if ( event.clientX > perwr ){
-					// v3d.startRot.axis.set(0,1,0);
-					// v3d.startRot = {issleeping: issleeping, rot: 1, camAngle: v3d.camAngle, axis: v3d.startRot.axis};
-					v3d.startRot.axis.set(0,1,0);
-					v3d.startRot = {issleeping: issleeping, rot: 1, camAngle: v3d.camAngle * -1, axis: v3d.startRot.axis};
-				}
-				else if ( event.clientX < perwl ) {
-					// v3d.startRot.axis.set(0,1,0);
-					// v3d.startRot = {issleeping: issleeping, rot: 1, camAngle: v3d.camAngle * -1, axis: v3d.startRot.axis};
-					v3d.startRot.axis.set(0,1,0);
-					v3d.startRot = {issleeping: issleeping, rot: 1, camAngle: v3d.camAngle, axis: v3d.startRot.axis};
-				}
-				else if ( event.clientY > perhu ) {
-					v3d.startRot.axis.set(1,0,0);
-					v3d.startRot = {issleeping: issleeping, rot: 1, camAngle: v3d.camAngle, axis: v3d.startRot.axis}; 
-				}
-				else if ( event.clientY < perhd ) {
-					v3d.startRot.axis.set(1,0,0);
-					v3d.startRot = {issleeping: issleeping, rot: 1, camAngle: v3d.camAngle * -1, axis: v3d.startRot.axis}; 
-				}
-				else {
-					v3d.startRot = {issleeping: issleeping, rot: 0, camAngle: v3d.camAngle, axis: v3d.startRot.axis};
-				}
+				// if ( event.clientX > perwr ){
+				// 	if( event.clientY > v3d.h/2){
+				// 		v3d.startRot = {issleeping: issleeping, rot: 'dr'};
+				// 	}
+				// 	else {
+				// 		v3d.startRot = {issleeping: issleeping, rot: 'ur'};
+				// 	}
+				// }
+				// else if ( event.clientX < perwl ) {
+				// 	if( event.clientY > v3d.h/2){
+				// 		v3d.startRot = {issleeping: issleeping, rot: 'dl'};
+				// 	}
+				// 	else {
+				// 		v3d.startRot = {issleeping: issleeping, rot: 'ul'};
+				// 	}
+				// }
+				// else if ( event.clientY > perhu ) {
+				// 	if( event.clientX > v3d.w/2){
+				// 		v3d.startRot = {issleeping: issleeping, rot: 'dr'}; 
+				// 	}
+				// 	else {
+				// 		v3d.startRot = {issleeping: issleeping, rot: 'dl'};
+				// 	}
+				// }
+				// else if ( event.clientY < perhd ) {
+				// 	if( event.clientX > v3d.w/2){
+				// 		v3d.startRot = {issleeping: issleeping, rot: 'ur'}; 
+				// 	}
+				// 	else {
+				// 		v3d.startRot = {issleeping: issleeping, rot: 'ul'};
+				// 	}
+				// }
+				// else {
+				// 	v3d.startRot = {issleeping: issleeping, rot: 0};
+				// }
 
 			},
 			loadEvents: function(){

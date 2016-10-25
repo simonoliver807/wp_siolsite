@@ -1,25 +1,14 @@
-<?php
-
-	if (!empty($_POST))
-	{
-
-		echo " post made". $_POST['name'];
-
-	}
-		
-
-
-?>
-
-
-
 <!DOCTYPE html>
 <html>
 <head>
 	<title>full screen canvas</title>
 </head>
 <body>
-	<div id="container" class="container" style="width:100%; height:100%"></div>
+	<div id="container" class="container" style="width:100%; height:100%">
+		<div id="accelCont" style="width:10%;height:10%;position: absolute;">
+			<div id="accel" style= "height:5%;background-color:#2646ea;margin: auto;position: absolute;"></div>
+		</div>
+	</div>
 
 	<script src="//localhost:35729/livereload.js"></script>
 

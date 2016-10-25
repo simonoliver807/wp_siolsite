@@ -126,11 +126,13 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
                                 v3d.camera.position.x += tmpPosX;
                                 v3d.camera.position.y += tmpPosY; 
                                 v3d.camera.position.z += tmpPosZ;
-                                if(v3d.startRot.rot){
+                                if(v3d.startRot.rot !== 0){
+
                                     v3d.camera.position.x += v3d.camrot.x;
                                     v3d.camera.position.y += v3d.camrot.y;
                                     v3d.camera.position.z += v3d.camrot.z;
                                     v3d.camera.lookAt( containerMesh.position );
+                                    
                                 };
                                 v3d.camera.updateMatrixWorld();
 
@@ -175,9 +177,9 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
                     x = 500;
                     z = -1500;
                     y = 100;
-                    w = 15;
-                    h = 15;
-                    d = 15;
+                    w = 50;
+                    h = 50;
+                    d = 50;
 
                 var spheres = [{ type: 'sphere', size: [shp1r, shp1r, shp1r], pos:[0,0,0], move: 'true', world: world, color:'#66ff33', wireframe: 'false', name:"shp1", transparent: 'false', opacity: 1},
                                { type: 'sphere', size:[8, 8, 8], pos:[0,0,0], move: 'true', world: world, color: '#ff0000', wireframe: 'false',  name: 'containerMesh', transparent: 'false', opacity: 1, image:'shp1.jpg'},
@@ -198,24 +200,29 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
                         containerMesh = v3d.addSphere(spheres[i]);
                     }
                 }
-                sightMesh = { type: 'box', size: [15, 15, 0.5], pos:[0,0,-100], move: 'true', world: world, color:'#66ff33', wireframe: 'false', name: 'sight', transparent: 'false', opacity: 1, image:'basic_gunsight.gif'};
+                sightMesh = { type: 'box', size: [15, 15, 0.5], pos:[0,0,-100], move: 'true', world: world, color:'#66ff33', wireframe: 'false', name: 'sight', transparent: 'true', opacity: 0, image:'sight1.png'};
                 sightMesh = v3d.addBox(sightMesh);
 
-               // var t = 2;
-               // for(var i=0;i<n;i++){
-               //     t === 2 ? t=3 : t=2 ;
-               //     if(t===2) obj = { type:'box', size:[w,h,d], pos:[x,y,z], move:true,world:world, name:'box1' };
-               //     if(t===3) obj = { type:'cylinder', size:[w,h,w, w,h,w, w,h,w, w,h,w], pos:[x,y,z], rot:[0,0,0, 0,45,0, 0,22.5,0, 0,-22.5,0], move:true,world:world };
+               var t = 3;
+               for(var i=0;i<n;i++){
+                   t === 2 ? t=3 : t=2 ;
+                   if(t===2) obj = { type:'box', size:[w,h,d], pos:[x,y,z], move: true, world:world, color:'#66ff33', wireframe: 'false', name: 'boxTarget', transparent: 'false', opacity: 1, image:''};;
+                   if(t===3) obj = { type:'cylinder', size:[w,h,d], pos:[x,y,z], move: true, world:world, color:'#66ff33', wireframe: 'false', name: 'cylTarget', transparent: 'false', opacity: 1, image:''};;
 
-               //      bodys[bodysNum] = new OIMO.Body(obj);
-               //      meshs[meshNum] = v3d.add(obj);
-               //      bodysNum += 1;
-               //      meshNum +=1
+                    bodys[bodysNum] = new OIMO.Body(obj);
+                    if(t == 2) {
+                        meshs[meshNum] = v3d.addBox(obj);
+                    }
+                    else {
+                        meshs[meshNum] = v3d.addCylinder(obj);
+                    }
+                    bodysNum += 1;
+                    meshNum +=1
 
-               //      x = this.randMinMax(-5000,5000);
-               //      y = this.randMinMax(-5000,5000);
-               //      z = this.randMinMax(-5000,5000);
-               // }
+                    x = this.randMinMax(-5000,5000);
+                    y = this.randMinMax(-5000,5000);
+                    z = this.randMinMax(-5000,5000);
+               }
             },
             addPhaser: function(body, sphere){
 

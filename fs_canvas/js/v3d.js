@@ -33,7 +33,7 @@ V3D.View = function(h,v,d){
     // this.pbX = [];
     // this.pbY = [];
     // this.axis = new THREE.Vector3();
-    this.startRot = { issleeping: 1, rot: 0, camAngle: 0.5, axis: new THREE.Vector3() };
+    this.startRot = { issleeping: 1, rot: 0, axis: new THREE.Vector3() };
 
 }
 
@@ -54,6 +54,11 @@ V3D.View.prototype = {
         this.camera.position.z = this.initialcamz;
         this.camera.position.y = 0;
         this.camera.matrixAutoUpdate = true;
+        this.camAngle = -0.025;
+
+        this.msechngdir;
+        this.chngeindir = false;
+      //  this.camNegate = false;
         
         
     	this.scene = new THREE.Scene();
@@ -72,7 +77,7 @@ V3D.View.prototype = {
        // this.raycaster = new THREE.Raycaster(this.camera.position, [0,1,0], 1, 100);
         this.raycaster = new THREE.Raycaster();
 
-        this.camAngle = 0.01;
+      
         
         this.tmpVCPprev1 = new THREE.Vector3(0,0,100);
 
@@ -126,90 +131,25 @@ V3D.View.prototype = {
     },
     render : function(){
 
-
-
-            // var m = new THREE.Matrix4();
-            // var q = new THREE.Quaternion();
-            // q.setFromAxisAngle( new THREE.Vector3(1,0,0), this.camAngle);
-
-            // var cmq = this.camera.quaternion;
-            // cmq.multiplyQuaternions(q, cmq);
-            // cmq.normalize;
-            // this.camera.matrix.makeRotationFromQuaternion(cmq);
-         //   this.containerMesh.matrixAutoUpdate = false;
-//            var d = m.makeRotationFromQuaternion( q );
-
-
-        if(this.startRot.rot){ this.applyRot() };
-       
-       // update the picking ray with the camera and mouse position    
-        // this.raycaster.setFromCamera( V3D.msePos, this.camera );  
-
-        // var objArr = [];
-        // objArr[0] = this.scene.children[0];
-        // objArr[1] = this.scene.children[1];
-
-        // calculate objects intersecting the picking ray
-        // var intersects = this.raycaster.intersectObjects( objArr );
-
-        // for ( let i = 0; i < intersects.length; i++ ) {
-
-        //     if(intersects[ i ].object.name == 'proBox') {
-                
-        //         this.sight.position.copy(intersects[i].point);
-        //      //   this.gs_mse_pos('set', intersects[i].point);
-        //     }
-        
-        // }
-
-        // this.raycaster.setFromCamera( V3D.msePos, this.camera );  
-        // this.newsightpos.addVectors ( this.raycaster.ray.origin, this.raycaster.ray.direction.multiplyScalar( 200 ));
-        // this.sight.position.copy(this.newsightpos);
-
-        // this.origin.setFromMatrixPosition( this.camera.matrixWorld );
-        // this.dir.set( V3D.msePos.x, V3D.msePos.y, 0.5 ).unproject( this.camera ).sub( this.origin ).normalize();
-        // this.newsightpos.addVectors ( this.origin, this.dir.multiplyScalar( 200 ));
-        // this.sight.position.copy(this.newsightpos);
-
-
-
+         if(this.startRot.rot !== 0){ this.applyRot() };
 
     	this.renderer.render( this.scene, this.camera );
 
-        // this.dir.set( V3D.msePos.x, V3D.msePos.y, 0.5 ).unproject( this.camera ).sub( this.camera.position ).normalize();
-        // this.newsightpos.addVectors ( this.camera.position, this.dir.multiplyScalar( 200 ));
-        // this.sight.position.copy(this.newsightpos);
-        // this.sight.lookAt(this.containerMesh.position);
 
     },
     initBasic:function(){
         var geos = {};
+        geos['boxTarget'] = new THREE.BoxGeometry(50,50,50);
+        geos['containerMesh'] = new THREE.SphereGeometry(8);
+        geos['cylTarget'] = new THREE.CylinderGeometry( 5, 5, 20, 32 );
+        geos['phaser'] = new THREE.SphereGeometry(1.5, 3, 2);
         geos['planet'] = new THREE.SphereBufferGeometry(500, 16, 12);
         geos['shp1'] = new THREE.SphereGeometry(7.5)
-        geos['containerMesh'] = new THREE.SphereGeometry(8);
-        geos['phaser'] = new THREE.SphereGeometry(1.5, 3, 2);
-
         geos['sight'] = new THREE.BoxGeometry(15,15,0.5);
         
 
         this.geos = geos;
 
-
-        // geos['box'] = new THREE.SphereBufferGeometry();
-        // geos['cyl'] = new THREE.BufferGeometry();
-        // geos['sph'].fromGeometry( new THREE.SphereGeometry(1,12,10)); 
-        // geos['cyl'].fromGeometry( new THREE.CylinderGeometry(0.5,0.5,1,12,1));  
-        // geos['box'].fromGeometry( new THREE.BoxGeometry(1,1,1));
-        // geos['plane'] = new THREE.PlaneBufferGeometry(1,1, 100, 100);
-        // geos['plane'].applyMatrix(new THREE.Matrix4().makeRotationX(-90*V3D.ToRad));
-
-        // var mats = {};
-
-        // mats['box'] = new THREE.MeshLambertMaterial( { color: 0x66ff33, wireframe: false, name:'box'} );
-        // mats['transbox'] = new THREE.MeshLambertMaterial( { color: 0x0000ff, wireframe: true, name:'transbox', transparent:true, opacity: 0.0} );
-
-        // this.mats = mats;
-        // this.geos = geos;
     },
     addSphere : function(sphere){
     
@@ -238,8 +178,15 @@ V3D.View.prototype = {
 
         if(box.image){
             var setImage = 'http://localhost:8887/fs_canvas/images/'+box.image;
-            var texture = new THREE.TextureLoader().load(setImage);
-            var material = new THREE.MeshBasicMaterial({map:texture, wireframe: box.wireframe, name: box.name, transparent: box.transparent, opacity: box.opacity});
+          //  var texture = new THREE.TextureLoader().load(setImage);
+            var material = new THREE.MeshBasicMaterial();
+            material.map = new THREE.TextureLoader().load(setImage);
+            material.transparent = true;
+         
+          //  material.depthWrite = false;
+            //material.color = new THREE.Color(0x66ff33);
+
+            //  var material = new THREE.MeshBasicMaterial({map:texture, wireframe: box.wireframe, name: box.name, transparent: box.transparent, opacity: box.opacity});
         }
         else {
              var material = new THREE.MeshBasicMaterial({ color: box.color, wireframe: box.wireframe, name: box.name, transparent: box.transparent, opacity: box.opacity });
@@ -252,11 +199,18 @@ V3D.View.prototype = {
         if(mesh.name == 'sight'){
             this.sight = mesh;
         };
+        return mesh;
 
     },
-    addCylinder: function(){
-        if(type=='cylinder' && move) mesh = new THREE.Mesh( this.geos.cyl, this.mats.cyl, name );
-        if(type=='cylinder' && !move) mesh = new THREE.Mesh( this.geos.cyl, this.mats.static, name);
+    addCylinder: function(cylinder){
+        
+        var material = new THREE.MeshBasicMaterial({ color: cylinder.color, wireframe: cylinder.wireframe, name: cylinder.name, transparent: cylinder.transparent, opacity: cylinder.opacity });
+        var mesh = new THREE.Mesh( this.geos['cylTarget'], material, cylinder.name );
+        mesh.position.set( cylinder.pos[0], cylinder.pos[1], cylinder.pos[2] );
+        this.scene.add( mesh );
+        return mesh;
+
+
     },
     moveLink:function(line, p1, p2){
     	line.geometry.vertices[0].copy( p1 );
@@ -349,13 +303,11 @@ V3D.View.prototype = {
 
             this.dir.set( V3D.msePos.x, V3D.msePos.y, 0.5 ).unproject( this.camera ).sub( this.camera.position ).normalize();
             this.newsightpos.addVectors ( this.camera.position, this.dir.multiplyScalar( 200 ));
-            this.sight.position.copy(this.newsightpos);
+            this.sight.position.set(this.newsightpos.x, this.newsightpos.y, this.newsightpos.z);
             this.sight.lookAt(this.containerMesh.position);
 
     },
     applyRot: function (issleeping) {
-
-
 
             // var q = new THREE.Quaternion();
             // q.setFromAxisAngle( this.startRot.axis, this.startRot.camAngle);
@@ -366,67 +318,142 @@ V3D.View.prototype = {
             // this.camera.matrix.makeRotationFromQuaternion(cmq);
 
 
+            var dir = new THREE.Vector3();
+            dir.subVectors( this.camera.position, this.containerMesh.position);
+            if (this.msechngdir === undefined){
+                this.msechngdir = this.startRot.rot;  
+            }
+            if (this.msechngdir != this.startRot.rot){
+                this.chngeindir = true;
+                this.msechngdir = this.startRot.rot;
+            }
 
-            var tmpVCP = new THREE.Vector3();
-            tmpVCP.copy(this.tmpVCPprev);
-            tmpVCP.applyAxisAngle( this.startRot.axis, this.startRot.camAngle );
+          if( (dir.y > -97 && dir.y < 97) || this.chngeindir){
 
-            tmpVCP.x -= this.tmpVCPprev.x;
-            tmpVCP.y -= this.tmpVCPprev.y;
-            tmpVCP.z -= this.tmpVCPprev.z;
+            var axis = new THREE.Vector3();
+            var tmpCM = new THREE.Vector3(0,0,0);
+            axis.subVectors(tmpCM, V3D.msePos);
 
-            this.tmpVCPprev.x += tmpVCP.x;
-            this.tmpVCPprev.y += tmpVCP.y;
-            this.tmpVCPprev.z += tmpVCP.z;
+         //   axis.set(V3D.msePos.x, V3D.msePos.y, V3D.msePos.z);
+            axis.z = 0;
 
-            if ( this.startRot.issleeping ) {
+            axis.set ( axis.y, axis.x*-1, axis.z );
+
+            axis.applyEuler(this.camera.rotation);
+
+
+          //  this.log('up down: ', this.startRot.rot);
+
+            //this.log('dir ' , dir);
+
+
+           // if( (dir.y > -99.5 && dir.y < 99.5) || this.chngeindir ) {
+                
+                var tmpVCP = new THREE.Vector3();
+                tmpVCP.copy(this.tmpVCPprev);
+                tmpVCP.applyAxisAngle( axis, this.camAngle );
+                
+
+                this.log('tmpVCP ', tmpVCP);
+
+                tmpVCP.x -= this.tmpVCPprev.x;
+                tmpVCP.y -= this.tmpVCPprev.y;
+                tmpVCP.z -= this.tmpVCPprev.z;
+
+                if(this.chngeindir){
+                    this.chngeindir = false; 
+                    if ( this.tmpVCPprev.y + tmpVCP.y > 97 ) {
+                        tmpVCP.y = this.tmpVCPprev.y - 96.9;
+                        tmpVCP.y *= -1;
+                    }
+                    else if ( this.tmpVCPprev.y + tmpVCP.y < -97 ) {
+                        tmpVCP.y = this.tmpVCPprev.y + 96.9;
+                        tmpVCP.y *= -1;    
+                    }
+                }
+
+
+
+                this.tmpVCPprev.x += tmpVCP.x;
+                this.tmpVCPprev.y += tmpVCP.y;
+                this.tmpVCPprev.z += tmpVCP.z;
+
+                if ( this.startRot.issleeping ) {
+                    this.camera.position.x += tmpVCP.x;
+                    this.camera.position.y += tmpVCP.y;
+                    this.camera.position.z += tmpVCP.z;
+
+
+                    this.camera.lookAt( this.containerMesh.position );
+                }
+                else {
+                    this.camrot.x = tmpVCP.x;
+                    this.camrot.y = tmpVCP.y;
+                    this.camrot.z = tmpVCP.z;
+                } 
+            }
+            else {
+
+                var axis = new THREE.Vector3(0,1,0);
+                var camAngle = new THREE.Vector3();
+                if(this.startRot.rot == 'ul' || this.startRot.rot == 'dl'){
+                    camAngle = 0.025
+                }
+                else {
+                    camAngle = -0.025;
+                }
+
+                var tmpVCP = new THREE.Vector3();
+                tmpVCP.copy(this.tmpVCPprev);
+                tmpVCP.applyAxisAngle( axis, camAngle );
+
+
+                this.log('tmpVCP ', tmpVCP);
+
+                tmpVCP.x -= this.tmpVCPprev.x;
+                tmpVCP.y -= this.tmpVCPprev.y;
+                tmpVCP.z -= this.tmpVCPprev.z;
+
+
+                this.tmpVCPprev.x += tmpVCP.x;
+                this.tmpVCPprev.y += tmpVCP.y;
+                this.tmpVCPprev.z += tmpVCP.z;
+
+                if ( this.startRot.issleeping ) {
                 this.camera.position.x += tmpVCP.x;
                 this.camera.position.y += tmpVCP.y;
                 this.camera.position.z += tmpVCP.z;
+
+
                 this.camera.lookAt( this.containerMesh.position );
-            }
-            else {
+                }
+                else {
                 this.camrot.x = tmpVCP.x;
                 this.camrot.y = tmpVCP.y;
                 this.camrot.z = tmpVCP.z;
+                } 
+
             }
-
-
-
-            // var tmpVCP = new THREE.Vector3();
-            // tmpVCP.copy(this.tmppbprev);
-            // tmpVCP.applyAxisAngle( this.startRot.axis, this.startRot.camAngle );
-
-            // tmpVCP.x -= this.tmppbprev.x;
-            // tmpVCP.y -= this.tmppbprev.y;
-            // tmpVCP.z -= this.tmppbprev.z;
-
-            // this.tmppbprev.x += tmpVCP.x;
-            // this.tmppbprev.y += tmpVCP.y;
-            // this.tmppbprev.z += tmpVCP.z;
-
-
-
-            // if( this.startRot.issleeping) {
-            //     this.proBox.position.x += tmpVCP.x;
-            //     this.proBox.position.y += tmpVCP.y;
-            //     this.proBox.position.z += tmpVCP.z; 
-            //     this.proBox.lookAt( this.containerMesh.position );
-            // }
-
-            // else {
-            //     this.pbrot.x = tmpVCP.x;
-            //     this.pbrot.y = tmpVCP.y;
-            //     this.pbrot.z = tmpVCP.z;
-            // }
+           // } 
+          //  else {
+           //     this.startRot.rot = 0;
+                // var axis = new THREE.Vector3();
+                // axis.subVectors( this.camera.position, this.containerMesh.position);
             
+                // var q = new THREE.Quaternion();
+                // q.setFromAxisAngle( axis, this.camAngle);
+
+                // var cmq = this.camera.quaternion;
+                // cmq.multiplyQuaternions(q, cmq);
+                // cmq.normalize;
+                // this.camera.matrix.makeRotationFromQuaternion(cmq);
 
 
-         
+            //}     
             
     },
-    tvec: function() {
-        return new THREE.Vector3();
+    tvec: function(x,y,z) {
+        return new THREE.Vector3(x,y,z);
     },
     whcam: function() {
         var vFOV = this.camera.fov * Math.PI / 180;        // convert vertical fov to radians
