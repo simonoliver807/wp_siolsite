@@ -132,7 +132,6 @@ V3D.View.prototype = {
     render : function(){
 
          if(this.startRot.rot !== 0){ this.applyRot() };
-
     	this.renderer.render( this.scene, this.camera );
 
 
@@ -301,10 +300,60 @@ V3D.View.prototype = {
     },
     updateSightPos: function () {
 
-            this.dir.set( V3D.msePos.x, V3D.msePos.y, 0.5 ).unproject( this.camera ).sub( this.camera.position ).normalize();
+           this.dir.set( V3D.msePos.x, V3D.msePos.y, 0.5 ).unproject( this.camera ).sub( this.camera.position ).normalize();
+
+
+            // var matrixWorld = new THREE.Matrix4();
+            // var matrix2 = new THREE.Matrix4();
+            // matrixWorld.copy(this.camera.matrixWorld);
+            // var cpn = new THREE.Vector3( matrixWorld.elements[12], matrixWorld.elements[13], matrixWorld.elements[14] );
+            // cpn.normalize();
+
+
+
+            // var len = this.camera.position.length();
+
+            // matrixWorld.elements[12] = cpn.x * len;
+            // matrixWorld.elements[13] = cpn.y * len;
+            // matrixWorld.elements[14] = cpn.z * len;
+
+
+            // matrix2.multiplyMatrices( matrixWorld, matrix2.getInverse( this.camera.projectionMatrix ) );
+            // var tmpVec10 = new THREE.Vector3(V3D.msePos.x, V3D.msePos.y, 0.5);
+            // tmpVec10.copy(tmpVec10.applyProjection(matrix2));
+            // this.dir.copy(tmpVec10.sub(this.camera.position).normalize());
+
+
+
+
+             //var tmpVec11 = new THREE.Vector3(this.camera.position.x,this.camera.position.y,this.camera.position.z);
+             //tmpVec11.normalize();
+            // tmpVec11.multiplyScalar(len);
+            // this.newsightpos.addVectors ( tmpVec11, this.dir.multiplyScalar( 200 ));
+            // this.newsightpos.normalize();
+            // this.newsightpos.multiplyScalar(len);
+
+
+
+
+
+
+
+
             this.newsightpos.addVectors ( this.camera.position, this.dir.multiplyScalar( 200 ));
             this.sight.position.set(this.newsightpos.x, this.newsightpos.y, this.newsightpos.z);
+
+
+
+            
+            var camdir = new THREE.Vector3();
+            camdir.subVectors(this.camera.position, this.containerMesh.position).normalize();
+            var q = new THREE.Quaternion();
+            q.setFromAxisAngle( camdir, Math.PI/2 );
+            this.sight.up.set(q.x, q.y, q.z);
             this.sight.lookAt(this.containerMesh.position);
+            
+            
 
     },
     applyRot: function (issleeping) {
@@ -316,6 +365,12 @@ V3D.View.prototype = {
             // cmq.multiplyQuaternions(q, cmq);
             // cmq.normalize;
             // this.camera.matrix.makeRotationFromQuaternion(cmq);
+
+            var q = new THREE.Quaternion();
+            var rotAxis = new THREE.Vector3(0,1,0);
+            q.setFromAxisAngle( rotAxis, 0.1);
+
+          //  this.log('sm rot: ', this.sight.rotation);
 
 
             var dir = new THREE.Vector3();
@@ -354,7 +409,7 @@ V3D.View.prototype = {
                 tmpVCP.applyAxisAngle( axis, this.camAngle );
                 
 
-                this.log('tmpVCP ', tmpVCP);
+//this.log('tmpVCP ', tmpVCP);
 
                 tmpVCP.x -= this.tmpVCPprev.x;
                 tmpVCP.y -= this.tmpVCPprev.y;
@@ -383,7 +438,6 @@ V3D.View.prototype = {
                     this.camera.position.y += tmpVCP.y;
                     this.camera.position.z += tmpVCP.z;
 
-
                     this.camera.lookAt( this.containerMesh.position );
                 }
                 else {
@@ -408,7 +462,7 @@ V3D.View.prototype = {
                 tmpVCP.applyAxisAngle( axis, camAngle );
 
 
-                this.log('tmpVCP ', tmpVCP);
+             //   this.log('tmpVCP ', tmpVCP);
 
                 tmpVCP.x -= this.tmpVCPprev.x;
                 tmpVCP.y -= this.tmpVCPprev.y;
@@ -434,6 +488,7 @@ V3D.View.prototype = {
                 } 
 
             }
+
            // } 
           //  else {
            //     this.startRot.rot = 0;
@@ -468,7 +523,8 @@ V3D.View.prototype = {
     log: function(name, output){
             
         if( typeof output == 'object' ){   
-            console.log(`output ${name}  x ${output.x} , y ${output.y} , z ${output.z} `);
+            if(output.w) { console.log(`output ${name}  x ${output.x} , y ${output.y} , z ${output.z} , w ${output.w}`) }
+            else { console.log(`output ${name}  x ${output.x} , y ${output.y} , z ${output.z} `);}
         }
         else if( typeof output === undefined ) {
             console.log(`string is ${name} `);
