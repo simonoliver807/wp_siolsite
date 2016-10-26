@@ -74,8 +74,7 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
     var containerMeshPrev;
     containerMeshPrev = new OIMO.Vec3(0,0,0)
     var canvas = document.getElementById('container');
-    var reverse = false;
-
+    var keys = [];
 
 
         return {
@@ -87,7 +86,14 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
                 world.worldscale(100);
                 // you can chooseworld gravity 
                 world.gravity = new OIMO.Vec3(0, 0, 0);
-
+                v3d.setWorld(world);
+                v3d.addPhaser = function(body, sphere) {
+                    bodys[bodysNum] = new OIMO.Body(body);
+                    meshs[meshNum] = sphere
+                    bodysNum += 1;
+                    meshNum +=1;
+                    return bodys[bodysNum -1];
+                }
 
             },
             oimoLoop: function() {  
@@ -162,6 +168,21 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
                          //   if(mesh.material.name === 'sph') mesh.material = v3d.mats.ssph;
                         }
                     }
+                    if(keys){
+                        if(keys[38]){
+                            v3d.addForce();
+                        }
+                        if(keys[40]){
+                            v3d.minusForce();
+                        }
+                        if(keys[32]){
+                            v3d.phaser();
+                        }
+                        if(keys[32] && keys[38]){
+                            v3d.addForce();
+                            v3d.phaser();
+                        }
+                    }
                     v3d.updateSightPos();
                 }
             },
@@ -193,6 +214,7 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
                     if(spheres[i].name != 'containerMesh'){
                         bodys[bodysNum] = new OIMO.Body(spheres[i]);
                         meshs[meshNum] = v3d.addSphere(spheres[i]);
+                        v3d.setBodys(bodys[bodysNum]);
                         bodysNum += 1;
                         meshNum +=1;
                     }
@@ -250,6 +272,9 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
                         break;
                     case 'world':
                         return world;
+                        break;
+                    case 'keys':
+                        return keys;
                         break;
                 }
 

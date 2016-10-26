@@ -34,6 +34,7 @@ V3D.View = function(h,v,d){
     // this.pbY = [];
     // this.axis = new THREE.Vector3();
     this.startRot = { issleeping: 1, rot: 0, axis: new THREE.Vector3() };
+    this.world;
 
 }
 
@@ -91,6 +92,10 @@ V3D.View.prototype = {
         this.pbrot = new THREE.Vector3();
         this.newsightpos = new THREE.Vector3();
         this.dir = new THREE.Vector3();
+        this.bodys = [];
+        this.velocity = 1;
+        this.reverse = false;
+        this.shootStart = new THREE.Vector3();
 
         //this.projector = new THREE.Projector();
     	//this.raycaster = new THREE.Raycaster();
@@ -506,6 +511,86 @@ V3D.View.prototype = {
 
             //}     
             
+    },
+    addForce: function() {
+
+        var rb = this.bodys[0].body;
+
+        if( rb.linearVelocity.length() < 50){
+            var heading = this.getPlayerDir('forward', this.containerMesh.position);    
+            if (this.startRot.rot !== 0) { 
+                heading.multiplyScalar( 35 ); 
+            }
+        else { 
+            if (rb.linearVelocity.length() < 21) { 
+             heading.multiplyScalar( 49 ); 
+            }
+            else {
+                heading.multiplyScalar( 25 ); 
+            }
+        }
+        rb.linearVelocity.addTime(heading , this.world.timeStep);
+        var perlv = ((rb.linearVelocity.length()/50)*100) - 5;
+        accel.style.width = perlv + '%';
+        if( rb.linearVelocity.length < 1 && gameinit.reverse){
+            gameinit.reverse = false;
+        }
+
+        this.velocity = 1 + rb.linearVelocity.length() / 10;
+        }
+    },
+    minusForce: function() {
+
+        var rb = this.bodys[0].body;
+        var lv = new THREE.Vector3();
+        lv.copy( rb.linearVelocity );
+        var lenghtlv = lv.length();
+        if((lv.x == 0 && lv.y == 0 && lv.z == 0) || this.reverse) {
+            var heading = this.getPlayerDir('reverse', this.containerMesh.position);
+            heading.multiplyScalar( 20 );
+            rb.linearVelocity.addTime(heading , this.world.timeStep);
+            this.reverse = true; 
+        }
+        else {
+            lv = lv.normalize();
+            lv = lv.multiplyScalar( lenghtlv -0.5 );
+            rb.linearVelocity.copy( lv );
+            if(lenghtlv < 1) {
+                this.reverse = true;
+            }
+        }
+        if(this.velocity < 3){
+            this.velocity = 1 + rb.linearVelocity.length() / 10;
+        }
+    },
+    phaser: function() {
+        var heading = this.getPlayerDir('forward', this.containerMesh.position);
+        var mag = 1000 * this.velocity;
+        heading.x *= mag;
+        heading.y *= mag;
+        heading.z *= mag;
+        this.shootStart.subVectors( this.containerMesh.position, this.camera.position );
+        this.shootStart.normalize();
+        this.shootStart.add(this.containerMesh.position);
+        
+        var phaser = { type: 'sphere', size: [1.5,1.5,1.5], pos: [this.shootStart.x, this.shootStart.y, this.shootStart.z], move: 'true', world: this.world, color:'#66ff33', wireframe: 'false', name:'phaser', transparent: 'false', opacity: 1};
+        var sphere = this.addSphere(phaser);
+        var rb = this.addPhaser(phaser, sphere);
+        rb.body.linearVelocity.addTime(heading, this.world.timeStep);
+        var shp1 = this.bodys[0].body;
+        rb.body.linearVelocity.addEqual(shp1.linearVelocity);
+        //console.log('velocity: ' + velocity);
+    },
+    pause: function() {
+            var val = gameinit.gspause() ? 0: 1;
+            gameinit.gspause(val);
+        },
+    setBodys: function(rb){
+        this.bodys.push(rb);
+    },
+    setWorld: function(world){
+
+        this.world = world;
     },
     tvec: function(x,y,z) {
         return new THREE.Vector3(x,y,z);

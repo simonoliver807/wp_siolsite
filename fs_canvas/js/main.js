@@ -6,12 +6,9 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 		var container = document.getElementById('container'); 
 		var accel;
 		var timestep = 1/60;
-		var keys = { LEFT: 37, UP: 48, RIGHT: 39, DOWN: 40, ECS: 27, SPC: 49 };
+		var keys = { LEFT: 37, UP: 32, RIGHT: 39, DOWN: 40, ECS: 27, SPC: 49 };
 		var render;
 		var v3d;
-		var velocity;
-		var shootStart;
-		var keys2;
 
 
 
@@ -25,7 +22,6 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 				var acw = ac.clientWidth * 0.01;
 				accel.style.top = ach+'px';
 				accel.style.right = acw + 'px';
-				keys2 = [];
 				v3d = gameinit.getObj('v3d');
 				this.loadEvents();
 				gameinit.createWorld(timestep);
@@ -33,164 +29,21 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 			    v3d.initLight();
 			    render = this.render;
 				setInterval(gameinit.oimoLoop, timestep*1000);
-				velocity = 1;
-				shootStart = v3d.tvec();
 
 
 			},
-			 // render: function () {
 
-		        // requestAnimationFrame( render );
-		        // 	if(!pause){ 
-		        //     v3d.render();
-		        // }
-
-		    // },
 			handleKeyDown: function( event ) {
 
 
-				var bodys = gameinit.getObj('bodys');
-				var containerMesh = gameinit.getObj('containerMesh');
-				var world = gameinit.getObj('world');
+				var keys = gameinit.getObj('keys');
+				keys[event.which] = true;
 
-				function addForce() {
-					var rb = bodys[0].body;
-
-					if( rb.linearVelocity.length() < 50){
-					var heading = v3d.getPlayerDir('forward', containerMesh.position);
-
-					if (v3d.startRot.rot !== 0) { 
-					heading.multiplyScalar( 35 ); 
-
-					}
-					else { 
-					if (rb.linearVelocity.length() < 21) { 
-					heading.multiplyScalar( 49 ); 
-					}
-					else {
-					heading.multiplyScalar( 25 ); 
-					}
-					}
-					rb.linearVelocity.addTime(heading , world.timeStep);
-
-					v3d.log('linearVelocity: ', rb.linearVelocity.length());
-
-					var perlv = ((rb.linearVelocity.length()/50)*100) - 5;
-
-					accel.style.width = perlv + '%';
-
-
-					if( rb.linearVelocity.length < 1 && gameinit.reverse){
-					gameinit.reverse = false;
-					}
-
-					velocity = 1 + rb.linearVelocity.length() / 10;
-					}
-				}
-				function minusForce() {
-					var rb = bodys[0].body;
-					var lv = V3D.View.prototype.tvec();
-					lv.copy( rb.linearVelocity );
-					var lenghtlv = lv.length();
-					if((lv.x == 0 && lv.y == 0 && lv.z == 0) || gameinit.reverse) {
-						var heading = v3d.getPlayerDir('reverse',containerMesh.position);
-					    heading.multiplyScalar( 20 );
-					    var rb = bodys[0].body;
-					    rb.linearVelocity.addTime(heading , world.timeStep);
-					    gameinit.reverse = true; 
-					}
-					else {
-						lv = lv.normalize();
-						lv = lv.multiplyScalar( lenghtlv -0.5 );
-						rb.linearVelocity.copy( lv );
-						if(lenghtlv < 1) {
-							gameinit.reverse = true;
-						}
-					}
-
-					v3d.log('linearVelocity: ', rb.linearVelocity.length());
-
-					if(velocity < 3){
-						velocity = 1 + rb.linearVelocity.length() / 10;
-					}
-				}
-				function phaser() {
-	    			var heading = v3d.getPlayerDir('forward', containerMesh.position);
-		            var mag = 1000 * velocity;
-		            heading.x *= mag;
-		            heading.y *= mag;
-		            heading.z *= mag;
-		            shootStart.subVectors( containerMesh.position, v3d.camera.position );
-		            shootStart.normalize();
-		            shootStart.add(containerMesh.position);
-		            
-		            var phaser = { type: 'sphere', size: [1.5,1.5,1.5], pos: [shootStart.x, shootStart.y, shootStart.z], move: 'true', world: world, color:'#66ff33', wireframe: 'false', name:'phaser', transparent: 'false', opacity: 1};
-		            var sphere = v3d.addSphere(phaser);
-		            var rb = gameinit.addPhaser(phaser, sphere);
-		            rb.body.linearVelocity.addTime(heading, world.timeStep);
-		            var shp1 = bodys[0].body;
-		            rb.body.linearVelocity.addEqual(shp1.linearVelocity);
-		            console.log('velocity: ' + velocity);
-				}
-				function pause() {
-					var val = gameinit.gspause() ? 0: 1;
-			        gameinit.gspause(val);
-				}
-
-
-				console.log('key ' + event.keyCode);
-				keys2[event.which] = true;
-				if ( keys2[48] && keys2[49] ){
-					addForce();
-					phaser();
-				}
-				else {
-
-					var hkd = false;
-					for(var key in keys){
-						if ( event.keyCode == keys[key]){
-							hkd = true;
-						}
-					}
-
-					if(hkd) {
-
-					    event.preventDefault();
-					    event.stopPropagation();
-
-
-					    switch ( event.keyCode ) {
-
-					        case keys.UP:
-
-					          addForce();
-
-					            break;
-
-					        case keys.DOWN:
-
-					        	minusForce();
-
-					            break;
-
-					        case keys.SPC:
-					            
-					            phaser();
-
-					            break;
-				    		case keys.ECS:
-				            	
-				    			pause();
-
-				            break;
-
-					    }
-					 }
-				}
 			},
 			handleKeyUp: function(event){
 
-					delete keys2[event.which];
+					var keys = gameinit.getObj('keys');
+					delete keys[event.which];
 
 			},
 			handleMouseMove: function(event){
