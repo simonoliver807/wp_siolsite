@@ -6,7 +6,6 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 		var container = document.getElementById('container'); 
 		var accel;
 		var timestep = 1/60;
-		var keys = { LEFT: 37, UP: 32, RIGHT: 39, DOWN: 40, ECS: 27, SPC: 49 };
 		var render;
 		var v3d;
 
@@ -36,8 +35,18 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 			handleKeyDown: function( event ) {
 
 
-				var keys = gameinit.getObj('keys');
-				keys[event.which] = true;
+				function  pause() {
+				    var val = gameinit.gspause() ? 0: 1;
+				    gameinit.gspause(val);
+				}
+
+				if( event.keyCode === 27) {
+					pause();
+				}
+				else {
+					var keys = gameinit.getObj('keys');
+					keys[event.which] = true;
+				}
 
 			},
 			handleKeyUp: function(event){

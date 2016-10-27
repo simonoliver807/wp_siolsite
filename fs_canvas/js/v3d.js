@@ -95,6 +95,7 @@ V3D.View.prototype = {
         this.bodys = [];
         this.velocity = 1;
         this.reverse = false;
+        this.heading = new THREE.Vector3();
         this.shootStart = new THREE.Vector3();
 
         //this.projector = new THREE.Projector();
@@ -515,39 +516,58 @@ V3D.View.prototype = {
     addForce: function() {
 
         var rb = this.bodys[0].body;
-
-        if( rb.linearVelocity.length() < 50){
-            var heading = this.getPlayerDir('forward', this.containerMesh.position);    
-            if (this.startRot.rot !== 0) { 
-                heading.multiplyScalar( 35 ); 
+        var heading = this.getPlayerDir('forward', this.containerMesh.position);  
+        var chngeindir = heading.equals(this.heading); 
+        //var set = false;
+        if ( !chngeindir ) {
+            this.heading.set(heading.x,heading.y,heading.z);
+        }
+        if(this.startRot.rot || !chngeindir || rb.linearVelocity.length() < 15){
+            if(rb.linearVelocity.length() < 40){
+                heading.multiplyScalar(25);
+                rb.linearVelocity.addTime(heading , this.world.timeStep);
+                if(rb.linearVelocity.length() > 40){
+                    var count = -2;
+                    while(rb.linearVelocity.length() > 40){
+                        heading.multiplyScalar(count);
+                        rb.linearVelocity.addTime(heading , this.world.timeStep);
+                        count --;
+                    }
+                }
+               // set = true;
             }
-        else { 
-            if (rb.linearVelocity.length() < 21) { 
-             heading.multiplyScalar( 49 ); 
-            }
-            else {
-                heading.multiplyScalar( 25 ); 
+        } 
+        if( chngeindir ){
+            if(rb.linearVelocity.length() < 40){
+                heading.multiplyScalar(15);
+                rb.linearVelocity.addTime(heading , this.world.timeStep);
             }
         }
-        rb.linearVelocity.addTime(heading , this.world.timeStep);
-        var perlv = ((rb.linearVelocity.length()/50)*100) - 5;
+        // if( !chngeindir && rb.linearVelocity.length() > 40 && rb.linearVelocity.length() < 41 && !set){
+        //     heading.multiplyScalar(-10);
+        //     rb.linearVelocity.addTime(heading , this.world.timeStep);
+        // }
+
+        this.log('lv ', rb.linearVelocity.length());
+
+        var perlv = ((rb.linearVelocity.length()/40)*100) - 5;
         accel.style.width = perlv + '%';
-        if( rb.linearVelocity.length < 1 && gameinit.reverse){
-            gameinit.reverse = false;
+        if( rb.linearVelocity.length < 1 && this.reverse ){
+            this.reverse = false;
         }
 
         this.velocity = 1 + rb.linearVelocity.length() / 10;
-        }
+        
     },
     minusForce: function() {
 
         var rb = this.bodys[0].body;
-        var lv = new THREE.Vector3();
-        lv.copy( rb.linearVelocity );
+        var lv = new THREE.Vector3(rb.linearVelocity.x,rb.linearVelocity.y,rb.linearVelocity.z);
+       // lv.copy( rb.linearVelocity );
         var lenghtlv = lv.length();
         if((lv.x == 0 && lv.y == 0 && lv.z == 0) || this.reverse) {
             var heading = this.getPlayerDir('reverse', this.containerMesh.position);
-            heading.multiplyScalar( 20 );
+            heading.multiplyScalar( 15 );
             rb.linearVelocity.addTime(heading , this.world.timeStep);
             this.reverse = true; 
         }
@@ -559,13 +579,18 @@ V3D.View.prototype = {
                 this.reverse = true;
             }
         }
+
+        this.log('lv ', rb.linearVelocity.length());
+
+        var perlv = ((rb.linearVelocity.length()/40)*100) - 5;
+        accel.style.width = perlv + '%';
         if(this.velocity < 3){
             this.velocity = 1 + rb.linearVelocity.length() / 10;
         }
     },
     phaser: function() {
         var heading = this.getPlayerDir('forward', this.containerMesh.position);
-        var mag = 1000 * this.velocity;
+        var mag = 700 * this.velocity;
         heading.x *= mag;
         heading.y *= mag;
         heading.z *= mag;
@@ -573,7 +598,7 @@ V3D.View.prototype = {
         this.shootStart.normalize();
         this.shootStart.add(this.containerMesh.position);
         
-        var phaser = { type: 'sphere', size: [1.5,1.5,1.5], pos: [this.shootStart.x, this.shootStart.y, this.shootStart.z], move: 'true', world: this.world, color:'#66ff33', wireframe: 'false', name:'phaser', transparent: 'false', opacity: 1};
+        var phaser = { type: 'sphere', size: [0.5,0.5,0.5], pos: [this.shootStart.x, this.shootStart.y, this.shootStart.z], move: 'true', world: this.world, color:'#66ff33', wireframe: 'false', name:'phaser', transparent: 'false', opacity: 1};
         var sphere = this.addSphere(phaser);
         var rb = this.addPhaser(phaser, sphere);
         rb.body.linearVelocity.addTime(heading, this.world.timeStep);
@@ -581,10 +606,6 @@ V3D.View.prototype = {
         rb.body.linearVelocity.addEqual(shp1.linearVelocity);
         //console.log('velocity: ' + velocity);
     },
-    pause: function() {
-            var val = gameinit.gspause() ? 0: 1;
-            gameinit.gspause(val);
-        },
     setBodys: function(rb){
         this.bodys.push(rb);
     },

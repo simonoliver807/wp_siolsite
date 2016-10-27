@@ -98,8 +98,26 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
             },
             oimoLoop: function() {  
                 if(!pause){  
+
+
                    world.step();// updateworld
                    v3d.render();
+
+                    var n1, n2;
+                    var name1 = 'boxTarget';
+                    var name2 = 'phaser';
+                    var contact = world.contacts;
+                    while(contact!==null){
+                        n1 = contact.body1.name || ' ';
+                        n2 = contact.body2.name || ' ';
+                        if((n1==name1 && n2==name2) || (n2==name1 && n1==name2)){ 
+                            if(contact.touching) {
+                                world.removeShape(contact.shape1);
+                                world.removeShape(contact.shape2);
+                            }
+                        }
+                        else contact = contact.next;
+                    }
 
 
                   // console.log('perf fps: ' + perf.fps); 
@@ -175,7 +193,7 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
                         if(keys[40]){
                             v3d.minusForce();
                         }
-                        if(keys[32]){
+                        if(keys[32] || true){
                             v3d.phaser();
                         }
                         if(keys[32] && keys[38]){
