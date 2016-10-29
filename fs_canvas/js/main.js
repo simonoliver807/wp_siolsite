@@ -22,11 +22,10 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 				accel.style.top = ach+'px';
 				accel.style.right = acw + 'px';
 				v3d = gameinit.getObj('v3d');
-				this.loadEvents();
 				gameinit.createWorld(timestep);
 				gameinit.populate(1000);
+				this.loadEvents();
 			    v3d.initLight();
-			    render = this.render;
 				setInterval(gameinit.oimoLoop, timestep*1000);
 
 

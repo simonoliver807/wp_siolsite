@@ -12,6 +12,8 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
     // container to hold three.js objects
     var meshs = [];
     var meshNum = 0;
+    // non physics object to exclude from mesh array
+    var exmesh = ['sight','hemlight','dirlight','containerMesh']
     var pause = 0;
     var v3d = new V3D.View();
     
@@ -54,7 +56,7 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
     var containerMesh;
     var sightMesh;
     // radius of the ship
-    var shp1r = 7.5;
+    var shp1r = 0.1;
     //var proBox;
     var tmp;
 
@@ -94,17 +96,31 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
                     meshNum +=1;
                     return bodys[bodysNum -1];
                 }
+                containerMesh = 0;
 
             },
             oimoLoop: function() {  
-                if(!pause){  
+                if( !pause && V3D.startRender ){  
 
 
                    world.step();// updateworld
                    v3d.render();
 
+                   if(!containerMesh){
+                        for(var i=0;i<v3d.scene.children.length;i++){
+                            if(exmesh.indexOf(v3d.scene.children[i].name) === -1){
+                                meshs.push(v3d.scene.children[i]);
+                                console.log('name ' + meshs[meshNum].name);
+                                 meshNum +=1;
+                            }
+                       }
+                       var scl = v3d.scene.children.length - 1;
+                       v3d.containerMesh = v3d.scene.children[scl];
+                       containerMesh = v3d.scene.children[scl];
+                    }
+
                     var n1, n2;
-                    var name1 = 'boxTarget';
+                    var name1 = 'drone';
                     var name2 = 'phaser';
                     var contact = world.contacts;
                     while(contact!==null){
@@ -112,11 +128,15 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
                         n2 = contact.body2.name || ' ';
                         if((n1==name1 && n2==name2) || (n2==name1 && n1==name2)){ 
                             if(contact.touching) {
-                                world.removeShape(contact.shape1);
-                                world.removeShape(contact.shape2);
+                                if(contact.shape1.proxy && contact.shape2.proxy){
+                                    world.removeShape(contact.shape1);
+                                    world.removeShape(contact.shape2);
+                                    v3d.scene.remove(meshs[contact.shape1.id]);
+                                    v3d.scene.remove(meshs[contact.shape2.id]);
+                                }
                             }
                         }
-                        else contact = contact.next;
+                        contact = contact.next;
                     }
 
 
@@ -139,8 +159,8 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
 
                             if(body.name == 'shp1'){
 
-                                containerMeshPrev.copy(containerMesh.position);
-                                containerMesh.position.copy(body.getPosition());
+                                containerMeshPrev.set(containerMesh.position.x,containerMesh.position.y, containerMesh.position.z);
+                                containerMesh.position.set(mesh.position.x, mesh.position.y, mesh.position.z);
                                var tmpPosX = (containerMesh.position.x - containerMeshPrev.x);
                                var tmpPosY = (containerMesh.position.y - containerMeshPrev.y);
                                var tmpPosZ = (containerMesh.position.z - containerMeshPrev.z); 
@@ -174,17 +194,7 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
 
 
                             }
-
-                            // change material
-                            if(mesh.material.name === 'sbox') mesh.material = v3d.mats.box;
-                            if(mesh.material.name === 'ssph') mesh.material = v3d.mats.sph; 
-
-                            // }
                         } 
-                        else {
-                        //    if(mesh.material.name === 'box') mesh.material = v3d.mats.sbox;
-                         //   if(mesh.material.name === 'sph') mesh.material = v3d.mats.ssph;
-                        }
                     }
                     if(keys){
                         if(keys[38]){
@@ -193,7 +203,7 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
                         if(keys[40]){
                             v3d.minusForce();
                         }
-                        if(keys[32] || true){
+                        if(keys[32] || false){
                             v3d.phaser();
                         }
                         if(keys[32] && keys[38]){
@@ -216,12 +226,12 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
                     x = 500;
                     z = -1500;
                     y = 100;
-                    w = 50;
-                    h = 50;
-                    d = 50;
+                    w = 20;
+                    h = 20;
+                    d = 20;
 
-                var spheres = [{ type: 'sphere', size: [shp1r, shp1r, shp1r], pos:[0,0,0], move: 'true', world: world, color:'#66ff33', wireframe: 'false', name:"shp1", transparent: 'false', opacity: 1},
-                               { type: 'sphere', size:[8, 8, 8], pos:[0,0,0], move: 'true', world: world, color: '#ff0000', wireframe: 'false',  name: 'containerMesh', transparent: 'false', opacity: 1, image:'shp1.jpg'},
+                var spheres = [{ type: 'sphere', size: [shp1r, shp1r, shp1r], pos:[0,0,0], move: 'true', world: world, color: 0x0000ff , wireframe: 'true', name:"shp1", transparent: 'true', opacity: 0.5},
+                               { type: 'sphere', size:[8, 8, 8], pos:[0,0,0], move: 'true', world: world, color: '#ff0000', wireframe: 'false',  name: 'containerMesh', transparent: 'false', opacity: 1, image:'cpv/cpv.obj'},
                                { type: 'sphere', size:[500, 500, 500], pos:[500,10,-10000], move: 'true', world: world, color: '#0000ff', wireframe: 'false',  name: 'planet', transparent: 'false', opacity: 1, image:'planet_1.png'},
                                { type: 'sphere', size:[500, 500, 500], pos:[500,10,10000], move: 'true', world: world, color: '#0000ff', wireframe: 'false',  name: 'planet', transparent: 'false', opacity: 1, image:'planet_2.jpg'}];
 
@@ -231,38 +241,43 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
                     //var sphere =  {size:spheres[i].size, pos:spheres[i].pos, move:spheres[i].move,world:world, name:spheres[i].name, image: spheres[i].image};
                     if(spheres[i].name != 'containerMesh'){
                         bodys[bodysNum] = new OIMO.Body(spheres[i]);
-                        meshs[meshNum] = v3d.addSphere(spheres[i]);
+                        v3d.addSphere(spheres[i]);
                         v3d.setBodys(bodys[bodysNum]);
                         bodysNum += 1;
-                        meshNum +=1;
+                       // meshNum +=1;
                     }
                     if(spheres[i].name == 'containerMesh'){
-                        containerMesh = v3d.addSphere(spheres[i]);
+                      //  containerMesh = v3d.addSphere(spheres[i]);
+                      v3d.addSphere(spheres[i]);
                     }
                 }
-                sightMesh = { type: 'box', size: [15, 15, 0.5], pos:[0,0,-100], move: 'true', world: world, color:'#66ff33', wireframe: 'false', name: 'sight', transparent: 'true', opacity: 0, image:'sight1.png'};
+                sightMesh = { type: 'box', size: [15, 15, 0.5], pos:[0,0,-10], move: 'true', world: world, color:'#66ff33', wireframe: 'false', name: 'sight', transparent: 'true', opacity: 0, image:'sight_1.png'};
                 sightMesh = v3d.addBox(sightMesh);
 
                var t = 3;
+               var cylArr = []
                for(var i=0;i<n;i++){
-                   t === 2 ? t=3 : t=2 ;
+                  // t === 2 ? t=3 : t=2 ;
                    if(t===2) obj = { type:'box', size:[w,h,d], pos:[x,y,z], move: true, world:world, color:'#66ff33', wireframe: 'false', name: 'boxTarget', transparent: 'false', opacity: 1, image:''};;
-                   if(t===3) obj = { type:'cylinder', size:[w,h,d], pos:[x,y,z], move: true, world:world, color:'#66ff33', wireframe: 'false', name: 'cylTarget', transparent: 'false', opacity: 1, image:''};;
+                   if(t===3) obj = { type:'cylinder', size:[w,h,d], pos:[x,y,z], move: true, world:world, color:'#66ff33', wireframe: 'false', name: 'drone', transparent: 'false', opacity: 1, image:'Free_Droid/bake.obj'};;
 
                     bodys[bodysNum] = new OIMO.Body(obj);
                     if(t == 2) {
-                        meshs[meshNum] = v3d.addBox(obj);
+                       // meshs[meshNum] = v3d.addBox(obj);
                     }
                     else {
-                        meshs[meshNum] = v3d.addCylinder(obj);
+                       // meshs[meshNum] = v3d.addCylinder(obj);
+                       cylArr.push(obj);
+
                     }
                     bodysNum += 1;
-                    meshNum +=1
+                    //meshNum +=1
 
                     x = this.randMinMax(-5000,5000);
                     y = this.randMinMax(-5000,5000);
                     z = this.randMinMax(-5000,5000);
                }
+               v3d.addCylinder(cylArr);
             },
             addPhaser: function(body, sphere){
 

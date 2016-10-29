@@ -5,6 +5,8 @@ var V3D = {};
 V3D.ToRad = Math.PI/180;
 V3D.ToDeg = 180 / Math.PI;
 V3D.msePos = new THREE.Vector3(0,0,0);
+V3D.startRender = false;
+V3D.objimage = 0;
 
 
 V3D.View = function(h,v,d){
@@ -22,7 +24,6 @@ V3D.View = function(h,v,d){
 	this.w = container.clientWidth;
 	this.h = container.clientHeight;
 	this.id = 'container';
-    this.initialcamz = 100;
 
 	this.init(h,v,d);
 	this.initBasic();
@@ -35,6 +36,7 @@ V3D.View = function(h,v,d){
     // this.axis = new THREE.Vector3();
     this.startRot = { issleeping: 1, rot: 0, axis: new THREE.Vector3() };
     this.world;
+    this.var =0;
 
 }
 
@@ -52,19 +54,22 @@ V3D.View.prototype = {
         // this.camhelp = new THREE.CameraHelper( this.camera );
         this.camera.useQuarternion = true;
 
-        this.camera.position.z = this.initialcamz;
-        this.camera.position.y = 0;
+        this.camera.position.z = 10;
+        this.origcamz = 10;
+       // this.camera.position.y = 0;
         this.camera.matrixAutoUpdate = true;
         this.camAngle = -0.025;
 
         this.msechngdir;
         this.chngeindir = false;
-      //  this.camNegate = false;
+
+
+       // this.tmpVCPprev1 = new THREE.Vector3(0,0,100);
+        this.tmpVCPprev = new THREE.Vector3(0,0,10);
         
         
     	this.scene = new THREE.Scene();
         this.scene.background = new THREE.Color( 0x000000 );
-        // this.scene.add( this.camhelp )
         
         
         
@@ -78,15 +83,10 @@ V3D.View.prototype = {
        // this.raycaster = new THREE.Raycaster(this.camera.position, [0,1,0], 1, 100);
         this.raycaster = new THREE.Raycaster();
 
-      
-        
-        this.tmpVCPprev1 = new THREE.Vector3(0,0,100);
 
-        this.tmpVCPprev = new THREE.Vector3(0,0,100);
-        this.tmppbprev = new THREE.Vector3(0,0,-100);
       //  this.axis = new THREE.Vector3(0,1,0);
 
-        this.containerMesh;
+        this.containerMesh = 0;
         this.proBox;
         this.camrot = new THREE.Vector3();
         this.pbrot = new THREE.Vector3();
@@ -114,9 +114,11 @@ V3D.View.prototype = {
     	//this.scene.fog = new THREE.Fog( 0x1d1f20, 100, 600 );
     	//this.scene.add( new THREE.AmbientLight( 0x3D4143 ) );
     	var hemiLight = new THREE.HemisphereLight( 0xffffff, 0x303030, 0.3 );
+        hemiLight.name = 'hemlight';
 		this.scene.add( hemiLight );
 		var dirLight = new THREE.DirectionalLight( 0xffffff, 1.2 );
 		dirLight.position.set( 0.5, 1, 0.5 ).normalize();
+        dirLight.name = 'dirlight';
 		this.scene.add( dirLight );
     },
     initLightShadow:function(){
@@ -149,7 +151,7 @@ V3D.View.prototype = {
         geos['cylTarget'] = new THREE.CylinderGeometry( 5, 5, 20, 32 );
         geos['phaser'] = new THREE.SphereGeometry(1.5, 3, 2);
         geos['planet'] = new THREE.SphereBufferGeometry(500, 16, 12);
-        geos['shp1'] = new THREE.SphereGeometry(7.5)
+        geos['shp1'] = new THREE.SphereGeometry(0.5)
         geos['sight'] = new THREE.BoxGeometry(15,15,0.5);
         
 
@@ -168,15 +170,22 @@ V3D.View.prototype = {
             var material = new THREE.MeshBasicMaterial({ color: sphere.color, wireframe: sphere.wireframe, name: sphere.name, transparent: sphere.transparent, opacity: sphere.opacity });
         }
 
-        var mesh = new THREE.Mesh( this.geos[sphere.name], material, sphere.name );
-        mesh.position.set( sphere.pos[0], sphere.pos[1], sphere.pos[2] );
-        this.scene.add( mesh );
+        if(sphere.name == 'containerMesh'){
+            var texture = this.loadTGA();
+            var object = this.loadOBJ(texture,this.scene,sphere);
+        }
+        else {
 
-        if(mesh.name == 'containerMesh'){
-            this.containerMesh = mesh;
-        };
+            var mesh = new THREE.Mesh( this.geos[sphere.name], material, sphere.name );
+            mesh.position.set( sphere.pos[0], sphere.pos[1], sphere.pos[2] );
+            this.scene.add( mesh );
 
-        return mesh;
+            // if(mesh.name == 'containerMesh'){
+            //     this.containerMesh = mesh;
+            // };
+
+            return mesh;
+        }
     	
     },
     addBox: function(box){
@@ -208,12 +217,16 @@ V3D.View.prototype = {
 
     },
     addCylinder: function(cylinder){
+
+
+            var texture = this.loadTGA();
+            this.loadOBJ(texture,this.scene,cylinder);
         
-        var material = new THREE.MeshBasicMaterial({ color: cylinder.color, wireframe: cylinder.wireframe, name: cylinder.name, transparent: cylinder.transparent, opacity: cylinder.opacity });
-        var mesh = new THREE.Mesh( this.geos['cylTarget'], material, cylinder.name );
-        mesh.position.set( cylinder.pos[0], cylinder.pos[1], cylinder.pos[2] );
-        this.scene.add( mesh );
-        return mesh;
+        // var material = new THREE.MeshBasicMaterial({ color: cylinder.color, wireframe: cylinder.wireframe, name: cylinder.name, transparent: cylinder.transparent, opacity: cylinder.opacity });
+        // var mesh = new THREE.Mesh( this.geos['cylTarget'], material, cylinder.name );
+        // mesh.position.set( cylinder.pos[0], cylinder.pos[1], cylinder.pos[2] );
+        // this.scene.add( mesh );
+        // return mesh;
 
 
     },
@@ -306,48 +319,55 @@ V3D.View.prototype = {
     },
     updateSightPos: function () {
 
-           this.dir.set( V3D.msePos.x, V3D.msePos.y, 0.5 ).unproject( this.camera ).sub( this.camera.position ).normalize();
+          // this.dir.set( V3D.msePos.x, V3D.msePos.y, 0.5 ).unproject( this.camera ).sub( this.camera.position ).normalize();
 
 
-            // var matrixWorld = new THREE.Matrix4();
-            // var matrix2 = new THREE.Matrix4();
-            // matrixWorld.copy(this.camera.matrixWorld);
-            // var cpn = new THREE.Vector3( matrixWorld.elements[12], matrixWorld.elements[13], matrixWorld.elements[14] );
-            // cpn.normalize();
+            var matrixWorld = new THREE.Matrix4();
+            var matrix2 = new THREE.Matrix4();
+            var matrix3 = new THREE.Matrix4();
+            var cpn = new THREE.Vector3( 0, 0, 0 );
+            var len = new THREE.Vector3();
+            len.setFromMatrixPosition( this.camera.matrixWorld );
+            len = len.length();
+            
 
 
+             // this.log('pos ', pos);
+             // this.log('quaternion ', q);
+             // this.log('scale ', scale);
 
-            // var len = this.camera.position.length();
-
-            // matrixWorld.elements[12] = cpn.x * len;
-            // matrixWorld.elements[13] = cpn.y * len;
-            // matrixWorld.elements[14] = cpn.z * len;
-
-
-            // matrix2.multiplyMatrices( matrixWorld, matrix2.getInverse( this.camera.projectionMatrix ) );
-            // var tmpVec10 = new THREE.Vector3(V3D.msePos.x, V3D.msePos.y, 0.5);
-            // tmpVec10.copy(tmpVec10.applyProjection(matrix2));
-            // this.dir.copy(tmpVec10.sub(this.camera.position).normalize());
-
-
-
-
-             //var tmpVec11 = new THREE.Vector3(this.camera.position.x,this.camera.position.y,this.camera.position.z);
-             //tmpVec11.normalize();
-            // tmpVec11.multiplyScalar(len);
-            // this.newsightpos.addVectors ( tmpVec11, this.dir.multiplyScalar( 200 ));
-            // this.newsightpos.normalize();
-            // this.newsightpos.multiplyScalar(len);
+            matrixWorld.copy(this.camera.matrixWorld);
+            cpn.x = matrixWorld.elements[12];
+            cpn.y = matrixWorld.elements[13];
+            cpn.z = matrixWorld.elements[14];
+            cpn.normalize()
+          //  cpn.z *= 10;
+            matrixWorld.setPosition(cpn);
 
 
 
+            matrix2.multiplyMatrices( matrixWorld, matrix2.getInverse( this.camera.projectionMatrix ) );
+            var tmpvecmse = new THREE.Vector3(V3D.msePos.x, V3D.msePos.y, 0.5);
+            tmpvecmse.applyProjection(matrix2);
 
 
 
+            this.dir.copy(tmpvecmse.sub(cpn).normalize());
 
-
+      //      tmpVec11.multiplyScalar(len);
             this.newsightpos.addVectors ( this.camera.position, this.dir.multiplyScalar( 200 ));
+            //this.newsightpos.multiplyScalar(len);
             this.sight.position.set(this.newsightpos.x, this.newsightpos.y, this.newsightpos.z);
+
+
+
+
+
+
+
+
+            // this.newsightpos.addVectors ( this.camera.position, this.dir.multiplyScalar( 200 ));
+            // this.sight.position.set(this.newsightpos.x, this.newsightpos.y, this.newsightpos.z);
 
 
 
@@ -372,9 +392,9 @@ V3D.View.prototype = {
             // cmq.normalize;
             // this.camera.matrix.makeRotationFromQuaternion(cmq);
 
-            var q = new THREE.Quaternion();
-            var rotAxis = new THREE.Vector3(0,1,0);
-            q.setFromAxisAngle( rotAxis, 0.1);
+            // var q = new THREE.Quaternion();
+            // var rotAxis = new THREE.Vector3(0,1,0);
+            // q.setFromAxisAngle( rotAxis, 0.1);
 
           //  this.log('sm rot: ', this.sight.rotation);
 
@@ -455,12 +475,12 @@ V3D.View.prototype = {
             else {
 
                 var axis = new THREE.Vector3(0,1,0);
-                var camAngle = new THREE.Vector3();
+               // var camAngle = new THREE.Vector3();
                 if(this.startRot.rot == 'ul' || this.startRot.rot == 'dl'){
-                    camAngle = 0.025
+                    var camAngle = 0.001
                 }
                 else {
-                    camAngle = -0.025;
+                    var camAngle = -0.001;
                 }
 
                 var tmpVCP = new THREE.Vector3();
@@ -596,7 +616,7 @@ V3D.View.prototype = {
         heading.z *= mag;
         this.shootStart.subVectors( this.containerMesh.position, this.camera.position );
         this.shootStart.normalize();
-        this.shootStart.add(this.containerMesh.position);
+        this.shootStart.addVectors(this.shootStart, this.containerMesh.position);
         
         var phaser = { type: 'sphere', size: [0.5,0.5,0.5], pos: [this.shootStart.x, this.shootStart.y, this.shootStart.z], move: 'true', world: this.world, color:'#66ff33', wireframe: 'false', name:'phaser', transparent: 'false', opacity: 1};
         var sphere = this.addSphere(phaser);
@@ -605,6 +625,61 @@ V3D.View.prototype = {
         var shp1 = this.bodys[0].body;
         rb.body.linearVelocity.addEqual(shp1.linearVelocity);
         //console.log('velocity: ' + velocity);
+    },
+    loadTGA: function() {
+        var loader = new THREE.TGALoader();
+        var texture = loader.load( 'http://localhost:8887/fs_canvas/images/Free_Droid/Materials/BaseMaterial_diffuse.tga' );
+        return texture
+    },
+    loadOBJ: function(texture,scene,obj) {
+        if( obj.length > 1) {
+            var image = obj[0].image;
+        }
+        else { var image = obj.image; }
+        var loader = new THREE.OBJLoader( );
+        loader.load( 'http://localhost:8887/fs_canvas/images/'+image, function ( object ) {
+
+            object.traverse( function ( child ) {
+
+                if ( child instanceof THREE.Mesh ) {
+
+                    child.material.map = texture;
+
+                }
+
+            } );
+            if(obj.name == 'containerMesh'){
+                object.position.set(obj.pos[0], obj.pos[1], obj.pos[2]);
+                object.name = obj.name;
+                scene.add(object);
+            }
+            else {
+                for(var i=0;i<obj.length;i++){
+                    var tmpobj = obj[i];
+                    var tmpgroup = object.clone();
+                    tmpgroup.position.set(tmpobj.pos[0], tmpobj.pos[1], tmpobj.pos[2]);
+                    tmpgroup.name = tmpobj.name;
+                    scene.add(tmpgroup);
+                }
+            }
+
+        }, this.onProgress, this.onError );
+    },
+    onProgress: function ( xhr ) {
+        if ( xhr.lengthComputable ) {
+            var percentComplete = xhr.loaded / xhr.total * 100;
+            console.log( Math.round(percentComplete, 2) + '% downloaded' );
+        }
+        if (percentComplete == 100){
+             V3D.objimage += 1;
+        }
+        if ( percentComplete == 100 && V3D.objimage == 2) {
+            V3D.startRender = true;
+        }
+    },
+    onError: function ( xhr ) {
+
+        console.log('xhr error ' + xhr);
     },
     setBodys: function(rb){
         this.bodys.push(rb);
