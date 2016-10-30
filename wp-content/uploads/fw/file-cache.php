@@ -1,6 +1,6 @@
 <?php return array (
-  'created' => 1477684117,
-  'updated' => 1477684117,
+  'created' => 1477827394,
+  'updated' => 1477827403,
   'data' => 
   array (
     'core:ext:load:glob:/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions' => 
@@ -126,5 +126,6 @@
     'core:ext:glob:inc-all-php:update:/Applications/MAMP/htdocs/website/wordpress/wp-content/themes/twentysixteen/framework-customizations/extensions/update' => 
     array (
     ),
+    'core:theme:path:/options/posts/page.php' => false,
   ),
 );

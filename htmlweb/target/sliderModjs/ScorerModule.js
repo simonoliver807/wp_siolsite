@@ -1,1 +1,0 @@
-define([],function(){return function(){return{setscorerID:function(t,e){this.opValue=0,this.totalValue=0,this.scorerID=t,this.disabledBool=!1,this.tooltipBool=!1,this.overscrollStatus=!1,this.setScorerValue=0,this.timesValue=100/e},setValues:function(t,e){var s=this.setScorerValue*this.timesValue;this.totalValue=e*s}}}});

@@ -291,19 +291,28 @@
 			}
 		},
 		{
+			"file": "wp-content/themes/twentysixteen/css/editor-style.css",
+			"settings":
+			{
+				"buffer_size": 6630,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "wp-content/themes/twentysixteen/style.css",
+			"settings":
+			{
+				"buffer_size": 69007,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
 			"file": "wp-includes/formatting.php",
 			"settings":
 			{
 				"buffer_size": 158894,
 				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "wp-content/plugins/unyson/framework/extensions/shortcodes/shortcodes/div/options.php",
-			"settings":
-			{
-				"buffer_size": 387,
 				"line_ending": "Unix"
 			}
 		},
@@ -353,15 +362,9 @@
 		"/Applications/MAMP/htdocs/website/wordpress/wp-content",
 		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins",
 		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson",
-		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework",
-		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions",
-		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/shortcodes",
-		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/shortcodes/shortcodes",
-		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/shortcodes/shortcodes/div",
-		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/shortcodes/shortcodes/div/views",
 		"/Applications/MAMP/htdocs/website/wordpress/wp-content/themes",
 		"/Applications/MAMP/htdocs/website/wordpress/wp-content/themes/twentysixteen",
-		"/Applications/MAMP/htdocs/website/wordpress/wp-includes"
+		"/Applications/MAMP/htdocs/website/wordpress/wp-content/themes/twentysixteen/css"
 	],
 	"file_history":
 	[
@@ -703,7 +706,7 @@
 	"groups":
 	[
 		{
-			"selected": 2,
+			"selected": 4,
 			"sheets":
 			[
 				{
@@ -731,7 +734,7 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 5,
+					"stack_index": 6,
 					"type": "text"
 				},
 				{
@@ -821,7 +824,7 @@
 						"translation.y": 1042.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 1,
+					"stack_index": 3,
 					"type": "text"
 				},
 				{
@@ -850,11 +853,69 @@
 						"translation.y": 821.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 0,
+					"stack_index": 2,
 					"type": "text"
 				},
 				{
 					"buffer": 3,
+					"file": "wp-content/themes/twentysixteen/css/editor-style.css",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 6630,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/CSS/CSS.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 3576.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "wp-content/themes/twentysixteen/style.css",
+					"semi_transient": true,
+					"settings":
+					{
+						"buffer_size": 69007,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								4231,
+								1858
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/CSS/CSS.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 338.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 5,
 					"file": "wp-includes/formatting.php",
 					"semi_transient": false,
 					"settings":
@@ -879,41 +940,11 @@
 						"translation.y": 11540.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 3,
+					"stack_index": 4,
 					"type": "text"
 				},
 				{
-					"buffer": 4,
-					"file": "wp-content/plugins/unyson/framework/extensions/shortcodes/shortcodes/div/options.php",
-					"semi_transient": true,
-					"settings":
-					{
-						"buffer_size": 387,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								387,
-								387
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/PHP/PHP.sublime-syntax",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 2,
-					"type": "text"
-				},
-				{
-					"buffer": 5,
+					"buffer": 6,
 					"file": "wp-includes/kses.php",
 					"semi_transient": false,
 					"settings":
@@ -938,7 +969,7 @@
 						"translation.y": 21793.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 4,
+					"stack_index": 5,
 					"type": "text"
 				}
 			]

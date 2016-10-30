@@ -1,0 +1,17 @@
+{
+  "restartable": "rs",
+  "ignore": [
+    "game/wf.txt"
+  ],
+  "verbose": true,
+  "execMap": {
+    "js": "node --harmony"
+  },
+  "events": {
+    "restart": ""
+  },
+  "env": {
+    "NODE_ENV": "development"
+  },
+  "ext": "js json"
+}

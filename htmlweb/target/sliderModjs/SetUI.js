@@ -1,1 +1,0 @@
-define(["sMods/Main"],function(n){"use strict";var i=window.location.search.substring(1);i=i?i.charAt(i.length-1):1;var t=new n;t.init(i)});
