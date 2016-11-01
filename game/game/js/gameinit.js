@@ -181,22 +181,14 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
                                     
                                 };
                                 v3d.camera.updateMatrixWorld();
-
-
-                                // proBox.position.x += tmpPosX;
-                                // proBox.position.y += tmpPosY; 
-                                // proBox.position.z += tmpPosZ;
-                                // if(v3d.startRot.rot){
-                                //    // v3d.log('rot started', 'proBox');
-                                //     proBox.position.x += v3d.pbrot.x;
-                                //     proBox.position.y += v3d.pbrot.y;
-                                //     proBox.position.z += v3d.pbrot.z;
-                                //     proBox.lookAt( containerMesh.position );
-                                // };
-
-
                             }
                         } 
+                        if( body.ld ) {
+                            for(var i=0;bodys.length;i++){
+                                
+                            }
+                            v3d.updateDrones( body.body );
+                        }
                     }
                     if(keys){
                         if(keys[38]){
@@ -218,6 +210,17 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
             },
 
             populate: function(n) {
+
+                /////////////*********************////////////////
+                /////////////*********************///////////////
+                //////    if you update size here   /////////////
+                //////     You must update size     /////////////
+                //////      in the geomety          /////////////
+                /////////////*********************///////////////
+                /////////////*********************///////////////
+
+
+
                 var obj;
 
                 perf = new OIMO.Performance(world);
@@ -225,9 +228,9 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
                 //add random objects
                 var x, y, z, w, h, d, t;
                 
-                    x = 500;
-                    z = -1500;
-                    y = 100;
+                    x = 0;
+                    z = 0;
+                    y = 0;
                     w = 20;
                     h = 20;
                     d = 20;
@@ -253,17 +256,34 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
                       v3d.addSphere(spheres[i]);
                     }
                 }
+                // sight mesh
                 sightMesh = { type: 'box', size: [15, 15, 0.5], pos:[0,0,-10], move: 'true', world: world, color:'#66ff33', wireframe: 'false', name: 'sight', transparent: 'true', opacity: 0, image:'sight_1.png'};
                 sightMesh = v3d.addBox(sightMesh);
+                // mothership mesh
+                var ms = { type:'box', size:[350,50,50], pos:[5000,0,-5000], move: true, world:world, color:'#66ff33', wireframe: 'true', name: 'mothership', transparent: 'false', opacity: 1}
+                bodys[bodysNum] = new OIMO.Body(ms);
+                v3d.addBox(ms);
+                bodysNum += 1;
 
                var t = 3;
-               var cylArr = []
+               var cylArr = [];
+               var randn = this.randMinMax(0,n);
                for(var i=0;i<n;i++){
+                    x = this.randMinMax(-1000,1000);
+                    y = this.randMinMax(-1000,1000);
+                    z = this.randMinMax(-1000,1000);
+                    x += ms.pos[0];
+                    y += ms.pos[1];
+                    z += ms.pos[2];
                   // t === 2 ? t=3 : t=2 ;
                    if(t===2) obj = { type:'box', size:[w,h,d], pos:[x,y,z], move: true, world:world, color:'#66ff33', wireframe: 'false', name: 'boxTarget', transparent: 'false', opacity: 1, image:''};;
                    if(t===3) obj = { type:'cylinder', size:[w,h,d], pos:[x,y,z], move: true, world:world, color:'#66ff33', wireframe: 'false', name: 'drone', transparent: 'false', opacity: 1, image:'Free_Droid/bake.obj'};;
 
                     bodys[bodysNum] = new OIMO.Body(obj);
+                    bodys[bodysNum].ld = false;
+                    if( randn == i ) {
+                        bodys[bodysNum].ld = true;
+                    }
                     if(t == 2) {
                        // meshs[meshNum] = v3d.addBox(obj);
                     }
@@ -273,11 +293,6 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
 
                     }
                     bodysNum += 1;
-                    //meshNum +=1
-
-                    x = this.randMinMax(-5000,5000);
-                    y = this.randMinMax(-5000,5000);
-                    z = this.randMinMax(-5000,5000);
                }
                v3d.addCylinder(cylArr);
             },

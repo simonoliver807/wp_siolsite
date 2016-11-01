@@ -13,6 +13,16 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 
 		return {
 			init: function(){
+
+
+				// var socket = io('http://localhost:9000');
+
+				// //var socket = io('https://grisly-scarecrow-29073.herokuapp.com');
+
+			 //  	 socket.on('gamestart', function (data) {
+				//  	console.log(data);
+				//     socket.emit('sendid', { id: data });
+				//  });
 				
 
 				accel = document.getElementById('accel');

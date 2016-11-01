@@ -4,9 +4,6 @@
     "game/wf.txt"
   ],
   "verbose": true,
-  "execMap": {
-    "js": "node --harmony"
-  },
   "events": {
     "restart": ""
   },

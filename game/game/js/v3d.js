@@ -168,8 +168,9 @@ V3D.View.prototype = {
         geos['cylTarget'] = new THREE.CylinderGeometry( 5, 5, 20, 32 );
         geos['phaser'] = new THREE.SphereGeometry(1.5, 3, 2);
         geos['planet'] = new THREE.SphereBufferGeometry(500, 16, 12);
-        geos['shp1'] = new THREE.SphereGeometry(0.5)
+        geos['shp1'] = new THREE.SphereGeometry(0.1)
         geos['sight'] = new THREE.BoxGeometry(15,15,0.5);
+        geos['mothership'] = new THREE.BoxGeometry(350,50,50,10,10,10);
         
 
         this.geos = geos;
@@ -221,6 +222,7 @@ V3D.View.prototype = {
         }
         else {
              var material = new THREE.MeshBasicMaterial({ color: box.color, wireframe: box.wireframe, name: box.name, transparent: box.transparent, opacity: box.opacity });
+            if(box.wireframe){ material.wireframe = true;}
         }
 
         var mesh = new THREE.Mesh( this.geos[box.name], material, box.name );
@@ -230,7 +232,7 @@ V3D.View.prototype = {
         if(mesh.name == 'sight'){
             this.sight = mesh;
         };
-        return mesh;
+        //return mesh;
 
     },
     addCylinder: function(cylinder){
@@ -604,6 +606,14 @@ V3D.View.prototype = {
         var shp1 = this.bodys[0].body;
         rb.body.linearVelocity.addEqual(shp1.linearVelocity);
         //console.log('velocity: ' + velocity);
+    },
+    updateDrones: function(rb){
+
+
+        var vec = new THREE.Vector3(0,1,0);
+        rb.linearVelocity.addTime(vec, this.world.timeStep);
+
+
     },
     loadTGA: function() {
         var loader = new THREE.TGALoader();
