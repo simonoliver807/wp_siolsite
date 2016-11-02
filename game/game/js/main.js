@@ -21,7 +21,11 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 
 			 //  	 socket.on('gamestart', function (data) {
 				//  	console.log(data);
-				//     socket.emit('sendid', { id: data });
+				//     socket.emit('getgd', { id: data });
+				//     socket.on('ggd', function(gamedata){
+				//     	gameinit.prs.push(gamedata);
+				//     });
+
 				//  });
 				
 

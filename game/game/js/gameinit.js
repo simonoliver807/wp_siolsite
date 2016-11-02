@@ -34,6 +34,12 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
 
     var world;
 
+
+    var socket;
+    var gameUUID;
+    var prs;
+
+
     var perf;
     
 
@@ -71,8 +77,6 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
     // ratio needs to be worked out canvasCentreX divided by camera width  
     var ratio = 0.73;
 
-    var newForce = 0;
-
     var containerMeshPrev;
     containerMeshPrev = new OIMO.Vec3(0,0,0)
     var canvas = document.getElementById('container');
@@ -83,6 +87,11 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
 
             createWorld: function(timestep){
 
+                // socket = io('http://localhost:9000');
+                // socket.on('gamestart', function (data) {
+                //     gameUUID = data['id'];
+                //     console.log('gu ' + gameUUID); 
+                // });
                  // create oimo world contains all rigidBodys and joint.
                 world = new OIMO.World( timestep, boardphase, Iterations, noStat );
                 world.worldscale(100);
@@ -97,6 +106,7 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
                     return bodys[bodysNum -1];
                 }
                 containerMesh = 0;
+                prs = [{id:'temp1',gameid:12345,posx:0,posy:0,posx:0,rotx:0,roty:0,rotz:0}];
 
             },
             oimoLoop: function() {  
@@ -105,6 +115,19 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
 
                    world.step();// updateworld
                    v3d.render();
+
+                   // socket.emit('getgd', { id: gameUUID });
+                   //  socket.on('ggd', function(gamedata){
+                   //    //  console.log(gamedata);
+
+                   //      prs.push(gamedata);
+
+                   //  });
+                   //  if(prs.length){
+                   //      socket.emit('setgd', prs);
+                   //      prs = [];
+                   //  }
+
 
                    if(!containerMesh){
                         for(var i=0;i<v3d.scene.children.length;i++){
@@ -184,10 +207,7 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
                             }
                         } 
                         if( body.ld ) {
-                            for(var i=0;bodys.length;i++){
-                                
-                            }
-                            v3d.updateDrones( body.body );
+                              v3d.updateDrones( body.body );
                         }
                     }
                     if(keys){
@@ -275,9 +295,9 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
                     x += ms.pos[0];
                     y += ms.pos[1];
                     z += ms.pos[2];
-                  // t === 2 ? t=3 : t=2 ;
-                   if(t===2) obj = { type:'box', size:[w,h,d], pos:[x,y,z], move: true, world:world, color:'#66ff33', wireframe: 'false', name: 'boxTarget', transparent: 'false', opacity: 1, image:''};;
-                   if(t===3) obj = { type:'cylinder', size:[w,h,d], pos:[x,y,z], move: true, world:world, color:'#66ff33', wireframe: 'false', name: 'drone', transparent: 'false', opacity: 1, image:'Free_Droid/bake.obj'};;
+                  // // t === 2 ? t=3 : t=2 ;
+                    if(t===2) obj = { type:'box', size:[w,h,d], pos:[x,y,z], move: true, world:world, color:'#66ff33', wireframe: 'false', name: 'boxTarget', transparent: 'false', opacity: 1, image:''};
+                    if(t===3) obj = { type:'cylinder', size:[w,h,d], pos:[x,y,z], move: true, world:world, color:'#66ff33', wireframe: 'false', name: 'drone', transparent: 'false', opacity: 1, image:'Free_Droid/bake.obj'};
 
                     bodys[bodysNum] = new OIMO.Body(obj);
                     bodys[bodysNum].ld = false;

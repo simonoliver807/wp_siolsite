@@ -96,7 +96,7 @@ V3D.View.prototype = {
 
 
         this.containerMesh = 0;
-        this.proBox;
+        this.mothership;
         this.camrot = new THREE.Vector3();
         this.pbrot = new THREE.Vector3();
         this.newsightpos = new THREE.Vector3();
@@ -232,6 +232,9 @@ V3D.View.prototype = {
         if(mesh.name == 'sight'){
             this.sight = mesh;
         };
+        if(mesh.name == 'mothership') {
+            this.mothership = mesh;
+        }
         //return mesh;
 
     },
@@ -611,7 +614,22 @@ V3D.View.prototype = {
 
 
         var vec = new THREE.Vector3(0,1,0);
-        rb.linearVelocity.addTime(vec, this.world.timeStep);
+        var len = new THREE.Vector3();
+        var rbvec = new THREE.Vector3(rb.position.x,rb.position.y,rb.position.z); 
+        rbvec.multiplyScalar(100);
+        len.subVectors(this.mothership.position, rbvec);
+        len = Math.round(len.length());
+        //if(this.mothership.position.sub(rb.position).length() > -1000 && this.mothership.position.sub(rb.position).length() < -1000 ){
+        if(len > -1200 && len < -1200 ){
+            if( rb.linearVelocity < 8 ) {
+                rb.linearVelocity.addTime(vec, this.world.timeStep);
+            }
+        }
+        else {
+            var axis = new THREE.Vector3(0,1,0);
+            //rb.position.applyAxisAngle( axis, 1.57 );
+        }
+
 
 
     },
