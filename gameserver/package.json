@@ -1,0 +1,24 @@
+{
+  "name": "gameserver",
+  "version": "1.0.0",
+  "description": "game server",
+  "main": "index.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/simonoliver807/gamerserver.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/simonoliver807/gamerserver/issues"
+  },
+  "homepage": "https://github.com/simonoliver807/gamerserver#readme",
+  "dependencies": {
+    "mongodb": "^2.2.11",
+    "socket.io": "^1.5.1"
+  }
+}
