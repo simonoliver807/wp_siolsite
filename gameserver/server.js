@@ -63,80 +63,87 @@ function handler (request, response) {
 
 }
 
+// Connect to the db
+// mc.connect("mongodb://localhost:27017/gamedata", function(err, db) {
+//     if(!err) {
+//         var collectiondata = [];
+//         var prs = db.collection('prs');
+//         prs.remove({});
+//         var type;
+//         for(i=0;i<100;i++){
+//             if(i < 2){ id = "player"+i;}
+//             else {id = 'drone'+(i-2);}
+//             var doc = {id:id,gameid:12345,posx:0,posy:0,posx:0,rotx:0,roty:0,rotz:0};
+//             collectiondata.push(doc);
+//         }
+//         prs.insert(collectiondata, {w:1}, function(err, result) {
+//             if(err){console.log(err);}
+//             if(result){  };
+//         });
+//     }
+//     var allgd = db.collection('prs').find().stream();
+//     allgd.on('data', function(gd) {
+//         gdarr.push(gd)
+//     });
+//     allgd.on('end', function(){
+//         console.log('done');
+
+//        console.log(gdarr)
+//     })
+
+
+// });
+
  var player = 0;
  var gameUUID = 12345;
+ var gdarr = [];
 
 
-// Connect to the db
+// // Connect to the db
 mc.connect("mongodb://localhost:27017/gamedata", function(err, db) {
-  if(!err) {
-    var collectiondata = [];
-    var prs = db.collection('prs');
-    prs.remove({});
-    var type;
-    for(i=0;i<100;i++){
-        if(i < 2){ id = "player"+i;}
-        else {id = 'drone'+(i-2);}
-        var doc = {id:id,gameid:12345,posx:0,posy:0,posx:0,rotx:0,roty:0,rotz:0};
-        collectiondata.push(doc);
-    }
-    prs.insert(collectiondata, {w:1}, function(err, result) {
-        if(err){console.log(err);}
-        if(result){  };
-    });
-  }
-
-io.on('connection', function (socket) {
-    socket.emit('gamestart', { id: gameUUID });
-    socket.on('getgd', function(gameUUID){
-        var allgd = db.collection('prs').find().stream();
-        allgd.on('data', function(gd) {
-            socket.emit('ggd', gd);
-        });
-    
-    });
-    socket.on('setgd', function (gd) {
+    if(!err) {
+        var collectiondata = [];
         var prs = db.collection('prs');
         prs.remove({});
+        var type;
+        for(i=0;i<100;i++){
+            if(i < 2){ id = "player"+i;}
+            else {id = 'drone'+(i-2);}
+            var doc = {id:id,gameid:12345,posx:0,posy:0,posx:0,rotx:0,roty:0,rotz:0};
+            collectiondata.push(doc);
+        }
+        prs.insert(collectiondata, {w:1}, function(err, result) {
+            if(err){console.log(err);}
+            if(result){  };
+        });
+    }
 
-        console.log('about to insert gd');
+    io.on('connection', function (socket) {
+        socket.emit('gamestart', { id: gameUUID });
+        socket.on('getgd', function(gameUUID){
+            //console.log(gameUUID);
+            var gdarr = [];
+            var allgd = db.collection('prs').find().stream();
+            allgd.on('data', function(gd) {
+                gdarr.push(gd)
+            });
+            allgd.on('end', function(){
+                //console.log('done');
+                socket.emit('sgd', gdarr);
 
-        prs.insert(gd, {w:1}, function(err, result) {
-            if(err){console.log( 'error ' + err);}
-            if(result){console.log('gd inserted');}
+               // console.log(gdarr)
+            })
+        });
+        socket.on('setgd', function (gd) {
+           var prs = db.collection('prs');
+           prs.remove({});
+            prs.insert(gd, {w:1}, function(err, result) {
+                if(err){console.log( 'error ' + err);}
+                if(result){console.log('gd inserted');}
+            });
         });
     });
 });
 
-
-
-});
-
-
-
-// io.on('connection', function (socket) {
-//     socket.emit('gamestart', { id: gameUUID });
-//     socket.on('getgd', function(gameUUID){
-//         mc.connect("mongodb://localhost:27017/gamedata", function(err, db) {
-//             var allgd = db.collection('prs').find().stream();
-//             allgd.on('data', function(gd) {
-//                 socket.emit('ggd', gd);
-//             });
-//         });
-//     });
-//   socket.on('setgd', function (gd) {
-//         mc.connect("mongodb://localhost:27017/gamedata", function(err, db) {
-//             var prs = db.collection('prs');
-//             prs.remove({});
-
-//             console.log('about to insert gd');
-
-//             prs.insert(gd, {w:1}, function(err, result) {
-//                 if(err){console.log( 'error ' + err);}
-//                 if(result){console.log('gd inserted');}
-//             });
-//         });
-//     });
-// });
 
 

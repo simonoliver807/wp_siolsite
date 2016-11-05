@@ -1,7 +1,0 @@
-
-gameInit.js
-----------------
-oimo.js
-three.js
-v3d.js
-gameInit.js
