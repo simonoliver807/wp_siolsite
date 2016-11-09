@@ -30,6 +30,8 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 				//  });
 				
 
+				window.oncontextmenu = function (){ return false; }
+				window.addEventListener( 'resize', this.onWindowResize, false );
 
 				accel = document.getElementById('accel');
 				var ac = document.getElementById('accelCont');
@@ -45,36 +47,19 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 
 
 
-				self = this;
-				window.addEventListener( 'resize', this.onWindowResize, false );
 				var n = navigator.userAgent;
 				this.isMobile = false;
 			    if (n.match(/Android/i) || n.match(/webOS/i) || n.match(/iPhone/i) || n.match(/iPad/i) || n.match(/iPod/i) || n.match(/BlackBerry/i) || n.match(/Windows Phone/i)) {
-			    	var addforce = document.getElementById('addforce');
-			    	var minusforce = document.getElementById('minusforce');
-			    	addforce.style.display = 'block';
-			    	minusforce.style.display = 'block';
-			    	var mc = new Hammer(container);
-			    	mc.on('pan', function(event) {
-			    		console.log('x ' + event.deltaX + ' y ' + event.deltaY); 
-			    		self.handleMouseMove(event);
-			    	});
-			    	mc.on('tap', function(event) {
-			    		if ( event.target.id == 'addforce') {
-			    			v3d.addForce();
-			    		}
-			    		if ( event.target.id == 'minusforce') {
-			    			v3d.minusForce();
-			    		}
-			    	});
-			    	this.loadHammerTime();
+			    	this.loadMobileEvents(n);
 			    }   
 			    else {
 			    	this.loadEvents();
 			    }
 
 						
+
 			    v3d.initLight();
+			    v3d.initPoints();
 				setInterval(gameinit.oimoLoop, timestep*1000);
 			},
 
@@ -105,10 +90,10 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 
 
 				if( event.type == 'pan') {
-					var x = event.deltaX;
-					var y = event.deltaY;
-					var clientX = event.deltaX;
-					var clientY = event.deltaY;
+					var x = event.pointers[0].pageX;
+					var y = event.pointers[0].pageY;
+					var clientX = event.pointers[0].pageX;
+					var clientY = event.pointers[0].pageY;
 				}
 				else {
 					var canvas = document.getElementById('gamecanvas');
@@ -183,6 +168,43 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 				window.scrollTo(0, document.body.clientHeight);
 				container.addEventListener('mousemove', this.handleMouseMove, false);
 
+			},
+			loadMobileEvents: function(n) {
+				self = this;
+		    	if( n.match(/iPhone/) ){
+		    		var pos = 5;
+		    	}
+		    	if( n.match(/iPad/) ){
+		    		var pos = 7;
+		    	}
+		    	v3d.camera.position.z = pos;
+		    	v3d.sight.position.z = pos * -1;
+		        v3d.tmpVCPprev = new v3d.tvec(0,0,pos);
+		        // for the rotation
+		        v3d.camdist = pos - 0.1;
+			    
+		    	var addforce = document.getElementById('addforce');
+		    	var minusforce = document.getElementById('minusforce');
+		    	addforce.style.display = 'block';
+		    	minusforce.style.display = 'block';
+		    	var mc = new Hammer(container);
+		    	mc.on('pan', function(event) {
+		    		console.log('x ' + event.deltaX + ' y ' + event.deltaY); 
+		    		self.handleMouseMove(event);
+		    	});
+		    	mc.on('press', function(event) {
+		    		if ( event.target.id == 'addforce') {
+		    			v3d.addforce = true;
+		    		}
+		    		if ( event.target.id == 'minusforce') {
+		    			v3d.minusforce = true;
+		    		}
+		    	});
+		    	mc.on('pressup', function(event) {
+		    		v3d.addforce = false;
+		    		v3d.minusforce = false;
+		    	});
+		    	this.loadHammerTime();
 			},
 			loadHammerTime: function() {
 

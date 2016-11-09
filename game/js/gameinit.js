@@ -13,7 +13,7 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
     var meshs = [];
     var meshNum = 0;
     // non physics object to exclude from mesh array
-    var exmesh = ['sight','hemlight','dirlight','containerMesh']
+    var exmesh = ['sight','hemlight','dirlight','containerMesh','points']
     var pause = 0;
     var v3d = new V3D.View();
     
@@ -296,6 +296,10 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
                     x = this.randMinMax(-1000,1000);
                     y = this.randMinMax(-1000,1000);
                     z = this.randMinMax(-1000,1000);
+
+                    // x = this.randMinMax(-10000,10000);
+                    // y = this.randMinMax(-10000,10000);
+                    // z = this.randMinMax(-10000,10000);
                     x += ms.pos[0];
                     y += ms.pos[1];
                     z += ms.pos[2];

@@ -47,6 +47,8 @@ V3D.View.prototype = {
     	this.renderer = new THREE.WebGLRenderer({precision: "mediump", antialias:false});
     	this.renderer.setSize( this.w, this.h );
     	this.renderer.setClearColor( 0x1d1f20, 1 );
+        this.renderer.setPixelRatio( window.devicePixelRatio );
+        this.renderer.autoClear = false;
 
 
     	// siolsite this.camera = new THREE.PerspectiveCamera( 60, this.w/this.h, 0.1, 2000 );
@@ -54,18 +56,17 @@ V3D.View.prototype = {
         // this.camhelp = new THREE.CameraHelper( this.camera );
         this.camera.useQuarternion = true;
 
+        
+        // need to update both cam pos and tmpVCPprev here and for mobile
         this.camera.position.z = 10;
-        this.origcamz = 10;
-       // this.camera.position.y = 0;
+        this.tmpVCPprev = new THREE.Vector3(0,0,10);
+        this.camdist = 9.9;
+
         this.camera.matrixAutoUpdate = true;
         this.camAngle = -0.025;
 
         this.msechngdir;
         this.chngeindir = false;
-
-
-       // this.tmpVCPprev1 = new THREE.Vector3(0,0,100);
-        this.tmpVCPprev = new THREE.Vector3(0,0,10);
         
         
     	this.scene = new THREE.Scene();
@@ -114,15 +115,25 @@ V3D.View.prototype = {
         this.ldq = new THREE.Quaternion();
         this.chngdircount = 0;
 
+        // applyRot() Vectors
+        this.rotaxis = new THREE.Vector3();
+        this.rotdir = new THREE.Vector3();
+        this.rottmpCM = new THREE.Vector3();
+
+        this.addforce = false;
+        this.minusforce = false;
+
 
     },
     initBackground:function(){
-    	var buffgeoBack = new THREE.BufferGeometry();
-        buffgeoBack.fromGeometry( new THREE.IcosahedronGeometry(1000,1) );
-        var back = new THREE.Mesh( buffgeoBack, new THREE.MeshBasicMaterial( { map:this.gradTexture([[0.75,0.6,0.4,0.25], ['#1B1D1E','#3D4143','#72797D', '#b0babf']]), side:THREE.BackSide, depthWrite: false, fog:false }  ));
-        back.geometry.applyMatrix(new THREE.Matrix4().makeRotationZ(15*V3D.ToRad));
-        this.scene.add( back );
-        this.renderer.autoClear = false;
+    	var geometry = new THREE.SphereGeometry( 10000, 32, 32 );
+        var texture = new THREE.TextureLoader().load('images/space_bg.png');
+        var material = new THREE.MeshBasicMaterial( { map: texture, side: THREE.BackSide } );
+        var bg = new THREE.Mesh( geometry, material );
+        bg.name = 'bg';
+        bg.position.set(0,0,-200);
+        this.scene.add( bg );
+//this.renderer.autoClear = false;
     },
     initLight:function(){
     	//if(this.isMobile) return;
@@ -145,25 +156,32 @@ V3D.View.prototype = {
          this.scene.add( dirlight1 );
          this.scene.add( dirlight2 );
     },
-    // initLightShadow:function(){
-    // 	if(this.isMobile) return;
-    // 	this.scene.add( new THREE.AmbientLight( 0x606060 ) );
-	   //  var light = new THREE.DirectionalLight( 0xffffff , 1);
-	   //  light.position.set( 300, 1000, 500 );
-	   //  light.target.position.set( 0, 0, 0 );
-	   //  light.castShadow = true;
-	   //  light.shadowCameraNear = 500;
-	   //  light.shadowCameraFar = 1600;
-	   //  light.shadowCameraFov = 70;
-	   //  light.shadowBias = 0.0001;
-	   //  light.shadowDarkness = 0.7;
-	   //  //light.shadowCameraVisible = true;
-	   //  light.shadowMapWidth = light.shadowMapHeight = 1024;
-	   //  this.scene.add( light );
-    // },
+    initPoints: function() {
+
+        var particles = 500;
+        var geometry = new THREE.BufferGeometry();
+        var positions = new Float32Array( particles * 3 );
+
+        for( var i = 0; i < positions.length; i++) {
+            var x = this.randMinMax(-11000,11000);
+            var y = this.randMinMax(-11000,11000);
+            var z = this.randMinMax(-11000,11000);
+            positions[ i ]     = x;
+            positions[ i + 1 ] = y;
+            positions[ i + 2 ] = z;
+        }
+        geometry.addAttribute( 'position', new THREE.BufferAttribute( positions, 3 ) );
+        geometry.computeBoundingSphere();
+        var points = new THREE.Points( geometry, new THREE.PointsMaterial( { size: 1, color: '#ffffff' } ) );
+        points.name = 'points';
+        this.scene.add( points );
+
+    },
     render : function(){
 
          if(this.startRot.rot !== 0){ this.applyRot() };
+         if(this.addforce) {this.addForce();}
+         if(this.minusforce) {this.minusForce();}
     	this.renderer.render( this.scene, this.camera );
 
 
@@ -260,59 +278,6 @@ V3D.View.prototype = {
 
 
     },
-    moveLink:function(line, p1, p2){
-    	line.geometry.vertices[0].copy( p1 );
-        line.geometry.vertices[1].copy( p2 );
-        line.geometry.verticesNeedUpdate = true;
-    },
-    initKeyboard:function(){
-    	this.nav.bindKeys();
-    },
-    customShader:function(shader){
-    	var material = new THREE.ShaderMaterial({
-			uniforms: shader.uniforms,
-			attributes: shader.attributes,
-			vertexShader: shader.vs,
-			fragmentShader: shader.fs
-		});
-		return material;
-    },
-    gradTexture : function(color) {
-        var c = document.createElement("canvas");
-        var ct = c.getContext("2d");
-        c.width = 16; c.height = 128;
-        var gradient = ct.createLinearGradient(0,0,0,128);
-        var i = color[0].length;
-        while(i--){ gradient.addColorStop(color[0][i],color[1][i]); }
-        ct.fillStyle = gradient;
-        ct.fillRect(0,0,16,128);
-        var tx = new THREE.Texture(c);
-        tx.needsUpdate = true;
-        return tx;
-    },
-    basicTexture : function (n, r){
-        var canvas = document.createElement( 'canvas' );
-        canvas.width = canvas.height = 64;
-        var ctx = canvas.getContext( '2d' );
-        var color;
-        if(n===0) color = "#58C3FF";// sphere
-        if(n===1) color = "#3580AA";// sphere sleep
-        if(n===2) color = "#FFAA58";// box
-        if(n===3) color = "#AA8038";// box sleep
-        if(n===4) color = "#1d1f20";// static
-        if(n===5) color = "#58FFAA";// cyl
-        if(n===6) color = "#38AA80";// cyl sleep
-        ctx.fillStyle = color;
-        ctx.fillRect(0, 0, 64, 64);
-        ctx.fillStyle = "rgba(0,0,0,0.1);";//colors[1];
-        ctx.fillRect(0, 0, 32, 32);
-        ctx.fillRect(32, 32, 32, 32);
-        var tx = new THREE.Texture(canvas);
-        tx.wrapS = tx.wrapT = THREE.RepeatWrapping;
-        tx.repeat = new THREE.Vector2( r || 1, r || 1);
-        tx.needsUpdate = true;
-        return tx;
-    },
     gs_mse_pos: function (gs, pos){
         if(gs == 'get'){
             return this.sight.position;
@@ -388,17 +353,66 @@ V3D.View.prototype = {
             // var rotAxis = new THREE.Vector3(0,1,0);
             // q.setFromAxisAngle( rotAxis, 0.1);
 
+
+          //   this.rotdir.subVectors( this.camera.position, this.containerMesh.position);
+
+
+          //   console.log(this.up); 
+
+          //   var tmprotdir = new THREE.Vector3(this.rotdir.x,this.rotdir.y,this.rotdir.z);
+
+          //   var rotMatrix = this.lookAtFunc(tmprotdir, this.up);
+          // //  this.prevdir.set( tmprotdir.x, tmprotdir.y, tmprotdir.z );
+
+
+
+          //   this.rotaxis.subVectors(this.rottmpCM, V3D.msePos);
+
+          //   this.rotaxis.z = 0;
+
+          //   this.rotaxis.set ( this.rotaxis.y, this.rotaxis.x*-1, this.rotaxis.z );
+
+          //   this.rotaxis.applyEuler(this.camera.rotation);
+            
+          //   var tmpVCP = new THREE.Vector3();
+          //   tmpVCP.copy(this.tmpVCPprev);
+          //   tmpVCP.applyAxisAngle( this.rotaxis, this.camAngle );
+
+          //   tmpVCP.x -= this.tmpVCPprev.x;
+          //   tmpVCP.y -= this.tmpVCPprev.y;
+          //   tmpVCP.z -= this.tmpVCPprev.z;
+
+
+          //   this.tmpVCPprev.x += tmpVCP.x;
+          //   this.tmpVCPprev.y += tmpVCP.y;
+          //   this.tmpVCPprev.z += tmpVCP.z;
+
+          //   if ( this.startRot.issleeping ) {
+          //       this.camera.position.x += tmpVCP.x;
+          //       this.camera.position.y += tmpVCP.y;
+          //       this.camera.position.z += tmpVCP.z;
+
+          //   //  this.camera.lookAt( this.containerMesh.position );
+          //    this.camera.quaternion.setFromRotationMatrix( rotMatrix );
+          //   }
+          //   else {
+          //       this.camrot.x = tmpVCP.x;
+          //       this.camrot.y = tmpVCP.y;
+          //       this.camrot.z = tmpVCP.z;
+          //   } 
+            
+
             var dir = new THREE.Vector3();
             dir.subVectors( this.camera.position, this.containerMesh.position);
             if (this.msechngdir === undefined){
                 this.msechngdir = this.startRot.rot;  
             }
-            if (this.msechngdir != this.startRot.rot){
+            if (this.msechngdir.charAt(0) !== this.startRot.rot.charAt(0)){
                 this.chngeindir = true;
                 this.msechngdir = this.startRot.rot;
             }
 
-          if( (dir.y > -97 && dir.y < 97) || this.chngeindir){
+          if( (dir.y > -this.camdist && dir.y < this.camdist) || this.chngeindir){
 
             var axis = new THREE.Vector3();
             var tmpCM = new THREE.Vector3();
@@ -421,12 +435,12 @@ V3D.View.prototype = {
 
                 if(this.chngeindir){
                     this.chngeindir = false; 
-                    if ( this.tmpVCPprev.y + tmpVCP.y > 97 ) {
-                        tmpVCP.y = this.tmpVCPprev.y - 96.9;
+                    if ( this.tmpVCPprev.y + tmpVCP.y > this.camdist ) {
+                        tmpVCP.y = this.tmpVCPprev.y - (this.camdist - 0.1);
                         tmpVCP.y *= -1;
                     }
-                    else if ( this.tmpVCPprev.y + tmpVCP.y < -97 ) {
-                        tmpVCP.y = this.tmpVCPprev.y + 96.9;
+                    else if ( this.tmpVCPprev.y + tmpVCP.y < -this.camdist ) {
+                        tmpVCP.y = this.tmpVCPprev.y + (this.camdist - 0.1);
                         tmpVCP.y *= -1;    
                     }
                 }
@@ -443,6 +457,7 @@ V3D.View.prototype = {
                     this.camera.position.z += tmpVCP.z;
 
                     this.camera.lookAt( this.containerMesh.position );
+
                 }
                 else {
                     this.camrot.x = tmpVCP.x;
@@ -489,24 +504,52 @@ V3D.View.prototype = {
                 } 
 
             }
-
-           // } 
-          //  else {
-           //     this.startRot.rot = 0;
-                // var axis = new THREE.Vector3();
-                // axis.subVectors( this.camera.position, this.containerMesh.position);
             
-                // var q = new THREE.Quaternion();
-                // q.setFromAxisAngle( axis, this.camAngle);
+    },
+    lookAtFunc: function(currdir,up) {
 
-                // var cmq = this.camera.quaternion;
-                // cmq.multiplyQuaternions(q, cmq);
-                // cmq.normalize;
-                // this.camera.matrix.makeRotationFromQuaternion(cmq);
+            var f;
+            var u;
+            var s;
+
+            if ( f === undefined ) {
+
+                    f = new THREE.Vector3();
+                    u = new THREE.Vector3();
+                    s = new THREE.Vector3();
+
+                }
+
+                var m = new THREE.Matrix4;
+                var te = m.elements;
+
+                f = currdir.normalize()
+
+                // if ( z.lengthSq() === 0 ) {
+
+                //     z.z = 1;
+
+                // }
+
+                u.crossVectors( up, f ).normalize();
+
+                // if ( x.lengthSq() === 0 ) {
+
+                //     z.z += 0.0001;
+                //     x.crossVectors( up, z ).normalize();
+
+                // }
+
+                s.crossVectors( f, u ).normalize();
+
+                //u.crossVectors( s, f);
 
 
-            //}     
-            
+                te[ 0 ] = u.x; te[ 4 ] = s.x; te[ 8 ] = f.x;
+                te[ 1 ] = u.y; te[ 5 ] = s.y; te[ 9 ] = f.y;
+                te[ 2 ] = u.z; te[ 6 ] = s.z; te[ 10 ] = f.z;
+
+                return m;
     },
     addForce: function() {
 
@@ -550,25 +593,35 @@ V3D.View.prototype = {
         }
 
         this.velocity = 1 + rb.linearVelocity.length() / 10;
+
+        console.log('forward ' + rb.linearVelocity.length());
         
     },
     minusForce: function() {
 
         var rb = this.bodys[0].body;
         var lv = new THREE.Vector3(rb.linearVelocity.x,rb.linearVelocity.y,rb.linearVelocity.z);
-       // lv.copy( rb.linearVelocity );
-        var lenghtlv = lv.length();
+        var lengthlv = lv.length();
         if((lv.x == 0 && lv.y == 0 && lv.z == 0) || this.reverse) {
             var heading = this.getPlayerDir('reverse', this.containerMesh.position);
-            heading.multiplyScalar( 15 );
-            rb.linearVelocity.addTime(heading , this.world.timeStep);
-            this.reverse = true; 
+            if( lengthlv<40 ) { 
+                heading.multiplyScalar( 15 );
+                rb.linearVelocity.addTime(heading , this.world.timeStep);
+                this.reverse = true;  }
+            if(rb.linearVelocity.length() > 40){
+                var count = -2;
+                while(rb.linearVelocity.length() > 40){
+                    heading.multiplyScalar(count);
+                    rb.linearVelocity.addTime(heading , this.world.timeStep);
+                    count --;
+                }
+            }
         }
         else {
             lv = lv.normalize();
-            lv = lv.multiplyScalar( lenghtlv -0.5 );
+            lv = lv.multiplyScalar( lengthlv -0.5 );
             rb.linearVelocity.copy( lv );
-            if(lenghtlv < 1) {
+            if(lengthlv < 1) {
                 this.reverse = true;
             }
         }
@@ -578,6 +631,7 @@ V3D.View.prototype = {
         if(this.velocity < 3){
             this.velocity = 1 + rb.linearVelocity.length() / 10;
         }
+        console.log('len ' + lengthlv); 
     },
     phaser: function() {
         var heading = this.getPlayerDir('forward', this.containerMesh.position);
