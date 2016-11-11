@@ -92,6 +92,7 @@ V3D.View.prototype = {
         this.len = 0;  
         this.cp = new THREE.Vector3();
         this.camdir = new THREE.Vector3();
+        this.tusv = new THREE.Vector3();
 
 
 
@@ -107,21 +108,22 @@ V3D.View.prototype = {
         this.heading = new THREE.Vector3();
         this.shootStart = new THREE.Vector3();
 
-        this.drot = new THREE.Vector3();
-        this.drota = 0.1;
-        this.dcurrot = 0;
-        this.ldh = new THREE.Vector3(0,1,0);
-        this.lda = new THREE.Vector3(1,1,1);
-        this.ldq = new THREE.Quaternion();
-        this.chngdircount = 0;
+        this.drota = 0;
+        this.ldh = new THREE.Vector3(0,0,1);
+
 
         // applyRot() Vectors
         this.rotaxis = new THREE.Vector3();
         this.rotdir = new THREE.Vector3();
         this.rottmpCM = new THREE.Vector3();
+        this.up = new THREE.Vector3(0,1,0);
 
         this.addforce = false;
         this.minusforce = false;
+
+        this.f = new THREE.Vector3();
+        this.u = new THREE.Vector3();
+        this.s = new THREE.Vector3();
 
 
     },
@@ -172,14 +174,14 @@ V3D.View.prototype = {
         }
         geometry.addAttribute( 'position', new THREE.BufferAttribute( positions, 3 ) );
         geometry.computeBoundingSphere();
-        var points = new THREE.Points( geometry, new THREE.PointsMaterial( { size: 1, color: '#ffffff' } ) );
+        var points = new THREE.Points( geometry, new THREE.PointsMaterial( { size: 100, color: '#ffffff' } ) );
         points.name = 'points';
         this.scene.add( points );
 
     },
     render : function(){
 
-         if(this.startRot.rot !== 0){ this.applyRot() };
+         if( this.startRot.rot !== 0 && this.containerMesh != 0){ this.applyRot() };
          if(this.addforce) {this.addForce();}
          if(this.minusforce) {this.minusForce();}
     	this.renderer.render( this.scene, this.camera );
@@ -214,8 +216,9 @@ V3D.View.prototype = {
         }
 
         if(sphere.name == 'containerMesh'){
-            var texture = this.loadTGA();
-            var object = this.loadOBJ(texture,this.scene,sphere);
+            var texture1 = '';
+            var texture2 = '';
+            var object = this.loadOBJ(texture1,texture2,this.scene,sphere);
         }
         else {
 
@@ -265,17 +268,9 @@ V3D.View.prototype = {
     },
     addCylinder: function(cylinder){
 
-
-            //var texture = this.loadTGA();
-            var texture;
-            this.loadOBJ(texture,this.scene,cylinder);
-        
-        // var material = new THREE.MeshBasicMaterial({ color: cylinder.color, wireframe: cylinder.wireframe, name: cylinder.name, transparent: cylinder.transparent, opacity: cylinder.opacity });
-        // var mesh = new THREE.Mesh( this.geos['cylTarget'], material, cylinder.name );
-        // mesh.position.set( cylinder.pos[0], cylinder.pos[1], cylinder.pos[2] );
-        // this.scene.add( mesh );
-        // return mesh;
-
+        var texture1 = this.loadTGA('images/Free_Droid/Materials/BaseMaterial_diffuse.tga');
+        var texture2 = this.loadTGA('images/Free_Droid/Materials/BaseMaterial_normal.tga');
+        this.loadOBJ(texture1,texture2,this.scene,cylinder);
 
     },
     gs_mse_pos: function (gs, pos){
@@ -328,13 +323,20 @@ V3D.View.prototype = {
             var q = new THREE.Quaternion();
             q.setFromAxisAngle( this.camdir, Math.PI/2 );
             this.sight.up.set(q.x, q.y, q.z);
-            this.sight.lookAt(this.containerMesh.position);
-            this.containerMesh.lookAt(this.sight.position);
-            
+            // this.sight.lookAt(this.containerMesh.position);
+            // this.containerMesh.lookAt(this.sight.position);
+
+
+            this.tusv.subVectors(this.sight.position,this.containerMesh.position);
+            var m = this.lookAtFunc(this.tusv, this.sight.up);
+            this.sight.quaternion.setFromRotationMatrix( m );
+            this.tusv.subVectors(this.sight.position,this.containerMesh.position);
+            var m = this.lookAtFunc(this.tusv, this.up);
+            this.containerMesh.quaternion.setFromRotationMatrix( m );            
             
 
     },
-    applyRot: function (issleeping) {
+    applyRot: function () {
 
         // params type = 'drone/cam', issleepling (not needed), 
         // going to need this.tmpVCPprev for cam and  lead drone?
@@ -451,19 +453,19 @@ V3D.View.prototype = {
                 this.tmpVCPprev.y += tmpVCP.y;
                 this.tmpVCPprev.z += tmpVCP.z;
 
-                if ( this.startRot.issleeping ) {
-                    this.camera.position.x += tmpVCP.x;
-                    this.camera.position.y += tmpVCP.y;
-                    this.camera.position.z += tmpVCP.z;
+                // if ( this.startRot.issleeping ) {
+                //     this.camera.position.x += tmpVCP.x;
+                //     this.camera.position.y += tmpVCP.y;
+                //     this.camera.position.z += tmpVCP.z;
 
-                    this.camera.lookAt( this.containerMesh.position );
+                //     this.camera.lookAt( this.containerMesh.position );
 
-                }
-                else {
+                // }
+                // else {
                     this.camrot.x = tmpVCP.x;
                     this.camrot.y = tmpVCP.y;
                     this.camrot.z = tmpVCP.z;
-                } 
+               // } 
             }
             else {
 
@@ -489,19 +491,19 @@ V3D.View.prototype = {
                 this.tmpVCPprev.y += tmpVCP.y;
                 this.tmpVCPprev.z += tmpVCP.z;
 
-                if ( this.startRot.issleeping ) {
-                this.camera.position.x += tmpVCP.x;
-                this.camera.position.y += tmpVCP.y;
-                this.camera.position.z += tmpVCP.z;
+                // if ( this.startRot.issleeping ) {
+                // this.camera.position.x += tmpVCP.x;
+                // this.camera.position.y += tmpVCP.y;
+                // this.camera.position.z += tmpVCP.z;
 
 
-                this.camera.lookAt( this.containerMesh.position );
-                }
-                else {
+                // this.camera.lookAt( this.containerMesh.position );
+                // }
+                // else {
                 this.camrot.x = tmpVCP.x;
                 this.camrot.y = tmpVCP.y;
                 this.camrot.z = tmpVCP.z;
-                } 
+             //   } 
 
             }
             
@@ -512,18 +514,11 @@ V3D.View.prototype = {
             var u;
             var s;
 
-            if ( f === undefined ) {
-
-                    f = new THREE.Vector3();
-                    u = new THREE.Vector3();
-                    s = new THREE.Vector3();
-
-                }
 
                 var m = new THREE.Matrix4;
                 var te = m.elements;
 
-                f = currdir.normalize()
+                this.f = currdir.normalize()
 
                 // if ( z.lengthSq() === 0 ) {
 
@@ -531,7 +526,7 @@ V3D.View.prototype = {
 
                 // }
 
-                u.crossVectors( up, f ).normalize();
+                this.u.crossVectors( up, this.f ).normalize();
 
                 // if ( x.lengthSq() === 0 ) {
 
@@ -540,14 +535,14 @@ V3D.View.prototype = {
 
                 // }
 
-                s.crossVectors( f, u ).normalize();
+                this.s.crossVectors( this.f, this.u ).normalize();
 
                 //u.crossVectors( s, f);
 
 
-                te[ 0 ] = u.x; te[ 4 ] = s.x; te[ 8 ] = f.x;
-                te[ 1 ] = u.y; te[ 5 ] = s.y; te[ 9 ] = f.y;
-                te[ 2 ] = u.z; te[ 6 ] = s.z; te[ 10 ] = f.z;
+                te[ 0 ] = this.u.x; te[ 4 ] = this.s.x; te[ 8 ] = this.f.x;
+                te[ 1 ] = this.u.y; te[ 5 ] = this.s.y; te[ 9 ] = this.f.y;
+                te[ 2 ] = this.u.z; te[ 6 ] = this.s.z; te[ 10 ] = this.f.z;
 
                 return m;
     },
@@ -593,8 +588,6 @@ V3D.View.prototype = {
         }
 
         this.velocity = 1 + rb.linearVelocity.length() / 10;
-
-        console.log('forward ' + rb.linearVelocity.length());
         
     },
     minusForce: function() {
@@ -631,11 +624,10 @@ V3D.View.prototype = {
         if(this.velocity < 3){
             this.velocity = 1 + rb.linearVelocity.length() / 10;
         }
-        console.log('len ' + lengthlv); 
     },
     phaser: function() {
         var heading = this.getPlayerDir('forward', this.containerMesh.position);
-        var mag = 700 * this.velocity;
+        var mag = 2000 * this.velocity;
         heading.x *= mag;
         heading.y *= mag;
         heading.z *= mag;
@@ -651,7 +643,7 @@ V3D.View.prototype = {
         rb.body.linearVelocity.addEqual(shp1.linearVelocity);
         //console.log('velocity: ' + velocity);
     },
-    updateDrones: function(rb){
+    updateDrones: function(rb, drone){
 
 
             // var q = new THREE.Quaternion();
@@ -667,50 +659,105 @@ V3D.View.prototype = {
             // q.setFromAxisAngle( rotAxis, 0.1);
 
 
-        var len = new THREE.Vector3();
-        var rbvec = new THREE.Vector3(rb.position.x,rb.position.y,rb.position.z); 
-        rbvec.multiplyScalar(100);
-        len.subVectors(this.mothership.position, rbvec);
-        len = Math.round(len.length());
+        // var len = new THREE.Vector3();
+        // var rbvec = new THREE.Vector3(rb.position.x,rb.position.y,rb.position.z); 
+        // rbvec.multiplyScalar(100);
+        // len.subVectors(this.mothership.position, rbvec);
+        // len = Math.round(len.length());
 
 
 
-        if(len > -1600 && len < 1600 ){
+        // if(len > -1600 && len < 1600 ){
+        //     var rblv = rb.linearVelocity.length();
+        //     if( rblv < 2 ) {
+        //         rb.linearVelocity.addTime(this.ldh, this.world.timeStep);
+        //     }
+        //     if ( len > 1100 && !this.dcurrot){
+        //         this.dcurrot = 1
+        //         // this.lda.x = this.randMinMax(0,1);
+        //         // this.lda.y = this.randMinMax(0,1);
+        //         // this.lda.z = this.randMinMax(0,1);
+        //     }
+        //     if( len > 1100 && this.dcurrot ) {
+
+
+        //        // rb.name = 'ldrone';
+
+        //        if( this.chngdircount < 30) {
+        //             this.ldq.setFromAxisAngle( this.lda, this.drota);
+        //             var dq = rb.getQuaternion();
+        //             var dqthree = new THREE.Quaternion( dq.x,dq.y,dq.z,dq.w );
+        //             this.ldq.multiplyQuaternions(dqthree,this.ldq).normalize();
+        //             rb.setQuaternion(this.ldq);
+
+
+        //             var rbpos = new THREE.Vector3( rb.position.x, rb.position.y, rb.position.z );
+        //             rbpos.normalize();
+        //             this.ldh = this.getObjHeading(rbpos, this.ldq);
+        //             rb.awake();
+
+        //             this.chngdircount += 1;
+        //         }
+        //    }
+        //    if( len <= 1100 ) {
+        //        this.dcurrot = 0;
+        //    }
+
+
+
+
+
             var rblv = rb.linearVelocity.length();
-            if( rblv < 2 ) {
-                rb.linearVelocity.addTime(this.ldh, this.world.timeStep);
-            }
-            if ( len > 1100 && !this.dcurrot){
-                this.dcurrot = 1
-                // this.lda.x = this.randMinMax(0,1);
-                // this.lda.y = this.randMinMax(0,1);
-                // this.lda.z = this.randMinMax(0,1);
-            }
-            if( len > 1100 && this.dcurrot ) {
+           // console.log('velocity ' + rblv); 
 
 
-               // rb.name = 'ldrone';
+            var correctvec = new THREE.Vector3(this.ldh.x,this.ldh.y,this.ldh.z).normalize();
 
-               if( this.chngdircount < 30) {
-                    this.ldq.setFromAxisAngle( this.lda, this.drota);
-                    var dq = rb.getQuaternion();
-                    var dqthree = new THREE.Quaternion( dq.x,dq.y,dq.z,dq.w );
-                    this.ldq.multiplyQuaternions(dqthree,this.ldq).normalize();
-                    rb.setQuaternion(this.ldq);
+            this.ldh.subVectors( this.containerMesh.position, drone.position ).normalize();
+            var m = this.lookAtFunc(this.ldh, this.up);
+            var q = new THREE.Quaternion();
+            q.setFromRotationMatrix( m );
+            rb.setQuaternion(q);
 
+            var angle = 2 * Math.acos(q.w);
 
-                    var rbpos = new THREE.Vector3( rb.position.x, rb.position.y, rb.position.z );
-                    rbpos.normalize();
-                    this.ldh = this.getObjHeading(rbpos, this.ldq);
-                    rb.awake();
+            if( this.drota != angle && rblv < 14) {
 
-                    this.chngdircount += 1;
+                var anglediff = this.drota - angle;
+                if( anglediff < 0 ) { anglediff *= -1; }
+                var mag = anglediff;
+                
+               if(anglediff <= 0.01) {
+                    mag *= 1000;
                 }
-           }
-           if( len <= 1100 ) {
-               this.dcurrot = 0;
-           }
-       }
+                if(anglediff > 0.01 && anglediff <= 0.1) {
+                    mag *= 100;
+                }
+                if(anglediff > 0.1 && anglediff < 1) {
+                    mag *= 10;
+                }
+                if(anglediff > 1) {
+                    mag;
+                }
+                console.log('mag ' + mag); 
+
+                correctvec.multiplyScalar(-mag);
+                rb.linearVelocity.addTime(correctvec, this.world.timeStep);
+                this.drota = angle;
+                console.log(rb.linearVelocity); 
+                console.log('anglediff' + anglediff);
+            }
+
+            if(rblv < 15){
+               this.ldh.multiplyScalar(5);
+                rb.linearVelocity.addTime(this.ldh, this.world.timeStep);
+          //      console.log(rb.linearVelocity); 
+            }
+            rb.awake();
+
+
+
+
 
 
 
@@ -720,12 +767,23 @@ V3D.View.prototype = {
         return pos.applyQuaternion(rot).negate();
 
     },
-    loadTGA: function() {
+    loadTGA: function(texture) {
+        var onProgress = function ( xhr ) {
+            if ( xhr.lengthComputable ) {
+                var percentComplete = xhr.loaded / xhr.total * 100;
+                console.log( Math.round(percentComplete, 2) + '% downloaded' );
+            }
+        };
+        var onError = function ( xhr ) { 
+            console.log(xhr);
+        };
         var loader = new THREE.TGALoader();
-        var texture = loader.load( 'images/Free_Droid/Materials/BaseMaterial_diffuse.tga' );
+        var texture = loader.load( texture, function( object) {
+            console.log(object); 
+        }, onProgress, onError );
         return texture
     },
-    loadOBJ: function(texture,scene,obj) {
+    loadOBJ: function(texture1,texture2,scene,obj) {
 
         var onProgress = function ( xhr ) {
             if ( xhr.lengthComputable ) {
@@ -733,9 +791,11 @@ V3D.View.prototype = {
                 console.log( Math.round(percentComplete, 2) + '% downloaded' );
             }
         };
-        var onError = function ( xhr ) { };
+        var onError = function ( xhr ) { 
+            console.log(xhr);
+        };
 
-        if( obj.length > 1) {
+        if( obj[0] ) {
             var image = obj[0].image;
             var loader = new THREE.OBJLoader( );
             loader.load( 'images/'+image, function ( object ) {
@@ -743,9 +803,9 @@ V3D.View.prototype = {
                 object.traverse( function ( child ) {
 
                     if ( child instanceof THREE.Mesh ) {
-
-                        child.material.map = texture;
-
+                        //child.materials[0].map = texture;
+                        child.material.materials[0].map = texture1;
+                        child.material.materials[0].map = texture2;
                     }
 
                 } );

@@ -211,7 +211,7 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
                             }
                         } 
                         if( body.ld ) {
-                              v3d.updateDrones( body.body );
+                             // v3d.updateDrones( body.body, mesh );
                         }
                     }
                     if(keys){
@@ -259,7 +259,7 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
                     h = 20;
                     d = 20;
 
-                var spheres = [{ type: 'sphere', size: [shp1r, shp1r, shp1r], pos:[0,0,0], move: 'true', world: world, color: 0x0000ff , wireframe: 'true', name:"shp1", transparent: 'true', opacity: 0.5},
+                var spheres = [{ type: 'sphere', size: [shp1r, shp1r, shp1r], pos:[0,0,0], move: 'true', noSleep: true, world: world, color: 0x0000ff , wireframe: 'true', name:"shp1", transparent: 'true', opacity: 0.5},
                                { type: 'sphere', size:[8, 8, 8], pos:[0,0,0], move: 'true', world: world, color: '#ff0000', wireframe: 'false',  name: 'containerMesh', transparent: 'false', opacity: 1, image:'cpv/cpv.obj', mtl:'cpv/cpv.mtl'},
                                { type: 'sphere', size:[500, 500, 500], pos:[500,10,-10000], move: 'true', world: world, color: '#0000ff', wireframe: 'false',  name: 'planet', transparent: 'false', opacity: 1, image:'planets/mercury.jpg'},
                                { type: 'sphere', size:[500, 500, 500], pos:[500,10,10000], move: 'true', world: world, color: '#0000ff', wireframe: 'false',  name: 'planet', transparent: 'false', opacity: 1, image:'planets/moon.jpg'}];
@@ -281,7 +281,7 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
                     }
                 }
                 // sight mesh
-                sightMesh = { type: 'box', size: [15, 15, 0.5], pos:[0,0,-10], move: 'true', world: world, color:'#66ff33', wireframe: 'false', name: 'sight', transparent: 'true', opacity: 0, image:'sight_1.png'};
+                sightMesh = { type: 'box', size: [15, 15, 0.5], pos:[0,0,-100], move: 'true', world: world, color:'#66ff33', wireframe: 'false', name: 'sight', transparent: 'true', opacity: 0, image:'sight_1.png'};
                 sightMesh = v3d.addBox(sightMesh);
                 // mothership mesh
                 var ms = { type:'box', size:[350,50,50], pos:[0,0,-2500], move: true, world:world, color:'#66ff33', wireframe: 'true', name: 'mothership', transparent: 'false', opacity: 1}
@@ -291,7 +291,7 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
 
                var t = 3;
                var cylArr = [];
-               var randn = this.randMinMax(0,n);
+               var randn = this.randMinMax(-1,n);
                for(var i=0;i<n;i++){
                     x = this.randMinMax(-1000,1000);
                     y = this.randMinMax(-1000,1000);
@@ -309,11 +309,14 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
 
                     bodys[bodysNum] = new OIMO.Body(obj);
                     bodys[bodysNum].ld = false;
-                    if( randn == i ) {
+
+console.log('randn ' +randn + ' i ' + i ); 
+
+                    if( (randn -1) == i ) {
                         bodys[bodysNum].ld = true;
 
 
-                     //  bodys[bodysNum].body.position.set(0,0,-1);
+                    //    bodys[bodysNum].body.position.set(0,0,-1);
                        
 
 
