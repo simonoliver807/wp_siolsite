@@ -110,6 +110,7 @@ V3D.View.prototype = {
 
         this.drota = 0;
         this.ldh = new THREE.Vector3(0,0,1);
+        this.bincount = 0;
 
 
         // applyRot() Vectors
@@ -705,15 +706,23 @@ V3D.View.prototype = {
 
 
 
+        /////////////////////////////////////
+            // later level use getObjHeading/////
+            // to predict heading of shp1 ////
+            /// and adjust heading of drone ///
+            ///////////////////////////////////
+
 
 
             var rblv = rb.linearVelocity.length();
-           // console.log('velocity ' + rblv); 
+        //   console.log('velocity ' + rblv); 
 
 
             var correctvec = new THREE.Vector3(this.ldh.x,this.ldh.y,this.ldh.z).normalize();
 
-            this.ldh.subVectors( this.containerMesh.position, drone.position ).normalize();
+            this.ldh.subVectors( this.containerMesh.position, drone.position );
+            var dist = Math.round(this.ldh.length());
+            this.ldh.normalize()
             var m = this.lookAtFunc(this.ldh, this.up);
             var q = new THREE.Quaternion();
             q.setFromRotationMatrix( m );
@@ -721,38 +730,69 @@ V3D.View.prototype = {
 
             var angle = 2 * Math.acos(q.w);
 
-            if( this.drota != angle && rblv < 14) {
+            if( this.bincount === 0) {
 
-                var anglediff = this.drota - angle;
-                if( anglediff < 0 ) { anglediff *= -1; }
-                var mag = anglediff;
-                
-               if(anglediff <= 0.01) {
-                    mag *= 1000;
-                }
-                if(anglediff > 0.01 && anglediff <= 0.1) {
-                    mag *= 100;
-                }
-                if(anglediff > 0.1 && anglediff < 1) {
-                    mag *= 10;
-                }
-                if(anglediff > 1) {
-                    mag;
-                }
-                console.log('mag ' + mag); 
+                if( this.drota != angle) {
 
-                correctvec.multiplyScalar(-mag);
-                rb.linearVelocity.addTime(correctvec, this.world.timeStep);
-                this.drota = angle;
-                console.log(rb.linearVelocity); 
-                console.log('anglediff' + anglediff);
+                    var anglediff = this.drota - angle;
+                    if( anglediff < 0 ) { anglediff *= -1; }
+                    var mag = anglediff;
+                    
+                   if(anglediff <= 0.01) {
+                        mag *= 100;
+                    }
+                    if(anglediff > 0.01 && anglediff <= 0.1) {
+                        mag *= 100;
+                    }
+                    if(anglediff > 0.1 && anglediff < 1) {
+                        mag *= 10;
+                    }
+                    if(anglediff > 1) {
+                        mag;
+                    }
+                 //   console.log('mag ' + mag); 
+
+                    correctvec.multiplyScalar(-mag);
+                    rb.linearVelocity.addTime(correctvec, this.world.timeStep);
+                    this.drota = angle;
+                    //console.log(rb.linearVelocity); 
+                  //  console.log('anglediff' + anglediff);
+
+                }
             }
+            else {
+                console.log('dist ' + dist); 
+                console.log('id ' + drone.id);
 
-            if(rblv < 15){
-               this.ldh.multiplyScalar(5);
-                rb.linearVelocity.addTime(this.ldh, this.world.timeStep);
-          //      console.log(rb.linearVelocity); 
+
+                    if (dist <= 2000 ) {
+                        this.ldh.multiplyScalar(2);
+                        rb.linearVelocity.addTime(this.ldh, this.world.timeStep);  
+                    }
+                    if (dist > 2000 && dist <= 4000) { 
+                            this.ldh.multiplyScalar(3);
+                            rb.linearVelocity.addTime(this.ldh, this.world.timeStep);
+                    
+                    }
+                    if (dist > 4000 ) {
+                            this.ldh.multiplyScalar(10);
+                            rb.linearVelocity.addTime(this.ldh, this.world.timeStep);  
+                    }
+                    if (dist > 10000 ) {
+                            this.ldh.multiplyScalar(20);
+                            rb.linearVelocity.addTime(this.ldh, this.world.timeStep);  
+                    }
+                    if ( dist <= 2000 && rblv > 8 ) {
+                        var tmplv = new THREE.Vector3(rb.linearVelocity.x,rb.linearVelocity.y,rb.linearVelocity.z);
+                        tmplv.normalize();
+                        tmplv.multiplyScalar(8);
+                        rb.linearVelocity.x = tmplv.x;
+                        rb.linearVelocity.y = tmplv.y;
+                        rb.linearVelocity.z = tmplv.z;
+                    }
+
             }
+            this.bincount ? this.bincount = 0 : this.bincount = 1;
             rb.awake();
 
 

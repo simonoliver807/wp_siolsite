@@ -81,6 +81,7 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
     containerMeshPrev = new OIMO.Vec3(0,0,0)
     var canvas = document.getElementById('container');
     var keys = [];
+    var pddist = new OIMO.Vec3();
 
 
         return {
@@ -168,7 +169,6 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
                         contact = contact.next;
                     }
 
-
                   // console.log('perf fps: ' + perf.fps); 
 
                    // var x, y, z, mesh, body;
@@ -210,9 +210,6 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
                                 v3d.camera.updateMatrixWorld();
                             }
                         } 
-                        if( body.ld ) {
-                             // v3d.updateDrones( body.body, mesh );
-                        }
                     }
                     if(keys){
                         if(keys[38]){
@@ -230,6 +227,23 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
                         }
                     }
                     v3d.updateSightPos();
+                    // update drones 
+                    for(var i=0;i<bodys.length;i++){
+                        var dbody = bodys[i];
+                        if(dbody.name == 'drone') {
+                            if( dbody.ld ) {
+                                v3d.updateDrones( dbody.body, meshs[i] );
+                            }
+                            if ( !dbody.ld && !dbody.rtm && dbody.name == 'drone' ) {
+                                pddist.sub(containerMesh.position,meshs[i].position);
+                                // var len = pddist.length();
+                                // console.log(pddist.length()); 
+                                if(pddist.length() < 500) {
+                                    dbody.ld = true;
+                                }
+                            }
+                        }
+                    }
                 }
             },
 
@@ -291,7 +305,7 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
 
                var t = 3;
                var cylArr = [];
-               var randn = this.randMinMax(-1,n);
+               //var randn = this.randMinMax(0,n);
                for(var i=0;i<n;i++){
                     x = this.randMinMax(-1000,1000);
                     y = this.randMinMax(-1000,1000);
@@ -309,19 +323,13 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
 
                     bodys[bodysNum] = new OIMO.Body(obj);
                     bodys[bodysNum].ld = false;
+                    bodys[bodysNum].rtm = false;
 
-console.log('randn ' +randn + ' i ' + i ); 
-
-                    if( (randn -1) == i ) {
-                        bodys[bodysNum].ld = true;
-
-
-                    //    bodys[bodysNum].body.position.set(0,0,-1);
-                       
-
-
-
-                    }
+                    //console.log('randn ' +randn + ' i ' + i ); 
+                    // if( (randn -1) == i ) {
+                    //     bodys[bodysNum].ld = true;
+                    //     bodys[bodysNum].body.position.set(0,0,-1);
+                    // }
                     if(t == 2) {
                        // meshs[meshNum] = v3d.addBox(obj);
                     }
