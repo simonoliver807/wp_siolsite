@@ -114,6 +114,8 @@ V3D.View.prototype = {
 
 
         // applyRot() Vectors
+        this.tmpCM = new THREE.Vector3();
+        this.tmpVCP = new THREE.Vector3();
         this.rotaxis = new THREE.Vector3();
         this.rotdir = new THREE.Vector3();
         this.rottmpCM = new THREE.Vector3();
@@ -339,174 +341,76 @@ V3D.View.prototype = {
     },
     applyRot: function () {
 
-        // params type = 'drone/cam', issleepling (not needed), 
-        // going to need this.tmpVCPprev for cam and  lead drone?
 
+        this.rotdir.subVectors( this.camera.position, this.containerMesh.position);
+        if (this.msechngdir === undefined){
+            this.msechngdir = this.startRot.rot;  
+        }
+        if (this.msechngdir.charAt(0) !== this.startRot.rot.charAt(0)){
+            this.chngeindir = true;
+            this.msechngdir = this.startRot.rot;
+        }
 
+        if( (this.rotdir.y > -this.camdist && this.rotdir.y < this.camdist) || this.chngeindir){
 
-            // var q = new THREE.Quaternion();
-            // q.setFromAxisAngle( this.startRot.axis, this.startRot.camAngle);
+            this.rotaxis.subVectors(this.tmpCM, V3D.msePos);
 
-            // var cmq = this.camera.quaternion;
-            // cmq.multiplyQuaternions(q, cmq);
-            // cmq.normalize;
-            // this.camera.matrix.makeRotationFromQuaternion(cmq);
+            this.rotaxis.z = 0;
 
-            // var q = new THREE.Quaternion();
-            // var rotAxis = new THREE.Vector3(0,1,0);
-            // q.setFromAxisAngle( rotAxis, 0.1);
+            this.rotaxis.set ( this.rotaxis.y, this.rotaxis.x*-1, this.rotaxis.z );
 
-
-          //   this.rotdir.subVectors( this.camera.position, this.containerMesh.position);
-
-
-          //   console.log(this.up); 
-
-          //   var tmprotdir = new THREE.Vector3(this.rotdir.x,this.rotdir.y,this.rotdir.z);
-
-          //   var rotMatrix = this.lookAtFunc(tmprotdir, this.up);
-          // //  this.prevdir.set( tmprotdir.x, tmprotdir.y, tmprotdir.z );
-
-
-
-          //   this.rotaxis.subVectors(this.rottmpCM, V3D.msePos);
-
-          //   this.rotaxis.z = 0;
-
-          //   this.rotaxis.set ( this.rotaxis.y, this.rotaxis.x*-1, this.rotaxis.z );
-
-          //   this.rotaxis.applyEuler(this.camera.rotation);
-            
-          //   var tmpVCP = new THREE.Vector3();
-          //   tmpVCP.copy(this.tmpVCPprev);
-          //   tmpVCP.applyAxisAngle( this.rotaxis, this.camAngle );
-
-          //   tmpVCP.x -= this.tmpVCPprev.x;
-          //   tmpVCP.y -= this.tmpVCPprev.y;
-          //   tmpVCP.z -= this.tmpVCPprev.z;
-
-
-          //   this.tmpVCPprev.x += tmpVCP.x;
-          //   this.tmpVCPprev.y += tmpVCP.y;
-          //   this.tmpVCPprev.z += tmpVCP.z;
-
-          //   if ( this.startRot.issleeping ) {
-          //       this.camera.position.x += tmpVCP.x;
-          //       this.camera.position.y += tmpVCP.y;
-          //       this.camera.position.z += tmpVCP.z;
-
-          //   //  this.camera.lookAt( this.containerMesh.position );
-          //    this.camera.quaternion.setFromRotationMatrix( rotMatrix );
-          //   }
-          //   else {
-          //       this.camrot.x = tmpVCP.x;
-          //       this.camrot.y = tmpVCP.y;
-          //       this.camrot.z = tmpVCP.z;
-          //   } 
-            
-
-            var dir = new THREE.Vector3();
-            dir.subVectors( this.camera.position, this.containerMesh.position);
-            if (this.msechngdir === undefined){
-                this.msechngdir = this.startRot.rot;  
-            }
-            if (this.msechngdir.charAt(0) !== this.startRot.rot.charAt(0)){
-                this.chngeindir = true;
-                this.msechngdir = this.startRot.rot;
-            }
-
-          if( (dir.y > -this.camdist && dir.y < this.camdist) || this.chngeindir){
-
-            var axis = new THREE.Vector3();
-            var tmpCM = new THREE.Vector3();
-            axis.subVectors(tmpCM, V3D.msePos);
-
-         //   axis.set(V3D.msePos.x, V3D.msePos.y, V3D.msePos.z);
-            axis.z = 0;
-
-            axis.set ( axis.y, axis.x*-1, axis.z );
-
-            axis.applyEuler(this.camera.rotation);
+            this.rotaxis.applyEuler(this.camera.rotation);
                 
-                var tmpVCP = new THREE.Vector3();
-                tmpVCP.copy(this.tmpVCPprev);
-                tmpVCP.applyAxisAngle( axis, this.camAngle );
+            this.tmpVCP.copy(this.tmpVCPprev);
+            this.tmpVCP.applyAxisAngle( this.rotaxis, this.camAngle );
 
-                tmpVCP.x -= this.tmpVCPprev.x;
-                tmpVCP.y -= this.tmpVCPprev.y;
-                tmpVCP.z -= this.tmpVCPprev.z;
+            this.tmpVCP.x -= this.tmpVCPprev.x;
+            this.tmpVCP.y -= this.tmpVCPprev.y;
+            this.tmpVCP.z -= this.tmpVCPprev.z;
 
-                if(this.chngeindir){
-                    this.chngeindir = false; 
-                    if ( this.tmpVCPprev.y + tmpVCP.y > this.camdist ) {
-                        tmpVCP.y = this.tmpVCPprev.y - (this.camdist - 0.1);
-                        tmpVCP.y *= -1;
-                    }
-                    else if ( this.tmpVCPprev.y + tmpVCP.y < -this.camdist ) {
-                        tmpVCP.y = this.tmpVCPprev.y + (this.camdist - 0.1);
-                        tmpVCP.y *= -1;    
-                    }
+            if(this.chngeindir){
+                this.chngeindir = false; 
+                if ( this.tmpVCPprev.y + this.tmpVCP.y > this.camdist ) {
+                    this.tmpVCP.y = this.tmpVCPprev.y - (this.camdist - 0.1);
+                    this.tmpVCP.y *= -1;
                 }
+                else if ( this.tmpVCPprev.y + this.tmpVCP.y < -this.camdist ) {
+                    this.tmpVCP.y = this.tmpVCPprev.y + (this.camdist - 0.1);
+                    this.tmpVCP.y *= -1;    
+                }
+            }
+            this.tmpVCPprev.x += this.tmpVCP.x; 
+            this.tmpVCPprev.y += this.tmpVCP.y;
+            this.tmpVCPprev.z += this.tmpVCP.z;
+            this.camrot.x = this.tmpVCP.x;
+            this.camrot.y = this.tmpVCP.y;
+            this.camrot.z = this.tmpVCP.z;
+        }
+        else {
 
-
-
-                this.tmpVCPprev.x += tmpVCP.x;
-                this.tmpVCPprev.y += tmpVCP.y;
-                this.tmpVCPprev.z += tmpVCP.z;
-
-                // if ( this.startRot.issleeping ) {
-                //     this.camera.position.x += tmpVCP.x;
-                //     this.camera.position.y += tmpVCP.y;
-                //     this.camera.position.z += tmpVCP.z;
-
-                //     this.camera.lookAt( this.containerMesh.position );
-
-                // }
-                // else {
-                    this.camrot.x = tmpVCP.x;
-                    this.camrot.y = tmpVCP.y;
-                    this.camrot.z = tmpVCP.z;
-               // } 
+            if(this.startRot.rot == 'ul' || this.startRot.rot == 'dl'){
+                var camAngle = 0.025;
             }
             else {
-
-                var axis = new THREE.Vector3(0,1,0);
-               // var camAngle = new THREE.Vector3();
-                if(this.startRot.rot == 'ul' || this.startRot.rot == 'dl'){
-                    var camAngle = 0.001
-                }
-                else {
-                    var camAngle = -0.001;
-                }
-
-                var tmpVCP = new THREE.Vector3();
-                tmpVCP.copy(this.tmpVCPprev);
-                tmpVCP.applyAxisAngle( axis, camAngle );
-
-                tmpVCP.x -= this.tmpVCPprev.x;
-                tmpVCP.y -= this.tmpVCPprev.y;
-                tmpVCP.z -= this.tmpVCPprev.z;
-
-
-                this.tmpVCPprev.x += tmpVCP.x;
-                this.tmpVCPprev.y += tmpVCP.y;
-                this.tmpVCPprev.z += tmpVCP.z;
-
-                // if ( this.startRot.issleeping ) {
-                // this.camera.position.x += tmpVCP.x;
-                // this.camera.position.y += tmpVCP.y;
-                // this.camera.position.z += tmpVCP.z;
-
-
-                // this.camera.lookAt( this.containerMesh.position );
-                // }
-                // else {
-                this.camrot.x = tmpVCP.x;
-                this.camrot.y = tmpVCP.y;
-                this.camrot.z = tmpVCP.z;
-             //   } 
-
+                var camAngle = -0.025;
             }
+            this.tmpVCP.copy(this.tmpVCPprev);
+            this.tmpVCP.applyAxisAngle( this.up, camAngle );
+
+            this.tmpVCP.x -= this.tmpVCPprev.x;
+            this.tmpVCP.y -= this.tmpVCPprev.y;
+            this.tmpVCP.z -= this.tmpVCPprev.z;
+
+
+            this.tmpVCPprev.x += this.tmpVCP.x;
+            this.tmpVCPprev.y += this.tmpVCP.y;
+            this.tmpVCPprev.z += this.tmpVCP.z;
+
+            this.camrot.x = this.tmpVCP.x;
+            this.camrot.y = this.tmpVCP.y;
+            this.camrot.z = this.tmpVCP.z;
+
+        }
             
     },
     lookAtFunc: function(currdir,up) {
@@ -660,51 +564,6 @@ V3D.View.prototype = {
             // q.setFromAxisAngle( rotAxis, 0.1);
 
 
-        // var len = new THREE.Vector3();
-        // var rbvec = new THREE.Vector3(rb.position.x,rb.position.y,rb.position.z); 
-        // rbvec.multiplyScalar(100);
-        // len.subVectors(this.mothership.position, rbvec);
-        // len = Math.round(len.length());
-
-
-
-        // if(len > -1600 && len < 1600 ){
-        //     var rblv = rb.linearVelocity.length();
-        //     if( rblv < 2 ) {
-        //         rb.linearVelocity.addTime(this.ldh, this.world.timeStep);
-        //     }
-        //     if ( len > 1100 && !this.dcurrot){
-        //         this.dcurrot = 1
-        //         // this.lda.x = this.randMinMax(0,1);
-        //         // this.lda.y = this.randMinMax(0,1);
-        //         // this.lda.z = this.randMinMax(0,1);
-        //     }
-        //     if( len > 1100 && this.dcurrot ) {
-
-
-        //        // rb.name = 'ldrone';
-
-        //        if( this.chngdircount < 30) {
-        //             this.ldq.setFromAxisAngle( this.lda, this.drota);
-        //             var dq = rb.getQuaternion();
-        //             var dqthree = new THREE.Quaternion( dq.x,dq.y,dq.z,dq.w );
-        //             this.ldq.multiplyQuaternions(dqthree,this.ldq).normalize();
-        //             rb.setQuaternion(this.ldq);
-
-
-        //             var rbpos = new THREE.Vector3( rb.position.x, rb.position.y, rb.position.z );
-        //             rbpos.normalize();
-        //             this.ldh = this.getObjHeading(rbpos, this.ldq);
-        //             rb.awake();
-
-        //             this.chngdircount += 1;
-        //         }
-        //    }
-        //    if( len <= 1100 ) {
-        //        this.dcurrot = 0;
-        //    }
-
-
 
         /////////////////////////////////////
             // later level use getObjHeading/////
@@ -765,30 +624,28 @@ V3D.View.prototype = {
                 console.log('id ' + drone.id);
 
 
-                    if (dist <= 2000 ) {
-                        this.ldh.multiplyScalar(2);
-                        rb.linearVelocity.addTime(this.ldh, this.world.timeStep);  
+                    // if (dist <= 2000 ) {
+                    //     this.ldh.multiplyScalar(2);
+                    //     rb.linearVelocity.addTime(this.ldh, this.world.timeStep);  
+                    // }
+                    if ( dist <= 1500 ) {
+
+                        this.normalizelv( rb,2,this.ldh );
+
                     }
-                    if (dist > 2000 && dist <= 4000) { 
-                            this.ldh.multiplyScalar(3);
-                            rb.linearVelocity.addTime(this.ldh, this.world.timeStep);
+                    if (dist > 1500 && dist <= 4000) { 
+
+                        this.normalizelv( rb,7,this.ldh );
                     
                     }
-                    if (dist > 4000 ) {
-                            this.ldh.multiplyScalar(10);
-                            rb.linearVelocity.addTime(this.ldh, this.world.timeStep);  
+                    if (dist > 4000 && dist <= 10000 ) {
+
+                        this.normalizelv( rb,10,this.ldh );
+
                     }
                     if (dist > 10000 ) {
-                            this.ldh.multiplyScalar(20);
-                            rb.linearVelocity.addTime(this.ldh, this.world.timeStep);  
-                    }
-                    if ( dist <= 2000 && rblv > 8 ) {
-                        var tmplv = new THREE.Vector3(rb.linearVelocity.x,rb.linearVelocity.y,rb.linearVelocity.z);
-                        tmplv.normalize();
-                        tmplv.multiplyScalar(8);
-                        rb.linearVelocity.x = tmplv.x;
-                        rb.linearVelocity.y = tmplv.y;
-                        rb.linearVelocity.z = tmplv.z;
+                        this.ldh.multiplyScalar(15);
+                        rb.linearVelocity.addTime(this.ldh, this.world.timeStep);  
                     }
 
             }
@@ -799,6 +656,25 @@ V3D.View.prototype = {
 
 
 
+
+
+    },
+    normalizelv: function(rb, mag, ldh) {
+
+
+        // var tmplv = new THREE.Vector3(rb.linearVelocity.x,rb.linearVelocity.y,rb.linearVelocity.z);
+        // tmplv.normalize();
+        // tmplv.multiplyScalar(mag);
+        // rb.linearVelocity.x = tmplv.x;
+        // rb.linearVelocity.y = tmplv.y;
+        // rb.linearVelocity.z = tmplv.z;
+
+        if( rb.linearVelocity.length() >= (mag + 1) ){
+            rb.linearVelocity.normalize(rb.linearVelocity);
+            rb.linearVelocity.multiplyScalar(mag);
+        }
+        ldh.multiplyScalar(mag);
+        rb.linearVelocity.addTime( ldh, this.world.timeStep );  
 
 
     },
@@ -849,13 +725,34 @@ V3D.View.prototype = {
                     }
 
                 } );
-                    for(var i=0;i<obj.length;i++){
-                        var tmpobj = obj[i];
-                        var tmpgroup = object.clone();
-                        tmpgroup.position.set(tmpobj.pos[0], tmpobj.pos[1], tmpobj.pos[2]);
-                        tmpgroup.name = tmpobj.name;
-                        scene.add(tmpgroup);
+                    // for(var i=0;i<obj.length;i++){
+                    //     var tmpobj = obj[i];
+                    //     var tmpgroup = object.clone();
+                    //     tmpgroup.position.set(tmpobj.pos[0], tmpobj.pos[1], tmpobj.pos[2]);
+                    //     tmpgroup.name = tmpobj.name;
+                    //     scene.add(tmpgroup);
+                    // }
+
+
+
+
+                    object.children[0].position.set(obj[0].pos[0], obj[0].pos[1], obj[0].pos[2]);;
+                    for(var i=1;i<obj.length;i++){
+
+                        var tmpDrone = object.children[0].clone();
+                        tmpDrone.position.set(obj[i].pos[0], obj[i].pos[1], obj[i].pos[2]);
+                        object.children.push(tmpDrone);
+
                     }
+                    object.name = 'drone';
+                    scene.add(object);
+
+
+
+
+
+
+
 
             }, onProgress, onError );
         }

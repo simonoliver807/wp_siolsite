@@ -13,7 +13,7 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
     var meshs = [];
     var meshNum = 0;
     // non physics object to exclude from mesh array
-    var exmesh = ['sight','hemlight','dirlight','containerMesh','points']
+   // var exmesh = ['sight','hemlight','dirlight','containerMesh','points']
     var pause = 0;
     var v3d = new V3D.View();
     
@@ -51,8 +51,6 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
     var bodys = [];
     var bodysNum = 0;
     
-    var thisPerf;
-
 
     var tmpRot = 10;
 
@@ -83,6 +81,8 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
     var keys = [];
     var pddist = new OIMO.Vec3();
 
+    var perfcont;
+
 
         return {
 
@@ -108,6 +108,8 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
                 }
                 containerMesh = 0;
                 prs = [{id:'temp1',gameid:12345,posx:0,posy:0,posx:0,rotx:0,roty:0,rotz:0}];
+
+                perfcont = document.getElementById('perf');
 
             },
             oimoLoop: function() {  
@@ -135,19 +137,38 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
                     // }
 
                    if(!containerMesh){
-                        for(var i=0;i<v3d.scene.children.length;i++){
-                            if(exmesh.indexOf(v3d.scene.children[i].name) === -1){
-                                meshs.push(v3d.scene.children[i]);
-                                console.log('name ' + meshs[meshNum].name);
-                                 meshNum +=1;
+                       //  for(var i=0;i<v3d.scene.children.length;i++){
+                       //      if(exmesh.indexOf(v3d.scene.children[i].name) === -1){
+                       //          meshs.push(v3d.scene.children[i]);
+                       //          console.log('name ' + meshs[meshNum].name);
+                       //           meshNum +=1;
+                       //      }
+                       // }
+                       // for(i=0;i<v3d.scene.children.length;i++){
+                       //      if(v3d.scene.children[i].name == 'containerMesh'){
+                       //          v3d.containerMesh = v3d.scene.children[i];
+                       //          containerMesh = v3d.scene.children[i];
+                       //      }
+                       //  }
+                       for(var i=0;i<v3d.scene.children.length;i++){
+                            if(v3d.scene.children[i].name != 'containerMesh'){
+                                if( v3d.scene.children[i].type == 'Group' ) {
+                                    var drones = v3d.scene.children[i].children;
+                                    for(var j=0;j<drones.length;j++) {
+                                        meshs.push(drones[j]);
+                                        meshNum +=1;
+                                    }
+                                }
+                                if( v3d.scene.children[i].type == 'Mesh' && v3d.scene.children[i].name != 'sight' ) {
+                                     meshs.push(v3d.scene.children[i]);
+                                     meshNum +=1;
+                                }
                             }
-                       }
-                       for(i=0;i<v3d.scene.children.length;i++){
-                            if(v3d.scene.children[i].name == 'containerMesh'){
+                            else {
                                 v3d.containerMesh = v3d.scene.children[i];
                                 containerMesh = v3d.scene.children[i];
                             }
-                        }
+                       }
                     }
                     var n1, n2;
                     var name1 = 'drone';
@@ -169,7 +190,9 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
                         contact = contact.next;
                     }
 
-                  // console.log('perf fps: ' + perf.fps); 
+                    perf = world.performance.show();
+                    perfcont.innerHTML = perf;
+                  
 
                    // var x, y, z, mesh, body;
 
@@ -238,7 +261,7 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
                                 pddist.sub(containerMesh.position,meshs[i].position);
                                 // var len = pddist.length();
                                 // console.log(pddist.length()); 
-                                if(pddist.length() < 500) {
+                                if(pddist.length() < 1500) {
                                     dbody.ld = true;
                                 }
                             }
@@ -261,17 +284,15 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
 
                 var obj;
 
-                perf = new OIMO.Performance(world);
-
-                //add random objects
+                //add random drones
                 var x, y, z, w, h, d, t;
                 
                     x = 0;
                     z = 0;
                     y = 0;
-                    w = 20;
-                    h = 20;
-                    d = 20;
+                    w = 25;
+                    h = 25;
+                    d = 25;
 
                 var spheres = [{ type: 'sphere', size: [shp1r, shp1r, shp1r], pos:[0,0,0], move: 'true', noSleep: true, world: world, color: 0x0000ff , wireframe: 'true', name:"shp1", transparent: 'true', opacity: 0.5},
                                { type: 'sphere', size:[8, 8, 8], pos:[0,0,0], move: 'true', world: world, color: '#ff0000', wireframe: 'false',  name: 'containerMesh', transparent: 'false', opacity: 1, image:'cpv/cpv.obj', mtl:'cpv/cpv.mtl'},
@@ -298,7 +319,7 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
                 sightMesh = { type: 'box', size: [15, 15, 0.5], pos:[0,0,-100], move: 'true', world: world, color:'#66ff33', wireframe: 'false', name: 'sight', transparent: 'true', opacity: 0, image:'sight_1.png'};
                 sightMesh = v3d.addBox(sightMesh);
                 // mothership mesh
-                var ms = { type:'box', size:[350,50,50], pos:[0,0,-2500], move: true, world:world, color:'#66ff33', wireframe: 'true', name: 'mothership', transparent: 'false', opacity: 1}
+                var ms = { type:'box', size:[350,50,50], pos:[0,0,-2500], move: false, world:world, color:'#66ff33', wireframe: 'true', name: 'mothership', transparent: 'false', opacity: 1}
                 bodys[bodysNum] = new OIMO.Body(ms);
                 v3d.addBox(ms);
                 bodysNum += 1;

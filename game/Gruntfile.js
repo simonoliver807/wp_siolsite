@@ -12,7 +12,7 @@ module.exports = function(grunt) {
           },
           css: {
             files: ['style/*.css'],
-            tasks: ['sass']
+            // tasks: ['sass']
           },
           txt: {
             files: ['**/*.txt']
