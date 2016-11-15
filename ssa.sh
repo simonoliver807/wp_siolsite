@@ -22,7 +22,7 @@ OpenEverything ()
 {
     echo "open everything"
     open /Applications/MAMP/MAMP.app
-    open http://localhost:8887/website
+    open http://localhost:8887/game
     open /Applications/Transmission.app
     open /Applications/Sublime\ Text.app
     open /Applications/Mail.app

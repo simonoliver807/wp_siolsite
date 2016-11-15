@@ -177,7 +177,7 @@ V3D.View.prototype = {
         }
         geometry.addAttribute( 'position', new THREE.BufferAttribute( positions, 3 ) );
         geometry.computeBoundingSphere();
-        var points = new THREE.Points( geometry, new THREE.PointsMaterial( { size: 100, color: '#ffffff' } ) );
+        var points = new THREE.Points( geometry, new THREE.PointsMaterial( { size: 1, color: '#ffffff' } ) );
         points.name = 'points';
         this.scene.add( points );
 
@@ -532,7 +532,7 @@ V3D.View.prototype = {
     },
     phaser: function() {
         var heading = this.getPlayerDir('forward', this.containerMesh.position);
-        var mag = 2000 * this.velocity;
+        var mag = 500 * this.velocity;
         heading.x *= mag;
         heading.y *= mag;
         heading.z *= mag;
@@ -620,9 +620,6 @@ V3D.View.prototype = {
                 }
             }
             else {
-                console.log('dist ' + dist); 
-                console.log('id ' + drone.id);
-
 
                     // if (dist <= 2000 ) {
                     //     this.ldh.multiplyScalar(2);
@@ -661,14 +658,6 @@ V3D.View.prototype = {
     },
     normalizelv: function(rb, mag, ldh) {
 
-
-        // var tmplv = new THREE.Vector3(rb.linearVelocity.x,rb.linearVelocity.y,rb.linearVelocity.z);
-        // tmplv.normalize();
-        // tmplv.multiplyScalar(mag);
-        // rb.linearVelocity.x = tmplv.x;
-        // rb.linearVelocity.y = tmplv.y;
-        // rb.linearVelocity.z = tmplv.z;
-
         if( rb.linearVelocity.length() >= (mag + 1) ){
             rb.linearVelocity.normalize(rb.linearVelocity);
             rb.linearVelocity.multiplyScalar(mag);
@@ -695,7 +684,6 @@ V3D.View.prototype = {
         };
         var loader = new THREE.TGALoader();
         var texture = loader.load( texture, function( object) {
-            console.log(object); 
         }, onProgress, onError );
         return texture
     },

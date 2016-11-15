@@ -2,6 +2,7 @@ requirejs(['hammer','oimo','three','objloader','tgaloader','mtlloader','ddsloade
         function (Hammer,OIMO, THREE, OBJLOADER, TGALoader, MTLLoader, DDSLoader, V3D, GAMEINIT, MAIN) {
             var main = new MAIN;
             main.init();
+
         }
     );
 

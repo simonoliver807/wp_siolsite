@@ -43,7 +43,7 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 
 				v3d = gameinit.getObj('v3d');
 				gameinit.createWorld(timestep);
-				gameinit.populate(1000);
+				gameinit.populate(2);
 
 
 
@@ -60,7 +60,8 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 
 			    v3d.initLight();
 			    v3d.initPoints();
-				setInterval(gameinit.oimoLoop, timestep*1000);
+			    gameinit.oimoLoop();
+				//setInterval(gameinit.oimoLoop, timestep*1000);
 			},
 
 			handleKeyDown: function( event ) {

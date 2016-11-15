@@ -33,6 +33,7 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
     var noStat = false;
 
     var world;
+    var worldcount = 0;
 
 
     var socket;
@@ -82,7 +83,10 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
     var pddist = new OIMO.Vec3();
 
     var perfcont;
-
+    // var dw;
+    // var te;
+    // var td;
+    // var dronesupdated = 1;
 
         return {
 
@@ -94,17 +98,17 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
                 //     console.log('gu ' + gameUUID); 
                 // });
                  // create oimo world contains all rigidBodys and joint.
+
                 world = new OIMO.World( timestep, boardphase, Iterations, noStat );
                 world.worldscale(100);
-                // you can chooseworld gravity 
                 world.gravity = new OIMO.Vec3(0, 0, 0);
                 v3d.setWorld(world);
+                bodysNum = 0;
+                meshNum = 0;
                 v3d.addPhaser = function(body, sphere) {
-                    bodys[bodysNum] = new OIMO.Body(body);
-                    meshs[meshNum] = sphere
-                    bodysNum += 1;
-                    meshNum +=1;
-                    return bodys[bodysNum -1];
+                    bodys[bodys.length] = new OIMO.Body(body);
+                    meshs[meshs.length] = sphere
+                    return bodys[bodys.length -1];
                 }
                 containerMesh = 0;
                 prs = [{id:'temp1',gameid:12345,posx:0,posy:0,posx:0,rotx:0,roty:0,rotz:0}];
@@ -113,161 +117,248 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
 
             },
             oimoLoop: function() {  
-                if( !pause && V3D.startRender ){  
+
+                // if ( window.Worker ) {
+                //     dw = new Worker('js/updatedrone.js');
+        
+                //     dw.onmessage = function(msg) {
+
+                //         var view = new DataView(msg.data, 0, msg.data.byteLength);
+                //        var rdd = td.decode(view);
+                //         rdd = rdd.split('/');
+                //         for(var i=0;i<rdd.length;i+=7){
+                //             rdd[i+2] = JSON.parse(rdd[i+2]);
+                //             rdd[i+3] = JSON.parse(rdd[i+3]);
+                //             rdd[i+5] = JSON.parse(rdd[i+5]);
+                //             rdd[i+6] = JSON.parse(rdd[i+6]);
+                //         }
+
+                //         for(var i=0; i<rdd.length;i+=7){
+                //                 if ( rdd[i+1] == 'true'  ) {
+                //                     // rdd += '['+ldh+']/'+'['+rblv+']/'+'['+bincount+']/'+'['+drota+']/';
+                //                     var id = parseInt(rdd[i]);
+                //                     bodys[id].ld = rdd[i+1];
+                //                     bodys[id].ldh.x = rdd[i+2][0],bodys[id].ldh.y = rdd[i+2][1],bodys[id].ldh.z = rdd[i+2][2];
+                //                     bodys[id].body.linearVelocity.x = rdd[i+3][0],bodys[id].body.linearVelocity.y = rdd[i+3][1],bodys[id].body.linearVelocity.z = rdd[i+3][2];
+                //                     bodys[id].bincount = rdd[i+4];
+                //                     bodys[id].drota = rdd[i+5];
+                //                     bodys[id].body.newOrientation.x = rdd[i+6][0],bodys[id].body.newOrientation.y = rdd[i+6][1],bodys[id].body.newOrientation.z = rdd[i+6][2],bodys[id].body.newOrientation.s = rdd[i+6][3];
+                //                 }
+                //         }
+
+                //         dronesupdated = 1;
+
+                //         console.log('message received'); 
+
+                //     }
+
+                //     dw.onerror = function(error){
+                //         console.log('web worker error');
+                //         // console.log(error); 
+                //     }
+                // }
+                // else {
+                //     // handle exception for now web worker
+                // }    
+
+                    function render(){
+
+                        requestAnimationFrame( render );
+                        worldcount += 0.00001;
+
+
+                      if( !pause && V3D.startRender ){  
+
+                            world.step();
+                            v3d.render();
 
 
 
-                    world.step();// updateworld
-                    v3d.render();
+                            // var dd = '['+bodys[0].body.position.x+','+bodys[0].body.position.y+','+bodys[0].body.position.z+']';
+                            // for(i=0; i<bodys.length;i++){
+                            //     if (bodys[i].name == 'drone'){
 
-                    //prs = [];
-                    // socket.emit('getgd', gameUUID);
-                    // socket.on('sgd', function(gdarr){ 
+                            //         dd += '/'+i;
+                            //         dd += '/['+bodys[i].body.linearVelocity.x+','+bodys[i].body.linearVelocity.y+','+bodys[i].body.linearVelocity.z+']';
+                            //         dd += '/['+bodys[i].body.position.x+','+bodys[i].body.position.y+','+bodys[i].body.position.z+']';
+                            //         dd += "/["+bodys[i].ldh.x+","+bodys[i].ldh.y+","+bodys[i].ldh.z+"]";  
+                            //         dd += '/'+bodys[i].ld;
+                            //         dd += '/'+bodys[i].drota;
+                            //         dd += '/'+bodys[i].bincount;
 
-                    //     prs = gdarr;
 
-                    // });
-                    // if( prs.length > 1 ) {
-                    //     for(var i=0;i<prs.length;i++){
+                            //     }                    
+                            // }
+                            // var uint8_array = te.encode(dd);
+                            // var array_buffer = uint8_array.buffer;
+                            // dw.postMessage(array_buffer, [array_buffer]);
+                          //  dw.postMessage('a');
 
-                    //         prs[i]['posx'] = 1;
 
-                    //     }
-                    //     socket.emit('setgd', prs);
-                    // }
 
-                   if(!containerMesh){
-                       //  for(var i=0;i<v3d.scene.children.length;i++){
-                       //      if(exmesh.indexOf(v3d.scene.children[i].name) === -1){
-                       //          meshs.push(v3d.scene.children[i]);
-                       //          console.log('name ' + meshs[meshNum].name);
-                       //           meshNum +=1;
-                       //      }
-                       // }
-                       // for(i=0;i<v3d.scene.children.length;i++){
-                       //      if(v3d.scene.children[i].name == 'containerMesh'){
-                       //          v3d.containerMesh = v3d.scene.children[i];
-                       //          containerMesh = v3d.scene.children[i];
-                       //      }
-                       //  }
-                       for(var i=0;i<v3d.scene.children.length;i++){
-                            if(v3d.scene.children[i].name != 'containerMesh'){
-                                if( v3d.scene.children[i].type == 'Group' ) {
-                                    var drones = v3d.scene.children[i].children;
-                                    for(var j=0;j<drones.length;j++) {
-                                        meshs.push(drones[j]);
-                                        meshNum +=1;
+
+
+
+
+                            //prs = [];
+                            // socket.emit('getgd', gameUUID);
+                            // socket.on('sgd', function(gdarr){ 
+
+                            //     prs = gdarr;
+
+                            // });
+                            // if( prs.length > 1 ) {
+                            //     for(var i=0;i<prs.length;i++){
+
+                            //         prs[i]['posx'] = 1;
+
+                            //     }
+                            //     socket.emit('setgd', prs);
+                            // }
+
+                           if(!containerMesh){
+                               for(var i=0;i<v3d.scene.children.length;i++){
+                                    if(v3d.scene.children[i].name != 'containerMesh'){
+                                        if( v3d.scene.children[i].type == 'Group' ) {
+                                            var drones = v3d.scene.children[i].children;
+                                            for(var j=0;j<drones.length;j++) {
+                                                meshs.push(drones[j]);
+                                                meshNum +=1;
+                                            }
+                                        }
+                                        if( v3d.scene.children[i].type == 'Mesh' && v3d.scene.children[i].name != 'sight' ) {
+                                             meshs.push(v3d.scene.children[i]);
+                                             meshNum +=1;
+                                        }
+                                    }
+                                    else {
+                                        v3d.containerMesh = v3d.scene.children[i];
+                                        containerMesh = v3d.scene.children[i];
+                                    }
+                               }
+                            }
+                            var n1, n2;
+                            var name1 = 'drone';
+                            var name2 = 'phaser';
+                            var contact = world.contacts;
+                            while(contact!==null){
+                                n1 = contact.body1.name || ' ';
+                                n2 = contact.body2.name || ' ';
+                                if((n1==name1 && n2==name2) || (n2==name1 && n1==name2)){ 
+                                    if(contact.touching) {
+                                        if(contact.shape1.proxy && contact.shape2.proxy){
+                                            world.removeShape(contact.shape1);
+                                            world.removeShape(contact.shape2);
+                                            v3d.scene.remove(meshs[contact.shape1.id]);
+                                            v3d.scene.remove(meshs[contact.shape2.id]);
+                                        }
                                     }
                                 }
-                                if( v3d.scene.children[i].type == 'Mesh' && v3d.scene.children[i].name != 'sight' ) {
-                                     meshs.push(v3d.scene.children[i]);
-                                     meshNum +=1;
+                                contact = contact.next;
+                            }
+
+                            perf = world.performance.show();
+                            perfcont.innerHTML = perf;
+                          
+
+                           // var x, y, z, mesh, body;
+
+                           var mesh, body;
+
+                            var i = bodys.length;
+                            while (i--){
+                                body = bodys[i];
+                                mesh = meshs[i];
+
+                                if( mesh.name == 'phaser' ) {
+                                    if( mesh.userData.timealive ){
+                                        if( worldcount - mesh.userData.timealive > 0.002 ){
+                                            world.removeRigidBody(body.body);
+                                            v3d.scene.remove(mesh);
+                                            bodys.splice(i,1);
+                                            meshs.splice(i,1);
+                                            bodys.length --;
+                                            meshs.length --;
+                                            bodysNum --;
+                                            meshNum --;
+
+                                        }
+                                    }
+                                    else {
+                                        mesh.userData.timealive = worldcount;
+                                    }
+                                }
+
+
+                                
+                                if(!body.getSleep()){ // if body didn't sleep
+                                    // apply rigidbody position and rotation to mesh
+                                    mesh.position.copy(body.getPosition());
+                                    mesh.quaternion.copy(body.getQuaternion());
+
+                                    if(body.name == 'shp1'){
+
+                                        containerMeshPrev.set(containerMesh.position.x,containerMesh.position.y, containerMesh.position.z);
+                                        containerMesh.position.set(mesh.position.x, mesh.position.y, mesh.position.z);
+                                       var tmpPosX = (containerMesh.position.x - containerMeshPrev.x);
+                                       var tmpPosY = (containerMesh.position.y - containerMeshPrev.y);
+                                       var tmpPosZ = (containerMesh.position.z - containerMeshPrev.z); 
+
+
+
+                                        v3d.camera.position.x += tmpPosX;
+                                        v3d.camera.position.y += tmpPosY; 
+                                        v3d.camera.position.z += tmpPosZ;
+                                        if(v3d.startRot.rot !== 0){
+
+                                            v3d.camera.position.x += v3d.camrot.x;
+                                            v3d.camera.position.y += v3d.camrot.y;
+                                            v3d.camera.position.z += v3d.camrot.z;
+                                            v3d.camera.lookAt( containerMesh.position );
+                                            
+                                        };
+                                        v3d.camera.updateMatrixWorld();
+                                    }
+                                } 
+                            }
+                            if(keys){
+                                if(keys[38]){
+                                    v3d.addForce();
+                                }
+                                if(keys[40]){
+                                    v3d.minusForce();
+                                }
+                                if(keys[32] || false){
+                                    v3d.phaser();
+                                }
+                                if(keys[32] && keys[38]){
+                                    v3d.addForce();
+                                    v3d.phaser();
                                 }
                             }
-                            else {
-                                v3d.containerMesh = v3d.scene.children[i];
-                                containerMesh = v3d.scene.children[i];
-                            }
-                       }
-                    }
-                    var n1, n2;
-                    var name1 = 'drone';
-                    var name2 = 'phaser';
-                    var contact = world.contacts;
-                    while(contact!==null){
-                        n1 = contact.body1.name || ' ';
-                        n2 = contact.body2.name || ' ';
-                        if((n1==name1 && n2==name2) || (n2==name1 && n1==name2)){ 
-                            if(contact.touching) {
-                                if(contact.shape1.proxy && contact.shape2.proxy){
-                                    world.removeShape(contact.shape1);
-                                    world.removeShape(contact.shape2);
-                                    v3d.scene.remove(meshs[contact.shape1.id]);
-                                    v3d.scene.remove(meshs[contact.shape2.id]);
-                                }
-                            }
-                        }
-                        contact = contact.next;
-                    }
-
-                    perf = world.performance.show();
-                    perfcont.innerHTML = perf;
-                  
-
-                   // var x, y, z, mesh, body;
-
-                   var mesh, body;
-
-                    var i = bodys.length;
-                    while (i--){
-                        body = bodys[i];
-                        mesh = meshs[i];
-
-                        
-                        if(!body.getSleep()){ // if body didn't sleep
-                            // apply rigidbody position and rotation to mesh
-                            mesh.position.copy(body.getPosition());
-                            mesh.quaternion.copy(body.getQuaternion());
-
-                            if(body.name == 'shp1'){
-
-                                containerMeshPrev.set(containerMesh.position.x,containerMesh.position.y, containerMesh.position.z);
-                                containerMesh.position.set(mesh.position.x, mesh.position.y, mesh.position.z);
-                               var tmpPosX = (containerMesh.position.x - containerMeshPrev.x);
-                               var tmpPosY = (containerMesh.position.y - containerMeshPrev.y);
-                               var tmpPosZ = (containerMesh.position.z - containerMeshPrev.z); 
+                            v3d.updateSightPos();
+                            // update drones 
 
 
-
-                                v3d.camera.position.x += tmpPosX;
-                                v3d.camera.position.y += tmpPosY; 
-                                v3d.camera.position.z += tmpPosZ;
-                                if(v3d.startRot.rot !== 0){
-
-                                    v3d.camera.position.x += v3d.camrot.x;
-                                    v3d.camera.position.y += v3d.camrot.y;
-                                    v3d.camera.position.z += v3d.camrot.z;
-                                    v3d.camera.lookAt( containerMesh.position );
-                                    
-                                };
-                                v3d.camera.updateMatrixWorld();
-                            }
-                        } 
-                    }
-                    if(keys){
-                        if(keys[38]){
-                            v3d.addForce();
-                        }
-                        if(keys[40]){
-                            v3d.minusForce();
-                        }
-                        if(keys[32] || false){
-                            v3d.phaser();
-                        }
-                        if(keys[32] && keys[38]){
-                            v3d.addForce();
-                            v3d.phaser();
-                        }
-                    }
-                    v3d.updateSightPos();
-                    // update drones 
-                    for(var i=0;i<bodys.length;i++){
-                        var dbody = bodys[i];
-                        if(dbody.name == 'drone') {
-                            if( dbody.ld ) {
-                                v3d.updateDrones( dbody.body, meshs[i] );
-                            }
-                            if ( !dbody.ld && !dbody.rtm && dbody.name == 'drone' ) {
-                                pddist.sub(containerMesh.position,meshs[i].position);
-                                // var len = pddist.length();
-                                // console.log(pddist.length()); 
-                                if(pddist.length() < 1500) {
-                                    dbody.ld = true;
+                            for(var i=0;i<bodys.length;i++){
+                                var dbody = bodys[i];
+                                if(dbody.name == 'drone') {
+                                    if( dbody.ld ) {
+                                        v3d.updateDrones( dbody.body, meshs[i] );
+                                    }
+                                    if ( !dbody.ld && !dbody.rtm && dbody.name == 'drone' ) {
+                                        pddist.sub(containerMesh.position,meshs[i].position);
+                                        // var len = pddist.length();
+                                        // console.log(pddist.length()); 
+                                        if(pddist.length() < 1500) {
+                                            dbody.ld = true;
+                                        }
+                                    }
                                 }
                             }
                         }
                     }
-                }
+                    render();    
             },
 
             populate: function(n) {
@@ -344,7 +435,11 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
 
                     bodys[bodysNum] = new OIMO.Body(obj);
                     bodys[bodysNum].ld = false;
-                    bodys[bodysNum].rtm = false;
+                   // bodys[bodysNum].rtm = false;
+                    bodys[bodysNum].bincount = 'false';
+                    bodys[bodysNum].drota = 0;
+                    bodys[bodysNum].ldh = {x:0,y:0,z:0};
+
 
                     //console.log('randn ' +randn + ' i ' + i ); 
                     // if( (randn -1) == i ) {
