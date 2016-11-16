@@ -173,13 +173,13 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 			loadMobileEvents: function(n) {
 				self = this;
 		    	if( n.match(/iPhone/) ){
-		    		if(v3d.bincam){
+		    		if(!v3d.bincam){
 		    			var pos = 5;}    
 		    		else {
 		    			var pos = 0;}
 		    	}
 		    	if( n.match(/iPad/) ){
-		    		if(v3d.bincam){
+		    		if(!v3d.bincam){
 		    			var pos = 7;}    
 		    		else {
 		    			var pos = 0;}
