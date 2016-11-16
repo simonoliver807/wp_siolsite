@@ -43,7 +43,7 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 
 				v3d = gameinit.getObj('v3d');
 				gameinit.createWorld(timestep);
-				gameinit.populate(2);
+				gameinit.populate(1000);
 
 
 
@@ -173,10 +173,16 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 			loadMobileEvents: function(n) {
 				self = this;
 		    	if( n.match(/iPhone/) ){
-		    		var pos = 5;
+		    		if(v3d.bincam){
+		    			var pos = 5;}    
+		    		else {
+		    			var pos = 0;}
 		    	}
 		    	if( n.match(/iPad/) ){
-		    		var pos = 7;
+		    		if(v3d.bincam){
+		    			var pos = 7;}    
+		    		else {
+		    			var pos = 0;}
 		    	}
 		    	v3d.camera.position.z = pos;
 		    	v3d.sight.position.z = pos * -1;

@@ -5,7 +5,8 @@ var V3D = {};
 V3D.ToRad = Math.PI/180;
 V3D.ToDeg = 180 / Math.PI;
 V3D.msePos = new THREE.Vector3(0,0,0);
-V3D.startRender = false;
+V3D.startRender = 0;
+V3D.bincam = 1;
 // V3D.objimage = 0;
 
 
@@ -58,8 +59,14 @@ V3D.View.prototype = {
 
         
         // need to update both cam pos and tmpVCPprev here and for mobile
-        this.camera.position.z = 10;
-        this.tmpVCPprev = new THREE.Vector3(0,0,10);
+        if( V3D.bincam ) {
+            this.camera.position.z = 10;
+            this.tmpVCPprev = new THREE.Vector3(0,0,10);
+        }
+        else {
+            this.camera.position.z = 0.1;
+            this.tmpVCPprev = new THREE.Vector3(0,0,0.1);
+        }
         this.camdist = 9.9;
 
         this.camera.matrixAutoUpdate = true;
@@ -111,6 +118,7 @@ V3D.View.prototype = {
         this.drota = 0;
         this.ldh = new THREE.Vector3(0,0,1);
         this.bincount = 0;
+        this.dpcnt = 0;
 
 
         // applyRot() Vectors
@@ -196,7 +204,8 @@ V3D.View.prototype = {
         geos['boxTarget'] = new THREE.BoxGeometry(50,50,50);
         geos['containerMesh'] = new THREE.SphereGeometry(8);
         geos['cylTarget'] = new THREE.CylinderGeometry( 5, 5, 20, 32 );
-        geos['phaser'] = new THREE.SphereGeometry(1.5, 3, 2);
+        geos['phaser'] = new THREE.SphereGeometry(0.3, 32, 32);
+        geos['dphaser'] = new THREE.SphereGeometry(1, 32, 32);
         geos['planet'] = new THREE.SphereBufferGeometry(500, 16, 12);
         geos['shp1'] = new THREE.SphereGeometry(0.1)
         geos['sight'] = new THREE.BoxGeometry(15,15,0.5);
@@ -218,7 +227,7 @@ V3D.View.prototype = {
             var material = new THREE.MeshBasicMaterial({ color: sphere.color, wireframe: sphere.wireframe, name: sphere.name, transparent: sphere.transparent, opacity: sphere.opacity });
         }
 
-        if(sphere.name == 'containerMesh'){
+        if(sphere.name == 'containerMesh' && sphere.image != 0){
             var texture1 = '';
             var texture2 = '';
             var object = this.loadOBJ(texture1,texture2,this.scene,sphere);
@@ -530,17 +539,26 @@ V3D.View.prototype = {
             this.velocity = 1 + rb.linearVelocity.length() / 10;
         }
     },
-    phaser: function() {
+    phaser: function(heading) {
         var heading = this.getPlayerDir('forward', this.containerMesh.position);
         var mag = 500 * this.velocity;
         heading.x *= mag;
         heading.y *= mag;
         heading.z *= mag;
-        this.shootStart.subVectors( this.containerMesh.position, this.camera.position );
-        this.shootStart.normalize();
-        this.shootStart.addVectors(this.shootStart, this.containerMesh.position);
+
+        if( !V3D.bincam ){
+            this.shootStart.subVectors( this.containerMesh.position, V3D.msePos );
+            this.shootStart.normalize();
+            this.shootStart.addVectors(this.shootStart, this.containerMesh.position);
+            this.shootStart.multiplyScalar(15);
+        }
+        else {
+            this.shootStart.subVectors( this.containerMesh.position, this.camera.position );
+            this.shootStart.normalize();
+            this.shootStart.addVectors(this.shootStart, this.containerMesh.position);
+        }
         
-        var phaser = { type: 'sphere', size: [0.5,0.5,0.5], pos: [this.shootStart.x, this.shootStart.y, this.shootStart.z], move: 'true', world: this.world, color:'#66ff33', wireframe: 'false', name:'phaser', transparent: 'false', opacity: 1};
+        var phaser = { type: 'sphere', pos: [this.shootStart.x, this.shootStart.y, this.shootStart.z], move: 'true', world: this.world, color:'#66ff33', wireframe: 'false', name:'phaser', transparent: 'false', opacity: 1};
         var sphere = this.addSphere(phaser);
         var rb = this.addPhaser(phaser, sphere);
         rb.body.linearVelocity.addTime(heading, this.world.timeStep);
@@ -589,7 +607,7 @@ V3D.View.prototype = {
 
             var angle = 2 * Math.acos(q.w);
 
-            if( this.bincount === 0) {
+            if( drone.userData.bincount === 0) {
 
                 if( this.drota != angle) {
 
@@ -646,7 +664,30 @@ V3D.View.prototype = {
                     }
 
             }
-            this.bincount ? this.bincount = 0 : this.bincount = 1;
+
+            if( drone.userData.dpcnt == 300 ) {
+                var heading = new THREE.Vector3(this.ldh.x,this.ldh.y,this.ldh.z);
+                heading.normalize;
+                var mag = 500 * heading.length();
+                heading.x *= mag;
+                heading.y *= mag;
+                heading.z *= mag;
+                this.shootStart.subVectors( this.containerMesh.position, drone.position );
+                this.shootStart.normalize();
+                this.shootStart.addVectors(this.shootStart, drone.position);
+                
+                var phaser = { type: 'sphere', pos: [this.shootStart.x, this.shootStart.y, this.shootStart.z], move: 'true', world: this.world, color:'#ffff00', wireframe: 'false', name:'dphaser', transparent: 'false', opacity: 1};
+                var sphere = this.addSphere(phaser);
+                var rb = this.addPhaser(phaser, sphere);
+                rb.body.linearVelocity.addTime(heading, this.world.timeStep);
+                // var shp1 = this.bodys[0].body;
+                // rb.body.linearVelocity.addEqual(shp1.linearVelocity);
+                drone.userData.dpcnt = 0;
+            }
+            else {
+                drone.userData.dpcnt +=1;
+            }
+            drone.userData.bincount ? drone.userData.bincount = 0 : drone.userData.bincount = 1;
             rb.awake();
 
 
@@ -713,16 +754,6 @@ V3D.View.prototype = {
                     }
 
                 } );
-                    // for(var i=0;i<obj.length;i++){
-                    //     var tmpobj = obj[i];
-                    //     var tmpgroup = object.clone();
-                    //     tmpgroup.position.set(tmpobj.pos[0], tmpobj.pos[1], tmpobj.pos[2]);
-                    //     tmpgroup.name = tmpobj.name;
-                    //     scene.add(tmpgroup);
-                    // }
-
-
-
 
                     object.children[0].position.set(obj[0].pos[0], obj[0].pos[1], obj[0].pos[2]);;
                     for(var i=1;i<obj.length;i++){
@@ -735,12 +766,9 @@ V3D.View.prototype = {
                     object.name = 'drone';
                     scene.add(object);
 
-
-
-
-
-
-
+                  if( !V3D.bincam ) {
+                    V3D.startRender = 1;
+                  }
 
             }, onProgress, onError );
         }
