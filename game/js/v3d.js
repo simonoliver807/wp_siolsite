@@ -11,17 +11,8 @@ V3D.bincam = 1;
 
 
 V3D.View = function(h,v,d){
-
-	// var n = navigator.userAgent;
-	// this.isMobile = false;
- //    if (n.match(/Android/i) || n.match(/webOS/i) || n.match(/iPhone/i) || n.match(/iPad/i) || n.match(/iPod/i) || n.match(/BlackBerry/i) || n.match(/Windows Phone/i)) this.isMobile = true;      
-
     
     var container = document.getElementById('container');
-
-
-    // container.style.width = "100%";
-    // container.style.height = "500px";
 	this.w = container.clientWidth;
 	this.h = container.clientHeight;
 	this.id = 'container';
@@ -30,14 +21,9 @@ V3D.View = function(h,v,d){
 	this.initBasic();
     this.sight;
 
-    // this.arrCamX = [];
-    // this.arrCamY = [];
-    // this.pbX = [];
-    // this.pbY = [];
-    // this.axis = new THREE.Vector3();
     this.startRot = { issleeping: 1, rot: 0, axis: new THREE.Vector3() };
     this.world;
-    this.var =0;
+
 
 }
 
@@ -114,12 +100,12 @@ V3D.View.prototype = {
         this.reverse = false;
         this.heading = new THREE.Vector3();
         this.shootStart = new THREE.Vector3();
+        this.paobj = [[0,0],[1,8],[2,12],[3,15],[4,17],[5,19],[6,22],[7,24],[8,26],[9,28],[10,29],[11,30],[12,31],[13,33],[14,34],[15,35],[16,36],[17,37],[18,38],[19,39]];
 
         this.drota = 0;
         this.ldh = new THREE.Vector3(0,0,1);
         this.bincount = 0;
         this.dpcnt = 0;
-
 
         // applyRot() Vectors
         this.tmpCM = new THREE.Vector3();
@@ -185,7 +171,7 @@ V3D.View.prototype = {
         }
         geometry.addAttribute( 'position', new THREE.BufferAttribute( positions, 3 ) );
         geometry.computeBoundingSphere();
-        var points = new THREE.Points( geometry, new THREE.PointsMaterial( { size: 1, color: '#ffffff' } ) );
+        var points = new THREE.Points( geometry, new THREE.PointsMaterial( { size: 3, color: '#ffffff' } ) );
         points.name = 'points';
         this.scene.add( points );
 
@@ -193,8 +179,6 @@ V3D.View.prototype = {
     render : function(){
 
          if( this.startRot.rot !== 0 && this.containerMesh != 0){ this.applyRot() };
-         if(this.addforce) {this.addForce();}
-         if(this.minusforce) {this.minusForce();}
     	this.renderer.render( this.scene, this.camera );
 
 
@@ -213,6 +197,51 @@ V3D.View.prototype = {
         
 
         this.geos = geos;
+
+    },
+    addBox: function(box){
+
+        if(box.image && box.name != 'mothership'){
+            var setImage = 'images/'+box.image;
+          //  var texture = new THREE.TextureLoader().load(setImage);
+            var material = new THREE.MeshBasicMaterial();
+            material.map = new THREE.TextureLoader().load(setImage);
+            material.transparent = true;
+         
+          //  material.depthWrite = false;
+            //material.color = new THREE.Color(0x66ff33);
+
+            //  var material = new THREE.MeshBasicMaterial({map:texture, wireframe: box.wireframe, name: box.name, transparent: box.transparent, opacity: box.opacity});
+        }
+        if(box.name == 'mothership'){
+            var texture1 = '';
+            var texture2 = '';
+            var object = this.loadOBJ(texture1,texture2,this.scene,box);
+            this.mothership = object;
+            return;
+        }
+
+        if(!box.image) {
+             var material = new THREE.MeshBasicMaterial({ color: box.color, wireframe: box.wireframe, name: box.name, transparent: box.transparent, opacity: box.opacity });
+            if(box.wireframe){ material.wireframe = true;}
+        }
+
+        var mesh = new THREE.Mesh( this.geos[box.name], material, box.name );
+        mesh.position.set( box.pos[0], box.pos[1], box.pos[2] );
+        this.scene.add( mesh );
+
+        if(mesh.name == 'sight'){
+            this.sight = mesh;
+        };
+
+        //return mesh;
+
+    },
+    addCylinder: function(cylinder){
+
+        var texture1 = this.loadTGA('images/Free_Droid/Materials/BaseMaterial_diffuse.tga');
+        var texture2 = this.loadTGA('images/Free_Droid/Materials/BaseMaterial_normal.tga');
+        this.loadOBJ(texture1,texture2,this.scene,cylinder);
 
     },
     addSphere : function(sphere){
@@ -244,46 +273,7 @@ V3D.View.prototype = {
 
             return mesh;
         }
-    	
-    },
-    addBox: function(box){
-
-        if(box.image){
-            var setImage = 'images/'+box.image;
-          //  var texture = new THREE.TextureLoader().load(setImage);
-            var material = new THREE.MeshBasicMaterial();
-            material.map = new THREE.TextureLoader().load(setImage);
-            material.transparent = true;
-         
-          //  material.depthWrite = false;
-            //material.color = new THREE.Color(0x66ff33);
-
-            //  var material = new THREE.MeshBasicMaterial({map:texture, wireframe: box.wireframe, name: box.name, transparent: box.transparent, opacity: box.opacity});
-        }
-        else {
-             var material = new THREE.MeshBasicMaterial({ color: box.color, wireframe: box.wireframe, name: box.name, transparent: box.transparent, opacity: box.opacity });
-            if(box.wireframe){ material.wireframe = true;}
-        }
-
-        var mesh = new THREE.Mesh( this.geos[box.name], material, box.name );
-        mesh.position.set( box.pos[0], box.pos[1], box.pos[2] );
-        this.scene.add( mesh );
-
-        if(mesh.name == 'sight'){
-            this.sight = mesh;
-        };
-        if(mesh.name == 'mothership') {
-            this.mothership = mesh;
-        }
-        //return mesh;
-
-    },
-    addCylinder: function(cylinder){
-
-        var texture1 = this.loadTGA('images/Free_Droid/Materials/BaseMaterial_diffuse.tga');
-        var texture2 = this.loadTGA('images/Free_Droid/Materials/BaseMaterial_normal.tga');
-        this.loadOBJ(texture1,texture2,this.scene,cylinder);
-
+        
     },
     gs_mse_pos: function (gs, pos){
         if(gs == 'get'){
@@ -465,7 +455,6 @@ V3D.View.prototype = {
         var rb = this.bodys[0].body;
         var heading = this.getPlayerDir('forward', this.containerMesh.position);  
         var chngeindir = heading.equals(this.heading); 
-        //var set = false;
         if ( !chngeindir ) {
             this.heading.set(heading.x,heading.y,heading.z);
         }
@@ -481,7 +470,6 @@ V3D.View.prototype = {
                         count --;
                     }
                 }
-               // set = true;
             }
         } 
         if( chngeindir ){
@@ -490,10 +478,6 @@ V3D.View.prototype = {
                 rb.linearVelocity.addTime(heading , this.world.timeStep);
             }
         }
-        // if( !chngeindir && rb.linearVelocity.length() > 40 && rb.linearVelocity.length() < 41 && !set){
-        //     heading.multiplyScalar(-10);
-        //     rb.linearVelocity.addTime(heading , this.world.timeStep);
-        // }
 
         var perlv = ((rb.linearVelocity.length()/40)*100) - 5;
         accel.style.width = perlv + '%';
@@ -535,9 +519,9 @@ V3D.View.prototype = {
 
         var perlv = ((rb.linearVelocity.length()/40)*100) - 5;
         accel.style.width = perlv + '%';
-        if(this.velocity < 3){
+        // if(this.velocity < 3){
             this.velocity = 1 + rb.linearVelocity.length() / 10;
-        }
+        //}
     },
     phaser: function(heading) {
         var heading = this.getPlayerDir('forward', this.containerMesh.position);
@@ -547,10 +531,10 @@ V3D.View.prototype = {
         heading.z *= mag;
 
         if( !V3D.bincam ){
-            this.shootStart.subVectors( this.containerMesh.position, V3D.msePos );
+            this.shootStart.subVectors( this.sight.position, this.containerMesh.position );
             this.shootStart.normalize();
+            this.shootStart.multiplyScalar(50);
             this.shootStart.addVectors(this.shootStart, this.containerMesh.position);
-            this.shootStart.multiplyScalar(15);
         }
         else {
             this.shootStart.subVectors( this.containerMesh.position, this.camera.position );
@@ -558,15 +542,32 @@ V3D.View.prototype = {
             this.shootStart.addVectors(this.shootStart, this.containerMesh.position);
         }
         
-        var phaser = { type: 'sphere', pos: [this.shootStart.x, this.shootStart.y, this.shootStart.z], move: 'true', world: this.world, color:'#66ff33', wireframe: 'false', name:'phaser', transparent: 'false', opacity: 1};
+        var phaser = { type: 'sphere', pos: [this.shootStart.x, this.shootStart.y, this.shootStart.z], move: 'true', world: this.world, color:'#66ff33', transparent: 'false', opacity: 1, wireframe: 'false', name:'phaser'};
         var sphere = this.addSphere(phaser);
         var rb = this.addPhaser(phaser, sphere);
         rb.body.linearVelocity.addTime(heading, this.world.timeStep);
-        var shp1 = this.bodys[0].body;
-        rb.body.linearVelocity.addEqual(shp1.linearVelocity);
+        var shplv = new THREE.Vector3( this.bodys[0].body.linearVelocity.x,this.bodys[0].body.linearVelocity.y,this.bodys[0].body.linearVelocity.z); 
+        shplv.normalize();
+        var shp1 = this.bodys[0].body.linearVelocity;
+        var len = this.bodys[0].body.linearVelocity.length();
+        console.log(len);
+
+
+        for(var i=0;i<this.paobj.length-1;i++){
+            if( len > this.paobj[i][1] && len < this.paobj[i+1][1] ){
+                var diff = this.paobj[i+1][1] - this.paobj[i][1];
+                var appvelmag = ((len - this.paobj[i][1])/diff) + this.paobj[i][0] ;
+            }
+        }
+       shplv.multiplyScalar(len + appvelmag);
+        rb.body.linearVelocity.addEqual(shplv);
+
+
+        //rb.body.linearVelocity.addEqual(shp1.linearVelocity);
         //console.log('velocity: ' + velocity);
     },
-    updateDrones: function(rb, drone){
+    // updateDrones: function(db){
+         updateDrones: function(rb,drone){
 
 
             // var q = new THREE.Quaternion();
@@ -589,6 +590,11 @@ V3D.View.prototype = {
             /// and adjust heading of drone ///
             ///////////////////////////////////
 
+
+            // for(var i=0;i<db.body.length;i++){
+
+            //     var rb = db.body[i];
+            //     var drone = db.drone[i];
 
 
             var rblv = rb.linearVelocity.length();
@@ -690,7 +696,7 @@ V3D.View.prototype = {
             drone.userData.bincount ? drone.userData.bincount = 0 : drone.userData.bincount = 1;
             rb.awake();
 
-
+        //}
 
 
 
@@ -763,7 +769,7 @@ V3D.View.prototype = {
                         object.children.push(tmpDrone);
 
                     }
-                    object.name = 'drone';
+                    object.name = 'drones';
                     scene.add(object);
 
                   if( !V3D.bincam ) {
@@ -792,7 +798,8 @@ V3D.View.prototype = {
                     object.position.set(obj.pos[0], obj.pos[1], obj.pos[2]);
                     object.name = obj.name;
                     scene.add(object);
-                    V3D.startRender = 1;
+                    if(object.name == 'mothership'){
+                        V3D.startRender = 1; return object;}
                 }, onProgress, onError );
 
             });

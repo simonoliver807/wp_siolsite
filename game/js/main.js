@@ -8,6 +8,7 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 		var timestep = 1/60;
 		var render;
 		var v3d;
+		var phaser;
 		var self;
 
 
@@ -40,10 +41,12 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 				var acw = ac.clientWidth * 0.01;
 				accel.style.top = ach+'px';
 				accel.style.right = acw + 'px';
+				var mobcon = document.getElementById('mobcon')
 
 				v3d = gameinit.getObj('v3d');
 				gameinit.createWorld(timestep);
-				gameinit.populate(1000);
+				gameinit.populate(200);
+				phaser = false;
 
 
 
@@ -61,19 +64,13 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 			    v3d.initLight();
 			    v3d.initPoints();
 			    gameinit.oimoLoop();
-				//setInterval(gameinit.oimoLoop, timestep*1000);
 			},
 
 			handleKeyDown: function( event ) {
 
-
-				function  pause() {
-				    var val = gameinit.gspause() ? 0: 1;
-				    gameinit.gspause(val);
-				}
-
 				if( event.keyCode === 27) {
-					pause();
+					var val = gameinit.gspause() ? 0: 1;
+				    gameinit.gspause(val);
 				}
 				else {
 					var keys = gameinit.getObj('keys');
@@ -91,10 +88,17 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 
 
 				if( event.type == 'pan') {
-					var x = event.pointers[0].pageX;
-					var y = event.pointers[0].pageY;
-					var clientX = event.pointers[0].pageX;
-					var clientY = event.pointers[0].pageY;
+					// if( event.pointers[0].pageX >= mobcon.offsetLeft && event.pointers[0].pageY >= mobcon.offsetTop 
+		   //  			&& event.pointers[0].pageX < mobcon.offsetLeft + mobcon.clientWidth 
+		   //  			&& event.pointers[0].pageY < mobcon.offsetTop  + mobcon.clientHeight  )
+		   //  		{
+
+		   			if(event.pointers[0].target.id == 'mobcon') {
+			    		var x = ((event.pointers[0].pageX - mobcon.offsetLeft)/13)*100 ;
+			    		var y = ((event.pointers[0].pageY - mobcon.offsetTop )/13)*100 ; 
+						var clientX = x;
+						var clientY = y;
+					}
 				}
 				else {
 					var canvas = document.getElementById('gamecanvas');
@@ -157,11 +161,6 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 				}
 
 			},
-			onWindowResize: function(){
-			    v3d.camera.aspect = window.innerWidth / window.innerHeight;
-			    v3d.camera.updateProjectionMatrix();
-			    v3d.renderer.setSize( window.innerWidth, window.innerHeight );
-			},
 			loadEvents: function(){
 
 				window.addEventListener( 'keydown', this.handleKeyDown, false );
@@ -172,17 +171,19 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 			},
 			loadMobileEvents: function(n) {
 				self = this;
+				mobcon.style.display = 'block';
+				var keys = gameinit.getObj('keys');
 		    	if( n.match(/iPhone/) ){
-		    		if(!v3d.bincam){
-		    			var pos = 5;}    
+		    		if(!V3D.bincam){
+		    			var pos = 0;}    
 		    		else {
-		    			var pos = 0;}
+		    			var pos = 5;}
 		    	}
 		    	if( n.match(/iPad/) ){
-		    		if(!v3d.bincam){
-		    			var pos = 7;}    
+		    		if(!V3D.bincam){
+		    			var pos = 0;}    
 		    		else {
-		    			var pos = 0;}
+		    			var pos = 7;}
 		    	}
 		    	v3d.camera.position.z = pos;
 		    	v3d.sight.position.z = pos * -1;
@@ -195,101 +196,133 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 		    	addforce.style.display = 'block';
 		    	minusforce.style.display = 'block';
 		    	var mc = new Hammer(container);
+
+
 		    	mc.on('pan', function(event) {
-		    		console.log('x ' + event.deltaX + ' y ' + event.deltaY); 
 		    		self.handleMouseMove(event);
 		    	});
+
+
+
 		    	mc.on('press', function(event) {
+
 		    		if ( event.target.id == 'addforce') {
-		    			v3d.addforce = true;
+						keys[38] = true;
 		    		}
 		    		if ( event.target.id == 'minusforce') {
-		    			v3d.minusforce = true;
+						keys[40] = true;
 		    		}
 		    	});
 		    	mc.on('pressup', function(event) {
-		    		v3d.addforce = false;
-		    		v3d.minusforce = false;
+		    		if ( event.target.id == 'addforce') {
+						delete keys[38];
+		    		}
+		    		if ( event.target.id == 'minusforce') {
+						delete keys[40];
+		    		}
 		    	});
+				//mc.add( new Hammer.Tap() );
+				mc.add( new Hammer.Tap({ event: 'doubleletap', taps: 2 }) );
+				mc.get('doubleletap').recognizeWith('tap');
+				mc.add( new Hammer.Tap({ event: 'tripletap', taps: 3 }) );
+				mc.get('tripletap').recognizeWith('tap');
+				mc.on('tap doubleletap', function(ev) {
+				    if(ev.type == 'doubleletap'){
+				    	if(!phaser){ keys[32] = true; phaser = true; }
+				    	else { delete keys[32]; phaser = false; }
+
+				     }
+				});
+				mc.on('tap tripletap', function(ev) {
+				    if(ev.type == 'tripletap'){
+				    	var val = gameinit.gspause() ? 0: 1;
+				    	gameinit.gspause(val);
+				     }
+				});
 		    	this.loadHammerTime();
 			},
 			loadHammerTime: function() {
 
-					    var a = window.MutationObserver || window.WebKitMutationObserver,
-					        b = "ontouchstart" in window || window.DocumentTouch && document instanceof DocumentTouch,
-					        c = void 0 !== document.documentElement.style["touch-action"] || document.documentElement.style["-ms-touch-action"];
-					    if (!c && b && a) {
-					        window.Hammer = window.Hammer || {};
-					        var d = /touch-action[:][\s]*(none)[^;'"]*/,
-					            e = /touch-action[:][\s]*(manipulation)[^;'"]*/,
-					            f = /touch-action/,
-					            g = navigator.userAgent.match(/(iPad|iPhone|iPod)/g) ? !0 : !1,
-					            h = function() {
-					                try {
-					                    var a = document.createElement("canvas");
-					                    return !(!window.WebGLRenderingContext || !a.getContext("webgl") && !a.getContext("experimental-webgl"))
-					                } catch (b) {
-					                    return !1
-					                }
-					            }(),
-					            i = h && g;
-					        window.Hammer.time = {
-					            getTouchAction: function(a) {
-					                return this.checkStyleString(a.getAttribute("style"))
-					            },
-					            checkStyleString: function(a) {
-					                return f.test(a) ? d.test(a) ? "none" : e.test(a) ? "manipulation" : !0 : void 0
-					            },
-					            shouldHammer: function(a) {
-					                var b = this.hasParent(a.target);
-					                return b && (!i || Date.now() - a.target.lastStart < 125) ? b : !1
-					            },
-					            touchHandler: function(a) {
-					                var b = a.target.getBoundingClientRect(),
-					                    c = b.top !== this.pos.top || b.left !== this.pos.left,
-					                    d = this.shouldHammer(a);
-					                ("none" === d || c === !1 && "manipulation" === d) && ("touchend" === a.type && (a.target.focus(), setTimeout(function() {
-					                    a.target.click()
-					                }, 0)), a.preventDefault()), this.scrolled = !1, delete a.target.lastStart
-					            },
-					            touchStart: function(a) {
-					                this.pos = a.target.getBoundingClientRect(), i && this.hasParent(a.target) && (a.target.lastStart = Date.now())
-					            },
-					            styleWatcher: function(a) {
-					                a.forEach(this.styleUpdater, this)
-					            },
-					            styleUpdater: function(a) {
-					                if (a.target.updateNext) return void(a.target.updateNext = !1);
-					                var b = this.getTouchAction(a.target);
-					                return b ? void("none" !== b && (a.target.hadTouchNone = !1)) : void(!b && (a.oldValue && this.checkStyleString(a.oldValue) || a.target.hadTouchNone) && (a.target.hadTouchNone = !0, a.target.updateNext = !1, a.target.setAttribute("style", a.target.getAttribute("style") + " touch-action: none;")))
-					            },
-					            hasParent: function(a) {
-					                for (var b, c = a; c && c.parentNode; c = c.parentNode)
-					                    if (b = this.getTouchAction(c)) return b;
-					                return !1
-					            },
-					            installStartEvents: function() {
-					                document.addEventListener("touchstart", this.touchStart.bind(this)), document.addEventListener("mousedown", this.touchStart.bind(this))
-					            },
-					            installEndEvents: function() {
-					                document.addEventListener("touchend", this.touchHandler.bind(this), !0), document.addEventListener("mouseup", this.touchHandler.bind(this), !0)
-					            },
-					            installObserver: function() {
-					                this.observer = new a(this.styleWatcher.bind(this)).observe(document, {
-					                    subtree: !0,
-					                    attributes: !0,
-					                    attributeOldValue: !0,
-					                    attributeFilter: ["style"]
-					                })
-					            },
-					            install: function() {
-					                this.installEndEvents(), this.installStartEvents(), this.installObserver()
-					            }
-					        }, window.Hammer.time.install()
-					    }
+				    var a = window.MutationObserver || window.WebKitMutationObserver,
+				        b = "ontouchstart" in window || window.DocumentTouch && document instanceof DocumentTouch,
+				        c = void 0 !== document.documentElement.style["touch-action"] || document.documentElement.style["-ms-touch-action"];
+				    if (!c && b && a) {
+				        window.Hammer = window.Hammer || {};
+				        var d = /touch-action[:][\s]*(none)[^;'"]*/,
+				            e = /touch-action[:][\s]*(manipulation)[^;'"]*/,
+				            f = /touch-action/,
+				            g = navigator.userAgent.match(/(iPad|iPhone|iPod)/g) ? !0 : !1,
+				            h = function() {
+				                try {
+				                    var a = document.createElement("canvas");
+				                    return !(!window.WebGLRenderingContext || !a.getContext("webgl") && !a.getContext("experimental-webgl"))
+				                } catch (b) {
+				                    return !1
+				                }
+				            }(),
+				            i = h && g;
+				        window.Hammer.time = {
+				            getTouchAction: function(a) {
+				                return this.checkStyleString(a.getAttribute("style"))
+				            },
+				            checkStyleString: function(a) {
+				                return f.test(a) ? d.test(a) ? "none" : e.test(a) ? "manipulation" : !0 : void 0
+				            },
+				            shouldHammer: function(a) {
+				                var b = this.hasParent(a.target);
+				                return b && (!i || Date.now() - a.target.lastStart < 125) ? b : !1
+				            },
+				            touchHandler: function(a) {
+				                var b = a.target.getBoundingClientRect(),
+				                    c = b.top !== this.pos.top || b.left !== this.pos.left,
+				                    d = this.shouldHammer(a);
+				                ("none" === d || c === !1 && "manipulation" === d) && ("touchend" === a.type && (a.target.focus(), setTimeout(function() {
+				                    a.target.click()
+				                }, 0)), a.preventDefault()), this.scrolled = !1, delete a.target.lastStart
+				            },
+				            touchStart: function(a) {
+				                this.pos = a.target.getBoundingClientRect(), i && this.hasParent(a.target) && (a.target.lastStart = Date.now())
+				            },
+				            styleWatcher: function(a) {
+				                a.forEach(this.styleUpdater, this)
+				            },
+				            styleUpdater: function(a) {
+				                if (a.target.updateNext) return void(a.target.updateNext = !1);
+				                var b = this.getTouchAction(a.target);
+				                return b ? void("none" !== b && (a.target.hadTouchNone = !1)) : void(!b && (a.oldValue && this.checkStyleString(a.oldValue) || a.target.hadTouchNone) && (a.target.hadTouchNone = !0, a.target.updateNext = !1, a.target.setAttribute("style", a.target.getAttribute("style") + " touch-action: none;")))
+				            },
+				            hasParent: function(a) {
+				                for (var b, c = a; c && c.parentNode; c = c.parentNode)
+				                    if (b = this.getTouchAction(c)) return b;
+				                return !1
+				            },
+				            installStartEvents: function() {
+				                document.addEventListener("touchstart", this.touchStart.bind(this)), document.addEventListener("mousedown", this.touchStart.bind(this))
+				            },
+				            installEndEvents: function() {
+				                document.addEventListener("touchend", this.touchHandler.bind(this), !0), document.addEventListener("mouseup", this.touchHandler.bind(this), !0)
+				            },
+				            installObserver: function() {
+				                this.observer = new a(this.styleWatcher.bind(this)).observe(document, {
+				                    subtree: !0,
+				                    attributes: !0,
+				                    attributeOldValue: !0,
+				                    attributeFilter: ["style"]
+				                })
+				            },
+				            install: function() {
+				                this.installEndEvents(), this.installStartEvents(), this.installObserver()
+				            }
+				        }, window.Hammer.time.install()
+				    }
+				},
+				onWindowResize: function(){
+			    	v3d.camera.aspect = window.innerWidth / window.innerHeight;
+			    	v3d.camera.updateProjectionMatrix();
+			    	v3d.renderer.setSize( window.innerWidth, window.innerHeight );
+				}
 
 
-			}
 		}
 	}
 

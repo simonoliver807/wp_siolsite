@@ -45,10 +45,6 @@ audio:not([controls]) {
 	height: 0;
 }
 
-[hidden],
-template {
-	display: none;
-}
 
 a {
 	background-color: transparent;
@@ -138,6 +134,7 @@ html input[type="button"],
 input[type="reset"],
 input[type="submit"] {
 	-webkit-appearance: button;
+	-moz-appearance: button;
 	cursor: pointer;
 }
 
@@ -226,6 +223,7 @@ optgroup {
 	width:10%;
 }
 #container {
+	cursor: none;
 	height:100%;
 	width:100%; 
 }
@@ -255,12 +253,16 @@ optgroup {
 	height: 30%;
 	width: 100%;
 }
-
-
-
-
-
-
+#mobcon {
+	bottom: 5%;
+    background-color: #ffffff;
+    display: none;
+    height: 13%;
+    left: 5%;
+    position: absolute;
+    width: 13%;
+    border-radius: 18px;
+} 
 
 
 

@@ -6,7 +6,7 @@ Ka 0 0 0
 Kd 1 1 1
 Ks 1 1 1
 Km 0
-map_Kd /Maps/as2.jpg
+map_Kd images/fi/Maps/as2.jpg
 
 newmtl default
 d 1
@@ -25,7 +25,7 @@ Ka 0 0 0
 Kd 1 1 1
 Ks 1 1 1
 Km 0
-map_Kd /Maps/yx1_02_01_01_02.jpg
+map_Kd images/fi/Maps/yx1_02_01_01_02.jpg
 
 newmtl default_cockpits_1_display
 d 1
@@ -35,7 +35,7 @@ Ka 1 1 1
 Kd 1 1 1
 Ks 1 1 1
 Km 0
-map_Kd /Maps/ggt1.jpg
+map_Kd images/fi/Maps/ggt1.jpg
 
 newmtl default_cockpits_joysticks
 d 1
@@ -54,7 +54,7 @@ Ka 0 0 0
 Kd 1 1 1
 Ks 1 1 1
 Km 0
-map_Kd /Maps/ahm1_01_01.jpg
+map_Kd images/fi/Maps/ahm1_01_01.jpg
 
 newmtl default_cabins1glass
 d 0.65
@@ -73,7 +73,7 @@ Ka 0 0 0
 Kd 1 1 1
 Ks 1 1 1
 Km 0
-map_Kd /Maps/lg1.jpg
+map_Kd images/fi/Maps/lg1.jpg
 
 newmtl default_landing_gear_doors
 d 1
@@ -83,7 +83,7 @@ Ka 0 0 0
 Kd 1 1 1
 Ks 1 1 1
 Km 0
-map_Kd /Maps/as2.jpg
+map_Kd images/fi/Maps/as2.jpg
 
 newmtl default_ship_door
 d 1
@@ -93,7 +93,7 @@ Ka 0 0 0
 Kd 1 1 1
 Ks 1 1 1
 Km 0
-map_Kd /Maps/as1_02.jpg
+map_Kd images/fi/Maps/as1_02.jpg
 
 newmtl default_door
 d 1
@@ -103,7 +103,7 @@ Ka 0 0 0
 Kd 1 1 1
 Ks 1 1 1
 Km 0
-map_Kd /Maps/as1_02.jpg
+map_Kd images/fi/Maps/as1_02.jpg
 
 newmtl default_steps
 d 1
@@ -113,5 +113,5 @@ Ka 0 0 0
 Kd 1 1 1
 Ks 1 1 1
 Km 0
-map_Kd /Maps/rmp1.jpg
+map_Kd images/fi/Maps/rmp1.jpg
 
