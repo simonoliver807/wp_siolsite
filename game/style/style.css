@@ -223,7 +223,7 @@ optgroup {
 	width:10%;
 }
 #container {
-	cursor: none;
+	/*cursor: none;*/
 	height:100%;
 	width:100%; 
 }

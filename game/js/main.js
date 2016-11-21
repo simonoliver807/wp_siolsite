@@ -175,22 +175,24 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 				var keys = gameinit.getObj('keys');
 		    	if( n.match(/iPhone/) ){
 		    		if(!V3D.bincam){
-		    			var pos = 0;}    
+		    			var pos = 0.1;
+		    			v3d.camdist = 0.09;}    
 		    		else {
-		    			var pos = 5;}
+		    			var pos = 5;
+		    			v3d.camdist = 4.9;}
 		    	}
 		    	if( n.match(/iPad/) ){
 		    		if(!V3D.bincam){
-		    			var pos = 0;}    
+		    			var pos = 0.1;
+		    			v3d.camdist = 0.09}    
 		    		else {
-		    			var pos = 7;}
+		    			var pos = 7;
+		    			v3d.camdist = 6.9;}
 		    	}
 		    	v3d.camera.position.z = pos;
 		    	v3d.sight.position.z = pos * -1;
 		        v3d.tmpVCPprev = new v3d.tvec(0,0,pos);
 		        // for the rotation
-		        v3d.camdist = pos - 0.1;
-			    
 		    	var addforce = document.getElementById('addforce');
 		    	var minusforce = document.getElementById('minusforce');
 		    	addforce.style.display = 'block';
