@@ -45,7 +45,7 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 
 				v3d = gameinit.getObj('v3d');
 				gameinit.createWorld(timestep);
-				gameinit.populate(200);
+				gameinit.populate(2);
 				phaser = false;
 
 
@@ -63,6 +63,15 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 
 			    v3d.initLight();
 			    v3d.initPoints();
+
+
+
+			  //  v3d.initexpart();
+
+
+
+
+			    
 			    gameinit.oimoLoop();
 			},
 
@@ -71,6 +80,10 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 				if( event.keyCode === 27) {
 					var val = gameinit.gspause() ? 0: 1;
 				    gameinit.gspause(val);
+				}
+				if ( event.keyCode == 83) {
+					var bodys = gameinit.getObj('bodys');
+					bodys[0].body.linearVelocity.init();
 				}
 				else {
 					var keys = gameinit.getObj('keys');

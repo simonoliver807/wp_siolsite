@@ -204,7 +204,7 @@ optgroup {
 	color: white;
     transform: rotate(180deg);
     font-size: 10px;
-    margin-top: -200px;
+    margin-top: -300px;
 }
 
 
@@ -224,8 +224,10 @@ optgroup {
 }
 #container {
 	/*cursor: none;*/
+	display: block;
 	height:100%;
 	width:100%; 
+	position: absolute;
 }
 
 /*accellerator controls*/
@@ -242,6 +244,16 @@ optgroup {
 	display: none;
 	height: 35%;
 	width: 100%;
+}
+#loadingScreen {
+
+	background-color: #000000;
+	color: #ffffff;
+	display: block;
+	height: 100%;
+	position: absolute;
+	width: 100%;
+	z-index: 1;
 }
 #minusforce {
 	background-color: #00FF00;
