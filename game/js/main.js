@@ -4,6 +4,7 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 	return function(){
 		var gameinit = new GAMEINIT;
 		var container = document.getElementById('container'); 
+
 		var accel;
 		var timestep = 1/60;
 		var render;
@@ -30,49 +31,47 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 
 				//  });
 				
+				// try {
+					window.oncontextmenu = function (){ return false; }
+					window.addEventListener( 'resize', this.onWindowResize, false );
 
-				window.oncontextmenu = function (){ return false; }
-				window.addEventListener( 'resize', this.onWindowResize, false );
+					accel = document.getElementById('accel');
+					var ac = document.getElementById('accelCont');
+					var tapaccel = document.getElementById('tapaccel');
+					var ach = ac.clientHeight/2;
+					var acw = ac.clientWidth * 0.01;
+					accel.style.top = ach+'px';
+					accel.style.right = acw + 'px';
+					var mobcon = document.getElementById('mobcon')
 
-				accel = document.getElementById('accel');
-				var ac = document.getElementById('accelCont');
-				var tapaccel = document.getElementById('tapaccel');
-				var ach = ac.clientHeight/2;
-				var acw = ac.clientWidth * 0.01;
-				accel.style.top = ach+'px';
-				accel.style.right = acw + 'px';
-				var mobcon = document.getElementById('mobcon')
-
-				v3d = gameinit.getObj('v3d');
-				gameinit.createWorld(timestep);
-				gameinit.populate(2);
-				phaser = false;
-
-
-
-				var n = navigator.userAgent;
-				this.isMobile = false;
-			    if (n.match(/Android/i) || n.match(/webOS/i) || n.match(/iPhone/i) || n.match(/iPad/i) || n.match(/iPod/i) || n.match(/BlackBerry/i) || n.match(/Windows Phone/i)) {
-			    	this.loadMobileEvents(n);
-			    }   
-			    else {
-			    	this.loadEvents();
-			    }
-
-						
-
-			    v3d.initLight();
-			    v3d.initPoints();
+					v3d = gameinit.getObj('v3d');
+					gameinit.createWorld(timestep);
+					gameinit.populate(600);
+					phaser = false;
 
 
 
-			  //  v3d.initexpart();
+					var n = navigator.userAgent;
+					this.isMobile = false;
+				    if (n.match(/Android/i) || n.match(/webOS/i) || n.match(/iPhone/i) || n.match(/iPad/i) || n.match(/iPod/i) || n.match(/BlackBerry/i) || n.match(/Windows Phone/i)) {
+				    	this.loadMobileEvents(n);
+				    }   
+				    else {
+				    	this.loadEvents();
+				    }
 
+							
+				    v3d.initLight();
+				    v3d.initPoints();		
 
-
-
-			    
-			    gameinit.oimoLoop();
+				    gameinit.oimoLoop();
+				// }
+				// catch (err) {
+				// 	document.getElementById('loadingScreen').style.display = 'none';
+				// 	var errscreen = document.getElementById('errScreen')
+				// 	errscreen.style.display = 'block';
+				// 	errscreen.innerHTML = '<div id="errdiv">Sorry there has beed an error ' + err.message + ' </div>';
+				// }
 			},
 
 			handleKeyDown: function( event ) {

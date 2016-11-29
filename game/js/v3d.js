@@ -13,10 +13,8 @@ V3D.exdrone3;
 V3D.phasers;
 V3D.dphasers;
 V3D.mesharrpos = {phasers:0,dphasers:0,drones:0};
-V3D.grouppart;
-V3D.objimage = 1;
-V3D.totalImg = 12;
-V3D.loadingScreen = document.getElementById('loadingScreen');
+V3D.grouppart = new THREE.Object3D();
+V3D.percom = document.getElementById('perCom');
 
 
 V3D.View = function(h,v,d){
@@ -41,10 +39,17 @@ V3D.View.prototype = {
     init:function(h,v,d){
     	this.clock = new THREE.Clock();
     	this.renderer = new THREE.WebGLRenderer({precision: "mediump", antialias:false});
+
+        //this.renderer = new THREE.WebGLRenderer({ antialias:true });
+
     	this.renderer.setSize( this.w, this.h );
-    	this.renderer.setClearColor( 0x1d1f20, 1 );
+    	// this.renderer.setClearColor( 0x1d1f20, 1 );
+     //    this.renderer.setPixelRatio( window.devicePixelRatio );
+     //    this.renderer.autoClear = false;
+
+        this.renderer.setClearColor( 0x000000, 1 );
         this.renderer.setPixelRatio( window.devicePixelRatio );
-        this.renderer.autoClear = false;
+       this.renderer.autoClear = false;
 
 
     	// siolsite this.camera = new THREE.PerspectiveCamera( 60, this.w/this.h, 0.1, 2000 );
@@ -134,6 +139,11 @@ V3D.View.prototype = {
         this.u = new THREE.Vector3();
         this.s = new THREE.Vector3();
 
+        this.dronetex;
+
+        V3D.grouppart.name = 'grouppart';
+        this.scene.add(V3D.grouppart);
+
 
     },
     initBackground:function(){
@@ -147,25 +157,20 @@ V3D.View.prototype = {
 //this.renderer.autoClear = false;
     },
     initLight:function(){
-    	//if(this.isMobile) return;
 
-    	//this.scene.fog = new THREE.Fog( 0x1d1f20, 100, 600 );
-    	//this.scene.add( new THREE.AmbientLight( 0x3D4143 ) );
-  //   	var hemiLight = new THREE.HemisphereLight( 0xffffff, 0x303030, 0.3 );
-  //       hemiLight.name = 'hemlight';
-		// this.scene.add( hemiLight );
-		// var dirlight = new THREE.DirectionalLight( 0xffffff, 1.2 );
-		// dirlight.position.set( 0.5, 1, 0.5 ).normalize();
-  //       dirlight.name = 'dirlight';
-		// this.scene.add( dirlight );
-         var dirlight1 = new THREE.DirectionalLight( 0xffffff, 1.2 );
-         dirlight1.position.set( 0, 1, 0 );
-         dirlight1.name = 'dirlight';
-         var dirlight2 = new THREE.DirectionalLight( 0xffffff, 1.2 );
-         dirlight2.position.set( 0, -1, 0 );
-         dirlight2.name = 'dirlight';
-         this.scene.add( dirlight1 );
-         this.scene.add( dirlight2 );
+        var dirlight1 = new THREE.DirectionalLight( 0xffffff, 1.2 );
+        dirlight1.position.set( 0, 1, 0 );
+        dirlight1.name = 'dirlight';
+        var dirlight2 = new THREE.DirectionalLight( 0xffffff, 1.2 );
+        dirlight2.position.set( 0, -1, 0 );
+        dirlight2.name = 'dirlight';
+
+        this.scene.add( dirlight1 );
+        this.scene.add( dirlight2 );
+
+     // var hemlight = new THREE.HemisphereLight( 0xffffff, 0xffffff, 0.6 );
+     // this.scene.add( hemlight );
+
     },
     initPoints: function() {
 
@@ -183,7 +188,7 @@ V3D.View.prototype = {
         }
         geometry.addAttribute( 'position', new THREE.BufferAttribute( positions, 3 ) );
         geometry.computeBoundingSphere();
-        var points = new THREE.Points( geometry, new THREE.PointsMaterial( { size: 100, color: '#ffffff' } ) );
+        var points = new THREE.Points( geometry, new THREE.PointsMaterial( { size: 1, color: '#ffffff' } ) );
         points.name = 'points';
         this.scene.add( points );
 
@@ -195,7 +200,18 @@ V3D.View.prototype = {
     
     expart: function() {
 
+        var particles = 150;
+        var geometry = new THREE.BufferGeometry();
+        var positions = new Float32Array( particles * 3 );
 
+        geometry.addAttribute( 'position', new THREE.BufferAttribute( positions, 3 ) );
+        geometry.computeBoundingSphere();
+        var points = new THREE.Points( geometry, new THREE.PointsMaterial( { size: 0.01, color: '#ffff00' } ) );
+        points.name = 'points1';
+        points.visible = true;
+        points.geometry.attributes.position.setDynamic(true);
+
+        return points;
 
     },
 
@@ -214,7 +230,7 @@ V3D.View.prototype = {
         var geos = {};
         geos['boxTarget'] = new THREE.BoxGeometry(50,50,50);
         geos['containerMesh'] = new THREE.SphereGeometry(8);
-        geos['cylTarget'] = new THREE.CylinderGeometry( 5, 5, 20, 32 );
+      //  geos['cylTarget'] = new THREE.CylinderGeometry( 20, 20, 20 );
         geos['phaser'] = new THREE.SphereGeometry(0.5, 32, 32);
         geos['dphaser'] = new THREE.SphereGeometry(1, 32, 32);
         geos['planet'] = new THREE.SphereBufferGeometry(500, 16, 12);
@@ -236,10 +252,10 @@ V3D.View.prototype = {
             material.transparent = true;
         }
         if(box.name == 'mothership'){
-            //var texture = '';
+            var texture = '';
            // var object = this.loadOBJ(texture,this.scene,box);
            // this.mothership = object;
-           var texture = new THREE.TextureLoader().load(box.texture);
+         //  var texture = new THREE.TextureLoader().load(box.texture);
            this.loadOBJ(texture,this.scene,box);
             return;
         }
@@ -263,13 +279,27 @@ V3D.View.prototype = {
     addCylinder: function(cylinder){
 
         if(cylinder.length > 0){
-            var texture = this.loadTGA('images/Free_Droid/Materials/BaseMaterial_normal.tga');
-//            var texture2 = this.loadTGA('images/Free_Droid/Materials/BaseMaterial_diffuse.tga');
+          var texture = this.loadTGA('images/Free_Droid/Materials/BaseMaterial_normal.tga');
+
+          this.dronetex = texture;
+
+//            var texture = new THREE.TextureLoader().load('images/Free_Droid/Materials/BaseMaterial_normal.png');
             this.loadOBJ(texture,this.scene,cylinder);}
         if(cylinder.name){
-            var texture = this.loadTGA(cylinder.mtl);
-            this.loadOBJ(texture,this.scene,cylinder); 
+
+           //  var texture = new THREE.TextureLoader().load(cylinder.mtl);
+            this.loadOBJ(this.dronetex,this.scene,cylinder); 
         }
+
+        // if(cylinder.length > 0) {
+        //     for(var i =0; i< cylinder.length; i++) {
+
+        //         var material =  new THREE.MeshBasicMaterial({ color: cylinder[i].color, wireframe: cylinder[i].wireframe, name: cylinder[i].name, transparent: cylinder[i].transparent, opacity: cylinder[i].opacity });
+        //         var mesh = new THREE.Mesh( this.geos['cylTarget'], material );
+        //         mesh.position.set( cylinder[i].pos[0], cylinder[i].pos[1], cylinder[i].pos[2] );
+        //         this.scene.add(mesh);
+        //     }
+        // }
 
 
     },
@@ -594,7 +624,7 @@ V3D.View.prototype = {
        // this.addSphere(tmpsphere);
 
 
-        var body = { type: 'sphere', size: [0.5,0.5,0.5], pos: [this.shootStart.x, this.shootStart.y, this.shootStart.z], move: 'true', world: this.world, name:'phaser', density: 100  };
+        var body = { type: 'sphere', size: [1,1,1], pos: [this.shootStart.x, this.shootStart.y, this.shootStart.z], move: 'true', world: this.world, name:'phaser', density: 10  };
 
         var rb = this.addPhaser(body, phaser);
         rb.body.linearVelocity.addTime(heading, this.world.timeStep);
@@ -778,19 +808,18 @@ V3D.View.prototype = {
 
             if ( xhr.lengthComputable ) {
                 var percentComplete = xhr.loaded / xhr.total * 100;
-                console.log( Math.round(percentComplete, 2) + '% downloaded ' + xhr.srcElement.responseURL );
+                V3D.percom.innerHTML = '  Current ' + Math.round(percentComplete, 2) + '% downloaded ';
+            }
 
-                console.log(   V3D.loadingScreen.innerHTML = "Progress " + V3D.objimage + ' of ' + V3D.totalImg + '  Current ' + Math.round(percentComplete, 2) + '% downloaded ');
-            }
-            if(xhr.loaded == xhr.total){
-                V3D.loadingScreen.innerHTML = V3D.objimage += 1;
-            }
-            if( V3D.objimage === V3D.totalImg) {
-                V3D.loadingScreen.style.display = "none";
-            }
     },
     onError: function ( xhr ) { 
+
             console.log(xhr);
+
+            var errscreen = document.getElementById('errScreen');
+            errscreen.innerHTML = "<div id='errdiv'><p>"+ xhr.target.responseURL + "</p><p>"+xhr.target.statusText+"</p><p>"+xhr.target.status+"</p></div>";
+            errscreen.style.display = "block";
+
     },
     loadTGA: function(texture) {
         // var onProgress = function ( xhr ) {
@@ -819,7 +848,8 @@ V3D.View.prototype = {
         //     console.log(xhr);
         // };
 
-        if( obj[0] || obj.name.charAt(0) == 'e' || obj.name == 'phasers' || obj.name == 'dphasers' || obj.name == 'mothership') {
+        // if( obj[0] || obj.name.charAt(0) == 'e' || obj.name == 'phasers' || obj.name == 'dphasers' || obj.name == 'mothership') {
+        if( obj[0] || obj.name.charAt(0) == 'e' || obj.name == 'phasers' || obj.name == 'dphasers') {
             if(obj[0]){ var image = obj[0].image;}
             else {var image = obj.image;}
             var loader = new THREE.OBJLoader( );

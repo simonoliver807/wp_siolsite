@@ -2,14 +2,24 @@
 <html>
 <head>
 		<title>MF Drone Warfare &#8211; siolsite</title>
-	<link rel="stylesheet" type="text/css" href="style/style.css">
+	<link rel="stylesheet" type="text/css" href="http://localhost:8887/game/style/style.css">
+<!-- 		<link rel="stylesheet" type="text/css" href="http://siolsite.com/style/style.css"> -->
 	 <link rel="icon" type="image/png" href="images/favicon.ico">
 	 <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1">
 
 </head>
 <body>
 
-	<div id="loadingScreen"></div>
+	<div id="loadingScreen">
+		<div id = "lscont">
+			<div class="ls" id="numImg" >0</div>
+			<div class="ls"> of 8 </div>
+			<div class="ls" id='perCom'></div>
+		</div>
+	</div>
+	<div id='errScreen'>
+	</div>
+
 
 	<div id="container" class="container">
 		<div id="accelCont">
@@ -30,7 +40,12 @@
 
 <script type="text/javascript" data-main="js/config.js" src="js/require.js"></script> 
 
-<!-- <script type="text/javascript" data-main="js_minified/config.js" src="js_minified/require.js"></script>  -->
+
+
+<!-- 
+<script type="text/javascript" data-main="http://localhost:8887/game/js_minified/config.js" src="http://localhost:8887/game/js_minified/require.js"></script>  -->
+
+<!-- <script type="text/javascript" data-main="http://siolsite.com/js_minified/config.js" src="http://siolsite.com/js_minified/require.js"></script>  -->
 
 
 </body>

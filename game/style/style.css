@@ -229,6 +229,24 @@ optgroup {
 	width:100%; 
 	position: absolute;
 }
+#errScreen {
+	background-color: #000000;
+	display: none;
+	height: 100%;
+	position: absolute;
+	width: 100%;
+	z-index: 1;
+}
+#errScreen #errdiv {
+	color: #ffffff;
+	display: block;
+	left: 50%;
+	margin: 0;
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+}
 
 /*accellerator controls*/
 #tapaccel {
@@ -246,14 +264,23 @@ optgroup {
 	width: 100%;
 }
 #loadingScreen {
-
 	background-color: #000000;
-	color: #ffffff;
 	display: block;
 	height: 100%;
 	position: absolute;
 	width: 100%;
 	z-index: 1;
+}
+#loadingScreen #lscont {
+	color: #ffffff;
+	left: 50%;
+	margin: 0;
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+.ls {
+	display: inline-block;
 }
 #minusforce {
 	background-color: #00FF00;
