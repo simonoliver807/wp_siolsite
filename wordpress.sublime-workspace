@@ -273,16 +273,6 @@
 			}
 		},
 		{
-			"contents": "Searching 19872 files for \"function sanitize_text_field\"\n\n/Applications/MAMP/htdocs/website/wordpress/wp-includes/formatting.php:\n 4267   * @return string\n 4268   */\n 4269: function sanitize_text_field( $str ) {\n 4270  \t$filtered = wp_check_invalid_utf8( $str );\n 4271  \n\n1 match in 1 file\n\n\nSearching 19872 files for \"_wp_specialchars\"\n\n/Applications/MAMP/htdocs/website/wordpress/wp-includes/default-filters.php:\n   17  \tadd_filter( $filter, 'sanitize_text_field'  );\n   18  \tadd_filter( $filter, 'wp_filter_kses'       );\n   19: \tadd_filter( $filter, '_wp_specialchars', 30 );\n   20  }\n   21  \n   ..\n   27  \t\tadd_filter( $filter, 'wp_kses_data'       );\n   28  \t}\n   29: \tadd_filter( $filter, '_wp_specialchars', 30 );\n   30  }\n   31  \n   ..\n  183  // Misc filters\n  184  add_filter( 'option_ping_sites',        'privacy_ping_filter'                 );\n  185: add_filter( 'option_blog_charset',      '_wp_specialchars'                    ); // IMPORTANT: This must not be wp_specialchars() or esc_html() or it'll cause an infinite loop\n  186  add_filter( 'option_blog_charset',      '_canonical_charset'                  );\n  187  add_filter( 'option_home',              '_config_wp_home'                     );\n\n/Applications/MAMP/htdocs/website/wordpress/wp-includes/deprecated.php:\n 2064  \tif ( func_num_args() > 1 ) { // Maintain backwards compat for people passing additional args\n 2065  \t\t$args = func_get_args();\n 2066: \t\treturn call_user_func_array( '_wp_specialchars', $args );\n 2067  \t} else {\n 2068  \t\treturn esc_html( $string );\n\n/Applications/MAMP/htdocs/website/wordpress/wp-includes/formatting.php:\n  889   * @return string The encoded text with HTML entities.\n  890   */\n  891: function _wp_specialchars( $string, $quote_style = ENT_NOQUOTES, $charset = false, $double_encode = false ) {\n  892  \t$string = (string) $string;\n  893  \n  ...\n  956   *                                both single and double if set to ENT_QUOTES or\n  957   *                                none if set to ENT_NOQUOTES.\n  958:  *                                Also compatible with old _wp_specialchars() values;\n  959   *                                converting single quotes if set to 'single',\n  960   *                                double if set to 'double' or both if otherwise set.\n  ...\n  974  \t}\n  975  \n  976: \t// Match the previous behaviour of _wp_specialchars() when the $quote_style is not an accepted value\n  977  \tif ( empty( $quote_style ) ) {\n  978  \t\t$quote_style = ENT_NOQUOTES;\n  ...\n 3512  function esc_js( $text ) {\n 3513  \t$safe_text = wp_check_invalid_utf8( $text );\n 3514: \t$safe_text = _wp_specialchars( $safe_text, ENT_COMPAT );\n 3515  \t$safe_text = preg_replace( '/&#(x)?0*(?(1)27|39);?/i', \"'\", stripslashes( $safe_text ) );\n 3516  \t$safe_text = str_replace( \"\\r\", '', $safe_text );\n ....\n 3540  function esc_html( $text ) {\n 3541  \t$safe_text = wp_check_invalid_utf8( $text );\n 3542: \t$safe_text = _wp_specialchars( $safe_text, ENT_QUOTES );\n 3543  \t/**\n 3544  \t * Filter a string cleaned and escaped for output in HTML.\n ....\n 3565  function esc_attr( $text ) {\n 3566  \t$safe_text = wp_check_invalid_utf8( $text );\n 3567: \t$safe_text = _wp_specialchars( $safe_text, ENT_QUOTES );\n 3568  \t/**\n 3569  \t * Filter a string cleaned and escaped for output in an HTML attribute.\n\n10 matches across 3 files\n\n\nSearching 828 files for \"add_shortcode\"\n\n/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/shortcodes/class-fw-extension-shortcodes.php:\n  113  \t{\n  114  \t\tforeach ($this->shortcodes as $tag => $instance) {\n  115: \t\t\tadd_shortcode($tag, array($instance, 'render'));\n  116  \t\t}\n  117  \t}\n\n1 match in 1 file\n",
-			"settings":
-			{
-				"buffer_size": 3678,
-				"line_ending": "Unix",
-				"name": "Find Results",
-				"scratch": true
-			}
-		},
-		{
 			"file": "wp-content/plugins/unyson/framework/extensions/shortcodes/class-fw-extension-shortcodes.php",
 			"settings":
 			{
@@ -291,28 +281,19 @@
 			}
 		},
 		{
-			"file": "wp-content/themes/twentysixteen/css/editor-style.css",
-			"settings":
-			{
-				"buffer_size": 6630,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "wp-content/themes/twentysixteen/style.css",
-			"settings":
-			{
-				"buffer_size": 69007,
-				"encoding": "UTF-8",
-				"line_ending": "Windows"
-			}
-		},
-		{
 			"file": "wp-includes/formatting.php",
 			"settings":
 			{
 				"buffer_size": 158894,
 				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "wp-content/themes/twentysixteen/db.php",
+			"settings":
+			{
+				"buffer_size": 717,
 				"line_ending": "Unix"
 			}
 		},
@@ -368,6 +349,7 @@
 	],
 	"file_history":
 	[
+		"/Applications/MAMP/htdocs/website/wordpress/wp-content/themes/twentysixteen/css/editor-style.css",
 		"/Applications/MAMP/htdocs/website/wordpress/wp-includes/formatting.php",
 		"/Applications/MAMP/htdocs/website/wordpress/wp-includes/load.php",
 		"/Applications/MAMP/htdocs/website/wordpress/index.php",
@@ -494,8 +476,7 @@
 		"/Applications/MAMP/htdocs/website/wordpress/readme.html",
 		"/Applications/MAMP/htdocs/website/readme.doc",
 		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/extensions/builder/includes/option-types/builder/includes/templates/components/full/scripts.js",
-		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/helpers/class-fw-db-options-model.php",
-		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/bootstrap.php"
+		"/Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/helpers/class-fw-db-options-model.php"
 	],
 	"find":
 	{
@@ -706,7 +687,7 @@
 	"groups":
 	[
 		{
-			"selected": 4,
+			"selected": 3,
 			"sheets":
 			[
 				{
@@ -734,101 +715,11 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 6,
+					"stack_index": 4,
 					"type": "text"
 				},
 				{
 					"buffer": 1,
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 3678,
-						"regions":
-						{
-							"match":
-							{
-								"flags": 112,
-								"regions":
-								[
-									[
-										173,
-										201
-									],
-									[
-										555,
-										571
-									],
-									[
-										697,
-										713
-									],
-									[
-										904,
-										920
-									],
-									[
-										1462,
-										1478
-									],
-									[
-										1706,
-										1722
-									],
-									[
-										2081,
-										2097
-									],
-									[
-										2354,
-										2370
-									],
-									[
-										2611,
-										2627
-									],
-									[
-										2927,
-										2943
-									],
-									[
-										3166,
-										3182
-									],
-									[
-										3589,
-										3602
-									]
-								],
-								"scope": ""
-							}
-						},
-						"selection":
-						[
-							[
-								3593,
-								3593
-							]
-						],
-						"settings":
-						{
-							"detect_indentation": false,
-							"line_numbers": false,
-							"output_tag": 3,
-							"result_base_dir": "",
-							"result_file_regex": "^([^ \t].*):$",
-							"result_line_regex": "^ +([0-9]+):",
-							"scroll_past_end": true,
-							"syntax": "Packages/Default/Find Results.hidden-tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 1042.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 3,
-					"type": "text"
-				},
-				{
-					"buffer": 2,
 					"file": "wp-content/plugins/unyson/framework/extensions/shortcodes/class-fw-extension-shortcodes.php",
 					"semi_transient": false,
 					"settings":
@@ -850,72 +741,14 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 821.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 2,
+					"stack_index": 3,
 					"type": "text"
 				},
 				{
-					"buffer": 3,
-					"file": "wp-content/themes/twentysixteen/css/editor-style.css",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 6630,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/CSS/CSS.sublime-syntax",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 3576.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 1,
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": "wp-content/themes/twentysixteen/style.css",
-					"semi_transient": true,
-					"settings":
-					{
-						"buffer_size": 69007,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								4231,
-								1858
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/CSS/CSS.sublime-syntax",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 338.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 0,
-					"type": "text"
-				},
-				{
-					"buffer": 5,
+					"buffer": 2,
 					"file": "wp-includes/formatting.php",
 					"semi_transient": false,
 					"settings":
@@ -937,14 +770,43 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 11540.0,
+						"translation.y": 353.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 4,
+					"stack_index": 1,
 					"type": "text"
 				},
 				{
-					"buffer": 6,
+					"buffer": 3,
+					"file": "wp-content/themes/twentysixteen/db.php",
+					"semi_transient": true,
+					"settings":
+					{
+						"buffer_size": 717,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/PHP/PHP.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
 					"file": "wp-includes/kses.php",
 					"semi_transient": false,
 					"settings":
@@ -966,10 +828,10 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 21793.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 5,
+					"stack_index": 2,
 					"type": "text"
 				}
 			]

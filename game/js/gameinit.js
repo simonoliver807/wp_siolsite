@@ -9,9 +9,7 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
     //////////////////////////
     
 
-    // container to hold three.js objects
-    var meshs = [];
-    var meshNum = 0;
+
     // non physics object to exclude from mesh array
    // var exmesh = ['sight','hemlight','dirlight','containerMesh','points']
     var pause = 0;
@@ -46,6 +44,8 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
     // container to hold oimo objects
     var bodys = [];
     var bodysNum = 0;
+    var meshs = [];
+    var meshNum = 0;
     
 
     // var tmpRot = 10;
@@ -94,7 +94,6 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
                 world.gravity = new OIMO.Vec3(0, 0, 0);
                 v3d.setWorld(world);
                 bodysNum = 0;
-                meshNum = 0;
                 v3d.addPhaser = function(body, phaser) {
                     bodys[bodys.length] = new OIMO.Body(body);
                     meshs[meshs.length] = phaser;
@@ -212,33 +211,34 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
                             // }
 
                            if(!containerMesh){
-                               document.getElementById('loadingScreen').style.display = 'none';
-                               for(var i=0;i<v3d.scene.children.length;i++){
-                                    if(v3d.scene.children[i].name != 'containerMesh'){
-                                        if( v3d.scene.children[i].name == 'drones' ) {
-                                            var drones = v3d.scene.children[i].children;
-                                            for(var j=0;j<drones.length;j++) {
-                                                drones[j].userData.dpcnt = v3d.randMinMax(0,290);
-                                                drones[j].userData.bincount = 0;
-                                                meshs.push(drones[j]);
-                                                meshNum +=1;
+                               document.getElementById('loadingScreen').style.display = 'none';                               
+                               // make sure the two mesh and body array match
+                                   // container to hold three.js objects
+                                    for(var b = 0; b < bodys.length; b++){
+                                        for(var i =0; i < v3d.scene.children.length ; i++){
+                                            if(bodys[b].name == v3d.scene.children[i].name){
+                                                meshs.push(v3d.scene.children[i]);
                                             }
-                                        }
-                                        if( v3d.scene.children[i].name == 'mothership' ){
-                                            meshs.push(v3d.scene.children[i]);
-                                            meshNum +=1;
-                                        }
-                                        if( v3d.scene.children[i].type == 'Mesh' && v3d.scene.children[i].name != 'sight' ) {
-                                             meshs.push(v3d.scene.children[i]);
-                                             meshNum +=1;
+                                            if(v3d.scene.children[i].name == 'drones') {
+                                                var dronenum = i;
+                                            }
+                                            if(v3d.scene.children[i].name == 'containerMesh'){
+                                                var contmeshnum = i;
+                                            }
+
                                         }
                                     }
-                                    else {
-                                        v3d.containerMesh = v3d.scene.children[i];
-                                        containerMesh = v3d.scene.children[i];
+                                    for(var i = 0; i < v3d.scene.children[dronenum].children.length;i++){
+                                        meshs.push(v3d.scene.children[dronenum].children[i]);
                                     }
-                               }
-                            }
+                                    v3d.containerMesh = v3d.scene.children[contmeshnum];
+                                    containerMesh = v3d.scene.children[contmeshnum];
+                                    meshNum = meshs.length;
+                                }
+
+
+
+                            
                                 if(V3D.exdrone3.userData.active){
                                     for(var i=1; i <V3D.exdrone3.children.length; i++) {
 
@@ -296,15 +296,18 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
                             var name2 = 'phaser';
                             var contact = world.contacts;
                             while(contact!==null){
-                                n1 = contact.body1.name || ' ';
-                                n2 = contact.body2.name || ' ';
-                                if((n1==name1 && n2==name2) || (n2==name1 && n1==name2)){ 
-                                   if(contact.touching) {
-                                       if(contact.shape1.proxy && contact.shape2.proxy){
-                                            btd.push(contact.shape1.id);
-                                            btd.push(contact.shape2.id); 
-                                       }
-                                   }
+                                if(contact.body1 != null && contact.body2 != null){
+                                    n1 = contact.body1.name || ' ';
+                                    n2 = contact.body2.name || ' ';
+                                    if((n1==name1 && n2==name2) || (n2==name1 && n1==name2)){ 
+                                     //  if(contact.touching) {
+                                          // if(contact.shape1.proxy && contact.shape2.proxy){
+                                                btd.push(contact.shape1.id);
+                                                btd.push(contact.shape2.id); 
+                                                world.removeContact(contact);
+                                        //   }
+                                      // }
+                                    }
                                 }
                                 contact = contact.next;
                             }
@@ -398,6 +401,8 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
                                             exdrone.quaternion.set(mesh.quaternion.x,mesh.quaternion.y,mesh.quaternion.z,mesh.quaternion.w);
                                             exdrone.visible = true;
                                             V3D.exdrone1.children.push(exdrone);
+                                            m.materials[0].dispose();
+                                            m.materials[1].dispose();
                                             v3d.scene.children[V3D.mesharrpos.drones].remove(mesh);
                                         }
                                     else {
@@ -442,7 +447,7 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
                                 var dbody = bodys[i];
                                 if(dbody.name == 'drone') {
                                     if( dbody.ld ) {
-                                        v3d.updateDrones( dbody.body, meshs[i] );
+                                       v3d.updateDrones( dbody.body, meshs[i] );
                                     }
                                     if ( !dbody.ld && !dbody.rtm && dbody.name == 'drone' ) {
                                         pddist.sub(containerMesh.position,meshs[i].position);
@@ -477,14 +482,12 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
                     x = 0;
                     z = 0;
                     y = 0;
-                    w = 25;
-                    h = 25;
-                    d = 25;
+                    w = h = d = 25 ;
 
                 var spheres = [{ type: 'sphere', size: [shp1r, shp1r, shp1r], pos:[0,0,0], move: 'true', noSleep: true, world: world, color: 0xffffff , wireframe: 'false', name:"shp1", transparent: 'true', opacity: 0},
                                { type: 'sphere', size:[8, 8, 8], pos:[0,0,0], move: 'true', world: world, color: '#ff0000', wireframe: 'false',  name: 'containerMesh', transparent: 'false', opacity: 1, image:'cpv/cpv.obj', mtl:'cpv/cpv.mtl'},
-                               { type: 'sphere', size:[500, 500, 500], pos:[500,10,-10000], move: 'true', world: world, color: '#0000ff', wireframe: 'false',  name: 'planet', transparent: 'false', opacity: 1, image:'planets/mercury.jpg'},
-                               { type: 'sphere', size:[500, 500, 500], pos:[500,10,10000], move: 'true', world: world, color: '#0000ff', wireframe: 'false',  name: 'planet', transparent: 'false', opacity: 1, image:'planets/moon.jpg'}];
+                               { type: 'sphere', size:[500, 500, 500], pos:[500,10,-10000], move: 'true', world: world, color: '#0000ff', wireframe: 'false',  name: 'mercury', transparent: 'false', opacity: 1, image:'planets/mercury.jpg'},
+                               { type: 'sphere', size:[500, 500, 500], pos:[500,10,10000], move: 'true', world: world, color: '#0000ff', wireframe: 'false',  name: 'moon', transparent: 'false', opacity: 1, image:'planets/moon.jpg'}];
 
 
                if(!V3D.bincam) {
@@ -530,7 +533,21 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
                     z = this.randMinMax(-1000,1000);
 
 
-                    //ms mothership
+                    // if(i==0){
+                    //     x = 10;
+                    //     y = 0;
+                    //     z = -200;
+                    // }
+                    // else {
+                    //     x += 60;
+                    //     y = 0;
+                    //     z = -200;
+                    // }
+
+
+                 //   ms mothership
+
+
                     x += ms.pos[0];
                     y += ms.pos[1];
                     z += ms.pos[2];
@@ -539,15 +556,11 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
 
                   // // t === 2 ? t=3 : t=2 ;
                     if(t===2) obj = { type:'box', size:[w,h,d], pos:[x,y,z], move: true, world:world, color:'#66ff33', wireframe: 'false', name: 'boxTarget', transparent: 'false', opacity: 1, image:''};
-                    if(t===3) obj = { type:'cylinder', size:[w,h,d], pos:[x,y,z], move: true, world:world, color:'#66ff33', wireframe: 'false', name: 'drone', transparent: 'false', opacity: 1, image:'Free_Droid/bake.obj'};
+                    if(t===3) obj = { type:'cylinder', size:[w,h,d], pos:[x,y,z], move: true, world:world, noSleep: true, color:'#66ff33', wireframe: 'false', name: 'drone', transparent: 'false', opacity: 1, image:'Free_Droid/bake.obj'};
 
                     bodys[bodysNum] = new OIMO.Body(obj);
                     bodys[bodysNum].ld = false;
-                   // bodys[bodysNum].rtm = false;
                     bodys[bodysNum].drota = 0;
-                   // bodys[bodysNum].ldh = {x:0,y:0,z:0};
-
-                 //  bodys[bodysNum].body.position.set(0,0,-1);
 
 
                     if(t == 2) {

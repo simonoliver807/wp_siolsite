@@ -46,7 +46,7 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 
 					v3d = gameinit.getObj('v3d');
 					gameinit.createWorld(timestep);
-					gameinit.populate(600);
+					gameinit.populate(10);
 					phaser = false;
 
 

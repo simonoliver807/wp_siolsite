@@ -49,7 +49,7 @@ V3D.View.prototype = {
 
         this.renderer.setClearColor( 0x000000, 1 );
         this.renderer.setPixelRatio( window.devicePixelRatio );
-       this.renderer.autoClear = false;
+       this.renderer.autoClear = true;
 
 
     	// siolsite this.camera = new THREE.PerspectiveCamera( 60, this.w/this.h, 0.1, 2000 );
@@ -59,6 +59,14 @@ V3D.View.prototype = {
 
         
         // need to update both cam pos and tmpVCPprev here and for mobile
+        var insideship = document.getElementById('insideship');
+        if(insideship.value == 'clicked inside'){
+            V3D.bincam = 0;
+        }
+        else {
+            V3D.bincam = 1;
+        }
+
         if( V3D.bincam ) {
             this.camera.position.z = 10;
             this.tmpVCPprev = new THREE.Vector3(0,0,10);
@@ -145,6 +153,7 @@ V3D.View.prototype = {
         this.scene.add(V3D.grouppart);
 
 
+
     },
     initBackground:function(){
     	var geometry = new THREE.SphereGeometry( 10000, 32, 32 );
@@ -158,11 +167,11 @@ V3D.View.prototype = {
     },
     initLight:function(){
 
-        var dirlight1 = new THREE.DirectionalLight( 0xffffff, 1.2 );
-        dirlight1.position.set( 0, 1, 0 );
+        var dirlight1  = new THREE.DirectionalLight( 0xffffff, 1.2 );
+        dirlight1.position.set( 0, -1, 0 );
         dirlight1.name = 'dirlight';
         var dirlight2 = new THREE.DirectionalLight( 0xffffff, 1.2 );
-        dirlight2.position.set( 0, -1, 0 );
+        dirlight2.position.set( 0, 1, 0 );
         dirlight2.name = 'dirlight';
 
         this.scene.add( dirlight1 );
@@ -306,7 +315,7 @@ V3D.View.prototype = {
     addSphere : function(sphere){
     
         // this.mats['sph'] = this.setMesh(color);
-        if( sphere.name == 'planet'){
+        if( sphere.name == 'moon' || sphere.name == 'mercury'){
             var setImage = 'images/'+sphere.image;
             var texture = new THREE.TextureLoader().load(setImage);
             var material = new THREE.MeshBasicMaterial({map:texture});
@@ -387,7 +396,7 @@ V3D.View.prototype = {
             var tmpvecmse = new THREE.Vector3(V3D.msePos.x, V3D.msePos.y, 0.5);
             tmpvecmse.applyProjection(this.matrix2);
             this.dir.copy(tmpvecmse.sub(this.cpn).normalize());
-            this.newsightpos.addVectors ( this.camera.position, this.dir.multiplyScalar( 200 ));
+            this.newsightpos.addVectors ( this.camera.position, this.dir.multiplyScalar( 100 ));
             this.sight.position.set(this.newsightpos.x, this.newsightpos.y, this.newsightpos.z);
         
 
@@ -595,7 +604,7 @@ V3D.View.prototype = {
     },
     phaser: function(heading) {
         var heading = this.getPlayerDir('forward', this.containerMesh.position);
-        var mag = 4000;
+        var mag = 2000;
         heading.x *= mag;
         heading.y *= mag;
         heading.z *= mag;
@@ -624,7 +633,7 @@ V3D.View.prototype = {
        // this.addSphere(tmpsphere);
 
 
-        var body = { type: 'sphere', size: [1,1,1], pos: [this.shootStart.x, this.shootStart.y, this.shootStart.z], move: 'true', world: this.world, name:'phaser', density: 10  };
+        var body = { type: 'sphere', size: [1.5,1.5,1.5], pos: [this.shootStart.x, this.shootStart.y, this.shootStart.z], move: 'true', world: this.world, allowSleep: false, name:'phaser', density: 20  };
 
         var rb = this.addPhaser(body, phaser);
         rb.body.linearVelocity.addTime(heading, this.world.timeStep);
@@ -870,6 +879,7 @@ V3D.View.prototype = {
                     for(var i=0;i<obj.length;i++){
                         if(i==0){
                             object.children[0].position.set(obj[i].pos[0], obj[i].pos[1], obj[i].pos[2]);
+                            object.children[0].name = 'drone';
                         }
                         else {
                             var tmpDrone = object.children[0].clone();

@@ -4,8 +4,8 @@ module.exports = function(grunt) {
            options: {
               livereload: true
           },
-          html: {
-            files: ['index.html,game.html']
+          php: {
+            files: ['**/*.php']
           },
           js: {
             files: ['**/*.js']
