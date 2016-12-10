@@ -19,10 +19,11 @@ else {
 <html>
 <head>
 		<title>MF Drone Warfare &#8211; siolsite</title>
-	<link rel="stylesheet" type="text/css" href="http://localhost:8887/game/style/style.css">
-<!-- 		<link rel="stylesheet" type="text/css" href="http://siolsite.com/style/style.css"> -->
+	<link rel="stylesheet" type="text/css" href="style/style101216.css">
+<!-- 		<link rel="stylesheet" type="text/css" href="http://siolsite.com/style/style101216.css"> -->
 	 <link rel="icon" type="image/png" href="images/favicon.ico">
-	 <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1">
+	 <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1, minimal-ui">
+	 <meta name="apple-mobile-web-app-capable" content="yes">
 
 </head>
 <body>
@@ -43,12 +44,18 @@ else {
 	<div id="container" class="container">
 		<div id="accelCont">
 			<div id="accel"></div>
+			<div id="gmap" class='divRed'>
+				<div id="mapcircle1" class="mapcircle"></div>
+				<div id="mapms1" class="mapms"></div>
+				<div id="mapms2" class="mapms"></div>
+				<div id="mapline"></div>
+			</div>
 			<div id="perf"></div>
 		</div>
 		<div id="tapaccel">
-			<div id="addforce"></div>
+			<div id="addforce"><div id="addforcebut"></div></div>
 			<div id="spacertapaccel"></div>
-			<div id="minusforce"></div>
+			<div id="minusforce"><div id="minusforcebut"></div></div>
 		</div>
 		<div id='mobcon'></div>
 	</div>
@@ -61,10 +68,11 @@ else {
 
 
 
-<!-- 
-<script type="text/javascript" data-main="http://localhost:8887/game/js_minified/config.js" src="http://localhost:8887/game/js_minified/require.js"></script>  -->
 
-<!-- <script type="text/javascript" data-main="http://siolsite.com/js_minified/configv1.js" src="http://siolsite.com/js_minified/require.js"></script>  -->
+<!-- <script type="text/javascript" data-main="http://localhost:8887/game/js_minified/config.js" src="http://localhost:8887/game/js_minified/require.js"></script>  -->
+
+<!-- 
+<script type="text/javascript" data-main="http://siolsite.com/js_minified/config101216.js" src="http://siolsite.com/js_minified/require.js"></script>  -->
 
 
 </body>

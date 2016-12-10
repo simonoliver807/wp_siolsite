@@ -31,22 +31,24 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 
 				//  });
 				
-				// try {
+		//		try {
+
+
 					window.oncontextmenu = function (){ return false; }
 					window.addEventListener( 'resize', this.onWindowResize, false );
 
 					accel = document.getElementById('accel');
 					var ac = document.getElementById('accelCont');
 					var tapaccel = document.getElementById('tapaccel');
-					var ach = ac.clientHeight/2;
-					var acw = ac.clientWidth * 0.01;
-					accel.style.top = ach+'px';
-					accel.style.right = acw + 'px';
+					// var ach = ac.clientHeight/2;
+					// var acw = ac.clientWidth * 0.01;
+					// accel.style.top = ach+'px';
+					// accel.style.right = acw + 'px';
 					var mobcon = document.getElementById('mobcon')
 
 					v3d = gameinit.getObj('v3d');
 					gameinit.createWorld(timestep);
-					gameinit.populate(10);
+					gameinit.populate(600);
 					phaser = false;
 
 
@@ -65,17 +67,21 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 				    v3d.initPoints();		
 
 				    gameinit.oimoLoop();
-				// }
+
+
+
+				//}
 				// catch (err) {
 				// 	document.getElementById('loadingScreen').style.display = 'none';
 				// 	var errscreen = document.getElementById('errScreen')
 				// 	errscreen.style.display = 'block';
-				// 	errscreen.innerHTML = '<div id="errdiv">Sorry there has beed an error ' + err.message + ' </div>';
+				// 	errscreen.innerHTML = '<div id="errdiv">Sorry there has been an error ' + err.message + ' </div>';
 				// }
 			},
 
 			handleKeyDown: function( event ) {
 
+				//event.preventDefault();
 				if( event.keyCode === 27) {
 					var val = gameinit.gspause() ? 0: 1;
 				    gameinit.gspause(val);
@@ -83,6 +89,9 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 				if ( event.keyCode == 83) {
 					var bodys = gameinit.getObj('bodys');
 					bodys[0].body.linearVelocity.init();
+				}
+				if ( event.keyCode == 70) {
+					document.body.webkitRequestFullScreen();
 				}
 				else {
 					var keys = gameinit.getObj('keys');
@@ -99,18 +108,11 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 			handleMouseMove: function(event){
 
 
-				if( event.type == 'pan') {
-					// if( event.pointers[0].pageX >= mobcon.offsetLeft && event.pointers[0].pageY >= mobcon.offsetTop 
-		   //  			&& event.pointers[0].pageX < mobcon.offsetLeft + mobcon.clientWidth 
-		   //  			&& event.pointers[0].pageY < mobcon.offsetTop  + mobcon.clientHeight  )
-		   //  		{
-
-		   			if(event.pointers[0].target.id == 'mobcon') {
-			    		var x = ((event.pointers[0].pageX - mobcon.offsetLeft)/13)*100 ;
-			    		var y = ((event.pointers[0].pageY - mobcon.offsetTop )/13)*100 ; 
-						var clientX = x;
-						var clientY = y;
-					}
+				if( event.target.id == 'mobcon') {
+		    		var x = ((event.pageX - mobcon.offsetLeft)/13)*100 ;
+		    		var y = ((event.pageY - mobcon.offsetTop )/13)*100 ; 
+					var clientX = x;
+					var clientY = y;
 				}
 				else {
 					var canvas = document.getElementById('gamecanvas');
@@ -125,9 +127,6 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 
 				V3D.msePos.set( ( x / v3d.w ) * 2 - 1, - ( y / v3d.h ) * 2 + 1, 0.5 )
 
-				
-
-				var issleeping = gameinit.isSleeping('shp1');
 
 				var perw = (v3d.w / 100) * 5;
 				var perh = (v3d.h / 100) * 5;
@@ -138,38 +137,38 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 
 				if ( clientX > perwr ){
 					if( clientY > v3d.h/2){
-						v3d.startRot = {issleeping: issleeping, rot: 'dr'};
+						v3d.startRot = {rot: 'dr'};
 					}
 					else {
-						v3d.startRot = {issleeping: issleeping, rot: 'ur'};
+						v3d.startRot = {rot: 'ur'};
 					}
 				}
 				else if ( clientX < perwl ) {
 					if( clientY > v3d.h/2){
-						v3d.startRot = {issleeping: issleeping, rot: 'dl'};
+						v3d.startRot = {rot: 'dl'};
 					}
 					else {
-						v3d.startRot = {issleeping: issleeping, rot: 'ul'};
+						v3d.startRot = {rot: 'ul'};
 					}
 				}
 				else if ( clientY > perhu ) {
 					if( clientX > v3d.w/2){
-						v3d.startRot = {issleeping: issleeping, rot: 'dr'}; 
+						v3d.startRot = {rot: 'dr'}; 
 					}
 					else {
-						v3d.startRot = {issleeping: issleeping, rot: 'dl'};
+						v3d.startRot = {rot: 'dl'};
 					}
 				}
 				else if ( clientY < perhd ) {
 					if( clientX > v3d.w/2){
-						v3d.startRot = {issleeping: issleeping, rot: 'ur'}; 
+						v3d.startRot = {rot: 'ur'}; 
 					}
 					else {
-						v3d.startRot = {issleeping: issleeping, rot: 'ul'};
+						v3d.startRot = {rot: 'ul'};
 					}
 				}
 				else {
-					v3d.startRot = {issleeping: issleeping, rot: 0};
+					v3d.startRot = {rot: 0};
 				}
 
 			},
@@ -209,33 +208,83 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 		    	var minusforce = document.getElementById('minusforce');
 		    	addforce.style.display = 'block';
 		    	minusforce.style.display = 'block';
+
+
+		    	container.addEventListener('touchstart', handleStart, false);
+		    	container.addEventListener('touchend', handleEnd, false);
+		    	container.addEventListener('touchmove', handleMove, false);
+
+		    	var toucharr = [];
+		    	function handleStart() {
+		    		event.preventDefault();
+		    		for(var i = 0; i< event.changedTouches.length; i++) {
+		    			if(event.changedTouches[i].target.id == 'addforce' || event.changedTouches[i].target.id == 'addforcebut'){
+		    				keys[38] = 1;
+		    			}
+		    			if(event.changedTouches[i].target.id == 'minusforce' || event.changedTouches[i].target.id == 'minusforcebut'){
+		    				keys[40] = 1;
+		    			}
+		    		}
+
+		    	}
+		    	function handleEnd() {
+		    		event.preventDefault();
+		    		for(var i = 0; i< event.changedTouches.length; i++) {
+		    			if(event.changedTouches[i].target.id == 'addforce' || event.changedTouches[i].target.id == 'addforcebut'){
+		    				keys[38] = 0;
+		    			}
+		    			if(event.changedTouches[i].target.id == 'minusforce' || event.changedTouches[i].target.id == 'minusforcebut'){
+		    				keys[40] = 0;
+		    			}
+		    			if(event.changedTouches[i].target.id == 'mobcon'){
+		    				mobcon.style.opacity = '1';
+		    			}
+		    		}
+		    	}
+		    	function handleMove() {
+		    		event.preventDefault();
+		    		for(var i = 0; i< event.changedTouches.length; i++) {
+		    			if(event.changedTouches[i].target.id == 'mobcon'){
+		    				self.handleMouseMove(event.changedTouches[i]);
+		    				mobcon.style.opacity = '0.1';
+		    			}
+		    		}
+
+		    	}
+
+
 		    	var mc = new Hammer(container);
 
 
-		    	mc.on('pan', function(event) {
-		    		self.handleMouseMove(event);
-		    	});
+		  //   	mc.on('pan', function(event) {
+		  //   		self.handleMouseMove(event);
+		  //   		event.preventDefault();
+		  //   	});
 
 
 
-		    	mc.on('press', function(event) {
+		  //   	mc.on('press', function(event) {
+		  //   		if ( event.target.id == 'addforce') {
+				// 		keys[38] = true;
+		  //   		}
+		  //   		if ( event.target.id == 'minusforce') {
+				// 		keys[40] = true;
+		  //   		}
+		  //   	});
+		  //   	mc.on('pressup', function(event) {
+		  //   		if ( event.target.id == 'addforce') {
+				// 		delete keys[38];
+		  //   		}
+		  //   		if ( event.target.id == 'minusforce') {
+				// 		delete keys[40];
+		  //   		}
+		  //   	});
+				
+		  //   	mc.add(new Hammer.Press()).recognizeWith(mc.get('pan'));
+		  //   	mc.on('press pan', function(event) {
+		  //   		accel.innerHTML += 'a';
+		  //   	});
 
-		    		if ( event.target.id == 'addforce') {
-						keys[38] = true;
-		    		}
-		    		if ( event.target.id == 'minusforce') {
-						keys[40] = true;
-		    		}
-		    	});
-		    	mc.on('pressup', function(event) {
-		    		if ( event.target.id == 'addforce') {
-						delete keys[38];
-		    		}
-		    		if ( event.target.id == 'minusforce') {
-						delete keys[40];
-		    		}
-		    	});
-				//mc.add( new Hammer.Tap() );
 				mc.add( new Hammer.Tap({ event: 'doubleletap', taps: 2 }) );
 				mc.get('doubleletap').recognizeWith('tap');
 				mc.add( new Hammer.Tap({ event: 'tripletap', taps: 3 }) );
@@ -246,11 +295,20 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 				    	else { delete keys[32]; phaser = false; }
 
 				     }
+				     if(ev.type == 'tap'){
+				     	if(ev.target.id == 'accelCont'){
+				     		 var elem = document.body;
+				     		 var req = elem.requestFullScreen || elem.webkitRequestFullScreen || elem.mozRequestFullScreen;
+        					req.call(elem);
+				     	}
+				     }
 				});
 				mc.on('tap tripletap', function(ev) {
 				    if(ev.type == 'tripletap'){
-				    	var val = gameinit.gspause() ? 0: 1;
-				    	gameinit.gspause(val);
+				    	// var val = gameinit.gspause() ? 0: 1;
+				    	// gameinit.gspause(val);
+				    	if(!phaser){ keys[32] = true; phaser = true; }
+				    	else { delete keys[32]; phaser = false; }
 				     }
 				});
 		    	this.loadHammerTime();

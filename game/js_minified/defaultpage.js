@@ -11,3 +11,4 @@ var startgame = document.getElementById('startGame').addEventListener( 'click', 
 
 
 });
+

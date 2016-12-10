@@ -10,11 +10,14 @@ html {
 	-webkit-text-size-adjust: 100%;
 	-ms-text-size-adjust: 100%;
 	height: 100%;
+	width: 100%;
 }
 
 body {
 	margin: 0;
 	height: 100%;
+	width: 100%;
+	
 }
 
 article,
@@ -202,9 +205,7 @@ optgroup {
 #perf {
 
 	color: white;
-    transform: rotate(180deg);
     font-size: 10px;
-    margin-top: -300px;
 }
 
 
@@ -212,14 +213,16 @@ optgroup {
 
 #accel {
 	background-color:#2646ea;
-	height:5%;
-	margin: auto;
-	position: absolute;
+	height:10%;
+	left: 0;
+	margin: 5% 0 0 5%;
+	position: relative;
+	top: 0;
+	width: 0;
 }
 #accelCont {
 	height:10%;
 	position: absolute;
-	transform: rotate(180deg);
 	width:10%;
 }
 #container {
@@ -228,6 +231,12 @@ optgroup {
 	height:100%;
 	width:100%; 
 	position: absolute;
+}
+.divGreen div {
+	background-color: #66ff33;
+}
+.divRed div {
+	background-color: #ff0000;
 }
 #errScreen {
 	background-color: #000000;
@@ -247,7 +256,41 @@ optgroup {
     transform: translate(-50%, -50%);
     z-index: 2;
 }
+#gmap {
+    
+    background-color: #000000;
+    height: 50%;
+    margin: 5% 0 0 5%;
+    position: relative;
+    width: 50%;
 
+}
+.mapcircle {
+	border-radius: 100%;
+	height: 20%;
+	left: 50%;
+	position: absolute;
+	top: 50%;
+	transform: translate(-50%, -50%);
+	width: 20%;
+}
+#mapline {
+    height: 2%;
+    position: relative;
+    top: 50%;
+    width: 100%;
+}
+.mapms {
+	background-color: #ffffff;
+	border-radius: 100%;
+	height: 10%;
+	left: 50%;
+	position: absolute;
+	top: 50%;
+	transform: translate(-50%, -50%);
+	width: 10%;
+
+}
 /*accellerator controls*/
 #tapaccel {
 	bottom: 0;
@@ -258,10 +301,19 @@ optgroup {
 	width:5%;
 }
 #addforce {
-	background-color: #FFFF00;
 	display: none;
 	height: 35%;
 	width: 100%;
+}
+#addforcebut {
+	background-color: #FFFF00;
+    border-radius: 100%;
+    height: 50%;
+    width: 50%;
+    left: 50%;
+    top: 50%;
+    position: relative;
+    transform: translate(-50%, -50%);
 }
 #loadingScreen {
 	background-color: #000000;
@@ -283,10 +335,20 @@ optgroup {
 	display: inline-block;
 }
 #minusforce {
-	background-color: #00FF00;
+	border-radius: 18px;
 	display: none;
 	height: 35%;
 	width: 100%;
+}
+#minusforcebut {
+	background-color: #00FF00;
+    border-radius: 100%;
+    height: 50%;
+    width: 50%;
+    left: 50%;
+    top: 50%;
+    position: relative;
+    transform: translate(-50%, -50%);
 }
 #spacertapaccel {
 	height: 30%;
