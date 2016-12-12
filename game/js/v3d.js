@@ -117,7 +117,6 @@ V3D.View.prototype = {
 
 
         this.containerMesh = 0;
-        this.mothership;
         this.camrot = new THREE.Vector3();
         this.pbrot = new THREE.Vector3();
         this.newsightpos = new THREE.Vector3();
@@ -255,6 +254,7 @@ V3D.View.prototype = {
         geos['mothershipbb1'] = new THREE.BoxGeometry(700,300,700,10,10,10);
         geos['mothershipbb2'] = new THREE.BoxGeometry(1600,300,300,10,10,10);
         geos['moon'] = new THREE.SphereGeometry(500, 16, 12);
+        geos['molten'] = new THREE.SphereGeometry(570, 16, 12);
         geos['msphaser'] = new THREE.CylinderGeometry( 5, 5, 20 );
 
         
@@ -264,14 +264,14 @@ V3D.View.prototype = {
     },
     addBox: function(box){
 
-        if(box.image && box.name != 'mothership'){
+        if(box.image && box.name != 'ms1' && box.name != 'ms2'){
             var setImage = 'images/'+box.image;
             var material = new THREE.MeshBasicMaterial();
             material.map = new THREE.TextureLoader().load(setImage);
             material.transparent = true;
         }
-        if(box.name == 'mothership'){
-            if(box.image == 'ms/ms.obj'){
+        if(box.name == 'ms1' || box.name == 'ms2'){
+            if(box.msname == 'ms1'){
                 this.ms1pos.set(box.pos[0],box.pos[1],box.pos[2]);
             }
             else {
@@ -371,7 +371,7 @@ V3D.View.prototype = {
     addSphere : function(sphere){
     
         // this.mats['sph'] = this.setMesh(color);
-        if( sphere.name == 'moon' || sphere.name == 'mercury'){
+        if( sphere.class == 'planet'){
             var setImage = 'images/'+sphere.image;
             var texture = new THREE.TextureLoader().load(setImage);
             var material = new THREE.MeshBasicMaterial({map:texture});
@@ -557,26 +557,11 @@ V3D.View.prototype = {
                 var m = new THREE.Matrix4;
                 var te = m.elements;
 
-                this.f = currdir.normalize()
-
-                // if ( z.lengthSq() === 0 ) {
-
-                //     z.z = 1;
-
-                // }
+                this.f = currdir.normalize();
 
                 this.u.crossVectors( up, this.f ).normalize();
 
-                // if ( x.lengthSq() === 0 ) {
-
-                //     z.z += 0.0001;
-                //     x.crossVectors( up, z ).normalize();
-
-                // }
-
                 this.s.crossVectors( this.f, this.u ).normalize();
-
-                //u.crossVectors( s, f);
 
 
                 te[ 0 ] = this.u.x; te[ 4 ] = this.s.x; te[ 8 ] = this.f.x;
@@ -790,17 +775,17 @@ V3D.View.prototype = {
 
                         if ( dist <= 1500 ) {
 
-                            this.normalizelv( rb,2,this.ldh );
+                            this.normalizelv( rb,3,this.ldh );
 
                         }
                         if (dist > 1500 && dist <= 4000) { 
 
-                            this.normalizelv( rb,7,this.ldh );
+                            this.normalizelv( rb,8,this.ldh );
                         
                         }
                         if (dist > 4000 && dist <= 10000 ) {
 
-                            this.normalizelv( rb,10,this.ldh );
+                            this.normalizelv( rb,11,this.ldh );
 
                         }
                         if (dist > 10000 ) {
@@ -810,16 +795,30 @@ V3D.View.prototype = {
 
                 }
 
-                if( drone.userData.dpcnt > 100 & V3D.dphasers.children.length < 200) {
-                    var heading = new THREE.Vector3(this.ldh.x,this.ldh.y,this.ldh.z);
-                    heading.normalize;
-                    var mag = 10 * heading.length();
-                    heading.x *= mag;
-                    heading.y *= mag;
-                    heading.z *= mag;
+                if( drone.userData.dpcnt > 100 & V3D.dphasers.children.length < 300) {
+                    //var heading = new THREE.Vector3(this.ldh.x,this.ldh.y,this.ldh.z);
+                    //heading.normalize;
+                   // console.log(10 - this.ldh.length()); 
+
                     this.shootStart.subVectors( this.containerMesh.position, drone.position );
                     this.shootStart.normalize();
                     this.shootStart.addVectors(this.shootStart, drone.position);
+
+                    var matrix = new THREE.Matrix4();
+                    matrix.extractRotation( drone.matrix );
+
+                    var heading = new THREE.Vector3( 0, 0, 1 );
+                    heading = heading.applyProjection( matrix );
+                    //var heading = new THREE.Vector3();
+                    //heading.subVectors(this.containerMesh.position, this.shootStart)
+                    //heading.normalize();
+                   // var mag = 20 * ( 10 - this.ldh.length());
+                   var mag = 2000;
+                    heading.x *= mag;
+                    heading.y *= mag;
+                    heading.z *= mag;
+                    //this.shootStart.normalize();
+                  //  this.shootStart.addVectors(this.shootStart, drone.position);
                     var dphaser = V3D.dphasers.children[0].clone();
                     dphaser.position.set(this.shootStart.x, this.shootStart.y, this.shootStart.z);
                     dphaser.visible = true;
@@ -827,17 +826,17 @@ V3D.View.prototype = {
                     var body = { type: 'sphere', size: [0.3,0.3,0.3], pos: [this.shootStart.x, this.shootStart.y, this.shootStart.z], move: 'true', world: this.world, name: 'dphaser' };
                     var rbdphaser = this.addPhaser(body, dphaser);
                     rbdphaser.body.linearVelocity.addTime(heading, this.world.timeStep);
-                    drone.userData.dpcnt = 0;
+                    drone.userData.dpcnt = this.randMinMax(0,200);
                 }
                 else {
                     drone.userData.dpcnt +=1;
                 }
 
 
-                if(ms == 1){
+                if(ms == 'ms1'){
                     this.distms.subVectors(this.ms1pos,drone.position);
                 }
-                if(ms == 2) {
+                if(ms == 'ms2') {
                     this.distms.subVectors(this.ms2pos,drone.position);
                 }
                 var len = this.distms.length();
@@ -847,18 +846,18 @@ V3D.View.prototype = {
             }
             if(drone.userData.rtm){
 
-                if(ms == 1){
+                if(ms == 'ms1'){
                     this.distms.subVectors(this.ms1pos,drone.position);
                 }
-                if(ms == 2) {
+                if(ms == 'ms2') {
                     this.distms.subVectors(this.ms2pos,drone.position);
                 }
                 var len = this.distms.length();
                 if(len > 2000){
                     this.distms.normalize();
-                    this.distms.x *= 100;
-                    this.distms.y *= 100;
-                    this.distms.z *= 100;
+                    this.distms.x *= 90;
+                    this.distms.y *= 90;
+                    this.distms.z *= 90;
                     rb.linearVelocity.addTime(this.distms, this.world.timeStep);
                 }
                 else {
@@ -1015,9 +1014,6 @@ V3D.View.prototype = {
                     V3D.mesharrpos.dphasers = scene.children.length;
                     scene.add(V3D.dphasers);
                 }
-                 if(object.name == 'mothership'){
-                    scene.add(object);
-                }
                 V3D.startRender +=1;
             }, V3D.View.prototype.onProgress, V3D.View.prototype.onError);
         }
@@ -1032,12 +1028,12 @@ V3D.View.prototype = {
                 var objLoader = new THREE.OBJLoader();
                 objLoader.setMaterials( materials );
                 objLoader.load( 'images/'+image, function ( object ) {
-
                     object.position.set(obj.pos[0], obj.pos[1], obj.pos[2]);
                     object.name = obj.name;
+                    if(obj.msname){
+                        object.userData.msname = obj.msname;
+                    }
                     scene.add(object);
-                    // if(object.name == 'mothership'){
-                    //     V3D.startRender = 1;}
                     V3D.startRender +=1;
                 }, V3D.View.prototype.onProgress, V3D.View.prototype.onError);
             });
