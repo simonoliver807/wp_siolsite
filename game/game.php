@@ -6,7 +6,7 @@ if (isset($_SESSION['radio_3698130'])) {
 	$insideship = $_SESSION["radio_3698130"];
 }
 else {
-	$insideship = 'clicked inside';
+	$insideship = 'clicked outside';
 }
 
 //echo "<script type='text/javascript'>console.log('$favcolor')</script>";
@@ -60,7 +60,7 @@ else {
 		</div>
 		<div id='mobcon'></div>
 	</div>
-
+	<audio><source loop src="audio/droneaudio.mp3" type="audio/mp3"></audio>
  <script src="//localhost:35729/livereload.js"></script>
 <!-- <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script> -->
 

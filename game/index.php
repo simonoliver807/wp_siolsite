@@ -104,7 +104,7 @@ session_start();
 																			<div class="fw-row">	
 																				<div class="fw-col-xs-12 fw-col-sm-6 form-builder-item">
 																					<div class="field-radio input-styled">
-																						<label>Select to play inside space fighter</label>
+																						<label>Select to play inside space fighter press f to go fullscreen</label>
 																						<div class="custom-radio field-columns-1">
 																							<div class="options">
 																								<input type="radio" name="radio_3698130" value="clicked inside" id="rand-1"  />

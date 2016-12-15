@@ -154,7 +154,7 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 											"opacity": 1,
 											"image": "planets/molten.jpg"
 										},
-										"drone": 600,
+										"drone": 6,
 										"ms1": {
 											"type": "box",
 											"size": [700, 300, 700],
@@ -247,14 +247,14 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 				}
 				else {
 					var keys = gameinit.getObj('keys');
-					keys[event.which] = true;
+					keys[event.which] = 1;
 				}
 
 			},
 			handleKeyUp: function(event){
 
 					var keys = gameinit.getObj('keys');
-					delete keys[event.which];
+					keys[event.which] = 0;;
 
 			},
 			handleMouseMove: function(event){
@@ -267,10 +267,8 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 					var clientY = y;
 				}
 				else {
-					var canvas = document.getElementById('gamecanvas');
-					var rect = canvas.getBoundingClientRect();
-					var x = event.clientX - rect.left;
-					var y = event.clientY - rect.top;
+					var x = event.clientX;
+					var y = event.clientY;
 					var clientX = event.clientX;
 					var clientY = event.clientY;
 				}
@@ -329,7 +327,7 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 				window.addEventListener( 'keydown', this.handleKeyDown, false );
 				window.addEventListener( 'keyup', this.handleKeyUp, false );
 				window.scrollTo(0, document.body.clientHeight);
-				container.addEventListener('mousemove', this.handleMouseMove, false);
+				window.addEventListener('mousemove', this.handleMouseMove, false);
 
 			},
 			loadMobileEvents: function(n) {
@@ -376,6 +374,16 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 		    			if(event.changedTouches[i].target.id == 'minusforce' || event.changedTouches[i].target.id == 'minusforcebut'){
 		    				keys[40] = 1;
 		    			}
+		    			if(event.changedTouches[i].target.id == 'gamecanvas'){
+		    				if(!phaser){
+		    					keys[32] = 1;
+		    					phaser = 1;
+		    				}
+		    				else {
+		    					keys[32] = 0;
+		    					phaser = 0;
+		    				}	
+		    			}
 		    		}
 
 		    	}
@@ -403,67 +411,6 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 		    		}
 
 		    	}
-
-
-		    	var mc = new Hammer(container);
-
-
-		  //   	mc.on('pan', function(event) {
-		  //   		self.handleMouseMove(event);
-		  //   		event.preventDefault();
-		  //   	});
-
-
-
-		  //   	mc.on('press', function(event) {
-		  //   		if ( event.target.id == 'addforce') {
-				// 		keys[38] = true;
-		  //   		}
-		  //   		if ( event.target.id == 'minusforce') {
-				// 		keys[40] = true;
-		  //   		}
-		  //   	});
-		  //   	mc.on('pressup', function(event) {
-		  //   		if ( event.target.id == 'addforce') {
-				// 		delete keys[38];
-		  //   		}
-		  //   		if ( event.target.id == 'minusforce') {
-				// 		delete keys[40];
-		  //   		}
-		  //   	});
-				
-		  //   	mc.add(new Hammer.Press()).recognizeWith(mc.get('pan'));
-		  //   	mc.on('press pan', function(event) {
-		  //   		accel.innerHTML += 'a';
-		  //   	});
-
-				mc.add( new Hammer.Tap({ event: 'doubleletap', taps: 2 }) );
-				mc.get('doubleletap').recognizeWith('tap');
-				mc.add( new Hammer.Tap({ event: 'tripletap', taps: 3 }) );
-				mc.get('tripletap').recognizeWith('tap');
-				mc.on('tap doubleletap', function(ev) {
-				    if(ev.type == 'doubleletap'){
-				    	if(!phaser){ keys[32] = true; phaser = true; }
-				    	else { delete keys[32]; phaser = false; }
-
-				     }
-				     if(ev.type == 'tap'){
-				     	if(ev.target.id == 'accelCont'){
-				     		 var elem = document.body;
-				     		 var req = elem.requestFullScreen || elem.webkitRequestFullScreen || elem.mozRequestFullScreen;
-        					req.call(elem);
-				     	}
-				     }
-				});
-				mc.on('tap tripletap', function(ev) {
-				    if(ev.type == 'tripletap'){
-				    	// var val = gameinit.gspause() ? 0: 1;
-				    	// gameinit.gspause(val);
-				    	if(!phaser){ keys[32] = true; phaser = true; }
-				    	else { delete keys[32]; phaser = false; }
-				     }
-				});
-		    	this.loadHammerTime();
 			},
 			loadHammerTime: function() {
 
@@ -542,8 +489,12 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 				},
 				onWindowResize: function(){
 			    	v3d.camera.aspect = window.innerWidth / window.innerHeight;
+			    	v3d.camera.fov = ( 360 / Math.PI ) * Math.atan( v3d.tanFOV * ( window.innerHeight / window.innerHeight ) );
 			    	v3d.camera.updateProjectionMatrix();
 			    	v3d.renderer.setSize( window.innerWidth, window.innerHeight );
+			    	v3d.h = window.innerHeight;
+			    	v3d.w = window.innerWidth;
+
 				}
 
 

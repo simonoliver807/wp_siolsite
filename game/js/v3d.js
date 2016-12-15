@@ -55,9 +55,10 @@ V3D.View.prototype = {
 
 
     	// siolsite this.camera = new THREE.PerspectiveCamera( 60, this.w/this.h, 0.1, 2000 );
-        this.camera = new THREE.PerspectiveCamera( 60, this.w/this.h, 0.1, 10000 );
+        this.camera = new THREE.PerspectiveCamera( 60, this.w/this.h, 0.1, 20000 );
         // this.camhelp = new THREE.CameraHelper( this.camera );
         this.camera.useQuarternion = true;
+        this.tanFOV = Math.tan( ( ( Math.PI / 180 ) * this.camera.fov / 2 ) );
 
         
         // need to update both cam pos and tmpVCPprev here and for mobile
@@ -157,6 +158,11 @@ V3D.View.prototype = {
         this.ms2pos = new THREE.Vector3(0,0,0);
         this.distms = new THREE.Vector3(0,0,0);
 
+        this.playaudio = 0;
+
+
+        this.linepos = 0;
+
 
 
     },
@@ -215,16 +221,20 @@ V3D.View.prototype = {
     
     expart: function() {
 
-        var particles = 150;
-        var geometry = new THREE.BufferGeometry();
-        var positions = new Float32Array( particles * 3 );
+        var particles = 1000;
+        var geometry = new THREE.Geometry();
+       // var positions = new Float32Array( particles * 3 );
 
-        geometry.addAttribute( 'position', new THREE.BufferAttribute( positions, 3 ) );
-        geometry.computeBoundingSphere();
+        //geometry.addAttribute( 'position', new THREE.BufferAttribute( positions, 3 ) );
+        //geometry.computeBoundingSphere();
+        for ( var i = 0; i < particles; i++){
+            var avec = new THREE.Vector3(0,0,0);
+            geometry.vertices.push(avec);
+        }
         var points = new THREE.Points( geometry, new THREE.PointsMaterial( { size: 2, color: '#ffff00' } ) );
         points.name = 'points1';
-        points.visible = true;
-        points.geometry.attributes.position.setDynamic(true);
+        //points.visible = true;
+        //points.geometry.attributes.position.setDynamic(true);
 
         return points;
 
@@ -644,11 +654,7 @@ V3D.View.prototype = {
         //}
     },
     phaser: function(heading) {
-        var heading = this.getPlayerDir('forward', this.containerMesh.position);
-        var mag = 2000;
-        heading.x *= mag;
-        heading.y *= mag;
-        heading.z *= mag;
+
 
         if( !V3D.bincam ){
             this.shootStart.subVectors( this.sight.position, this.containerMesh.position );
@@ -662,37 +668,95 @@ V3D.View.prototype = {
             this.shootStart.multiplyScalar(30);
             this.shootStart.addVectors(this.shootStart, this.containerMesh.position);
         }
-        
-        var phaser = V3D.phasers.children[0].clone();
-        phaser.visible = true;
-        phaser.position.set(this.shootStart.x, this.shootStart.y, this.shootStart.z);
-        V3D.phasers.children.push(phaser);
 
-
-
-      //  var tmpsphere = { type: 'sphere', color: '#66ff33', pos: [this.shootStart.x, this.shootStart.y, this.shootStart.z], move: 'true', world: this.world, name:'phaser'};
-       // this.addSphere(tmpsphere);
-
-
-        var body = { type: 'sphere', size: [1.5,1.5,1.5], pos: [this.shootStart.x, this.shootStart.y, this.shootStart.z], move: 'true', world: this.world, allowSleep: false, name:'phaser', density: 20  };
-
-        var rb = this.addPhaser(body, phaser);
-        rb.body.linearVelocity.addTime(heading, this.world.timeStep);
-        var shplv = new THREE.Vector3( this.bodys[0].body.linearVelocity.x,this.bodys[0].body.linearVelocity.y,this.bodys[0].body.linearVelocity.z); 
-        shplv.normalize();
-        var shp1 = this.bodys[0].body.linearVelocity;
-        var len = this.bodys[0].body.linearVelocity.length();
-       // console.log(len);
-
-
-        for(var i=0;i<this.paobj.length-1;i++){
-            if( len > this.paobj[i][1] && len < this.paobj[i+1][1] ){
-                var diff = this.paobj[i+1][1] - this.paobj[i][1];
-                var appvelmag = ((len - this.paobj[i][1])/diff) + this.paobj[i][0] ;
-            }
+        var raycaster = new THREE.Raycaster();
+        var direction = this.getPlayerDir('forward', this.containerMesh.position);
+        raycaster.set(this.containerMesh.position, direction);
+        var intersection = raycaster.intersectObjects( this.scene.children[11].children);
+        if(intersection.length){
+            console.log(intersection); 
         }
-        shplv.multiplyScalar(len + appvelmag);
-        rb.body.linearVelocity.addEqual(shplv);
+
+        var material = new THREE.LineBasicMaterial({
+            color: 0xff0000,
+            linewidth: 30
+        });
+        var geometry = new THREE.Geometry();
+        geometry.vertices.push(
+            new THREE.Vector3( this.sight.position.x+1000, this.sight.position.y + 1000, this.sight.position.z + 1000  ),
+            new THREE.Vector3( this.containerMesh.x, this.containerMesh.y, this.shootStart.z )
+        );
+        var line = new THREE.Line( geometry, material);
+        if(this.linepos){this.scene.remove(this.scene.children[this.linepos])};
+        this.scene.add(line);
+        this.linepos = this.scene.children.length-1;
+
+
+
+        // var heading = this.getPlayerDir('forward', this.containerMesh.position);
+        // var mag = 2000;
+        // heading.x *= mag;
+        // heading.y *= mag;
+        // heading.z *= mag;
+
+        // if( !V3D.bincam ){
+        //     this.shootStart.subVectors( this.sight.position, this.containerMesh.position );
+        //     this.shootStart.normalize();
+        //     this.shootStart.multiplyScalar(50);
+        //     this.shootStart.addVectors(this.shootStart, this.containerMesh.position);
+        // }
+        // else {
+        //     this.shootStart.subVectors( this.containerMesh.position, this.camera.position );
+        //     this.shootStart.normalize();
+        //     this.shootStart.multiplyScalar(30);
+        //     this.shootStart.addVectors(this.shootStart, this.containerMesh.position);
+        // }
+        
+        // var phaser = V3D.phasers.children[0].clone();
+        // phaser.visible = true;
+        // phaser.position.set(this.shootStart.x, this.shootStart.y, this.shootStart.z);
+        // V3D.phasers.children.push(phaser);
+
+
+        // var body = { type: 'sphere', size: [1.5,1.5,1.5], pos: [this.shootStart.x, this.shootStart.y, this.shootStart.z], move: 'true', world: this.world, allowSleep: false, name:'phaser', restitution: 0, friction:0 };
+
+        // var rb = this.addPhaser(body, phaser);
+        // rb.body.linearVelocity.addTime(heading, this.world.timeStep);
+        // var shplv = new THREE.Vector3( this.bodys[0].body.linearVelocity.x,this.bodys[0].body.linearVelocity.y,this.bodys[0].body.linearVelocity.z); 
+
+
+        // shplv.normalize();
+        // var len = this.bodys[0].body.linearVelocity.length();
+        // if(len <= 16){
+        //     var appvelmag = len * 0.75;
+        // }
+        // if(len > 16){
+        //     appvelmag = len * 0.785; 
+        // }
+        // if(len > 18){
+        //     appvelmag = len * 0.8; 
+        // }
+        // if(len >= 20){
+        //     appvelmag = len * 0.75;
+        // }
+        // if(len >= 22){
+        //     appvelmag = len * 0.8;
+        // }
+        // if(len > 30){
+        //     appvelmag = len * 0.5;
+        // }
+        // console.log(len);
+        // console.log(appvelmag); 
+
+
+        // for(var i=0;i<this.paobj.length-1;i++){
+        //     if( len > this.paobj[i][1] && len < this.paobj[i+1][1] ){
+        //         var diff = this.paobj[i+1][1] - this.paobj[i][1];
+        //         var appvelmag = ((len - this.paobj[i][1])/diff) + this.paobj[i][0] ;
+        //     }
+        // }
+      //  shplv.multiplyScalar(len + appvelmag);
+     //   rb.body.linearVelocity.addEqual(shplv);
     },
     // updateDrones: function(db){
          updateDrones: function(rb,drone,ms){
@@ -733,6 +797,9 @@ V3D.View.prototype = {
 
                 this.ldh.subVectors( this.containerMesh.position, drone.position );
                 var dist = Math.round(this.ldh.length());
+                // if(dist < 500){
+                //     this.playaudio = 1;
+                // }
                 this.ldh.normalize()
                 var m = this.lookAtFunc(this.ldh, this.up);
                 var q = new THREE.Quaternion();
@@ -953,7 +1020,9 @@ V3D.View.prototype = {
 
                     if ( child instanceof THREE.Mesh ) {
                         if (child.material.type == 'MultiMaterial') { 
-                            child.material.materials[0].map = texture; }
+                            //child.material.materials[0] = new THREE.MeshBasicMaterial()
+                            child.material.materials[0].map = texture; 
+                        }
                         if (child.material.type == 'MeshPhongMaterial') { 
                             child.material.map = texture;} 
                     }
@@ -1021,7 +1090,7 @@ V3D.View.prototype = {
 
             var image = obj.image; 
             var mtl = obj.mtl;
-            THREE.Loader.Handlers.add( /\.dds$/i, new THREE.DDSLoader() );
+         //   THREE.Loader.Handlers.add( /\.dds$/i, new THREE.DDSLoader() );
             var mtlLoader = new THREE.MTLLoader();
             mtlLoader.load( 'images/'+mtl , function( materials ) {
                 materials.preload();
@@ -1061,14 +1130,6 @@ V3D.View.prototype = {
     },
     randMinMax: function(min, max) {
         return Math.floor(Math.random() * (max - min + 1)) + min;
-    },
-    log: function(atxt, aval) {
-        if(typeof(aval) == 'ojbect') {
-            console.log(atxt);console.log(aval);
-        }
-        else {
-            console.log(atxt + ' ' + aval); 
-        }
     }
 
 }

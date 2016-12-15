@@ -466,7 +466,9 @@ define(['three'], function (THREE) {
 
 			}
 
+			// siolstie mtl Basic Material 
 			this.materials[ materialName ] = new THREE.MeshPhongMaterial( params );
+		//	this.materials[ materialName ] = new THREE.MeshBasicMaterial( params );
 			return this.materials[ materialName ];
 		},
 

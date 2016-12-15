@@ -34,7 +34,7 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
     var worldcount = 0;
 
     var levels = [];
-    var currlevel = 1;      //*************************************
+    var currlevel = 3;      //*************************************
     var startlevel = 1;     //*************************************
 
 
@@ -93,6 +93,7 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
 
     var ms1y = 0;
     var ms2y = 0;
+    var audio1 = document.getElementsByTagName("audio")[0];
 
         return {
 
@@ -203,13 +204,10 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
                                     for(var i=1; i <V3D.exdrone3.children.length; i++) {
 
                                             var points = v3d.expart();
-                                            var numArr = points.geometry.attributes.position.array.length;
-                                            while(numArr>2) {
-                                                points.geometry.attributes.position.array[numArr-3] = V3D.exdrone3.children[i].position.x;
-                                                points.geometry.attributes.position.array[numArr-2] = V3D.exdrone3.children[i].position.y;
-                                                points.geometry.attributes.position.array[numArr-1] = V3D.exdrone3.children[i].position.z;
-                                                numArr-=3;
-
+                                            for(var p = 0; p < points.geometry.vertices.length; p++){
+                                                points.geometry.vertices[p].x = V3D.exdrone3.children[i].position.x;
+                                                points.geometry.vertices[p].y = V3D.exdrone3.children[i].position.y;
+                                                points.geometry.vertices[p].z = V3D.exdrone3.children[i].position.z;
                                             }
                                             points.userData.timecreated = worldcount;
                                             V3D.grouppart.add(points);
@@ -294,15 +292,17 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
                                     V3D.grouppart.remove( V3D.grouppart.children[i] );
                                 }
                                 else {
-                                    var expart = V3D.grouppart.children[i].geometry.attributes.position.array;
-                                    for(var numArr = 0; numArr< expart.length; numArr++){
-                                        var num = Math.random();
-                                        if( numArr % 2 === 0 ){
+                                    var expart = V3D.grouppart.children[i].geometry.vertices;;
+                                    for(var numarr = 0; numarr< expart.length; numarr++){
+                                        var num = Math.random() * 10;
+                                        if( numarr % 2 === 0 ){
                                             num *= -1;
                                         }
-                                         V3D.grouppart.children[i].geometry.attributes.position.array[numArr] += num;
+                                         V3D.grouppart.children[i].geometry.vertices[numarr].x += Math.random() * 10;
+                                         V3D.grouppart.children[i].geometry.vertices[numarr].y += Math.random() * 10;
+                                         V3D.grouppart.children[i].geometry.vertices[numarr].z += Math.random() * 10;
                                     }
-                                    V3D.grouppart.children[i].geometry.attributes.position.needsUpdate = true;
+                                   V3D.grouppart.children[i].geometry.verticesNeedUpdate = true;
                                 }
                             }
                             
@@ -453,25 +453,23 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
 
                             }
 
-                            if(keys.length > 0){
-                                if(keys[38] && keys[32] === undefined){
-                                    v3d.addForce();
-                                }
-                                if(keys[40] && keys[32] === undefined){
-                                    v3d.minusForce();
-                                }
-                                //if(keys[32] || false){
-                                if(keys[32] && keys[38] === undefined && keys[40] === undefined){
-                                    v3d.phaser();
-                                }
-                                if(keys[32] && keys[38]){
-                                    v3d.addForce();
-                                    v3d.phaser();
-                                }
-                                if(keys[32] && keys[40]){
-                                    v3d.minusForce();
-                                    v3d.phaser();
-                                }
+                            if(keys[38] && !keys[32]){
+                                v3d.addForce();
+                            }
+                            if(keys[40] && !keys[32]){
+                                v3d.minusForce();
+                            }
+                            //if(keys[32] || false){
+                            if(keys[32] && !keys[38] && !keys[40]){
+                                v3d.phaser();
+                            }
+                            if(keys[32] && keys[38]){
+                                v3d.addForce();
+                                v3d.phaser();
+                            }
+                            if(keys[32] && keys[40]){
+                                v3d.minusForce();
+                                v3d.phaser();
                             }
                             v3d.updateSightPos();
                             // update drones 
@@ -482,7 +480,7 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
                                 var drone = meshs[i];
                                 if(dbody.name == 'drone') {
                                     if( drone.userData.ld ) {
-                                      v3d.updateDrones( dbody.body, meshs[i], dbody.ms );
+                                       v3d.updateDrones( dbody.body, meshs[i], dbody.ms );
                                     }
                                     if ( !drone.userData.ld && !drone.userData.rtm) {
                                         pddist.sub(containerMesh.position,meshs[i].position);
@@ -507,6 +505,13 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
                                   }
                                  p ++;
                             }
+                            // if(v3d.playaudio){
+                            //   audio1.play();
+                            // }
+                            // else {
+                            //     audio1.pause();
+                            // }
+                            // v3d.playaudio = 0;
 
 
                         }
@@ -665,6 +670,7 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
                         bodys[bodysNum] = new OIMO.Body(droneobj);
                         bodys[bodysNum].drota = 0;
                         bodys[bodysNum].ms = ms[msnum].msname;
+                        bodysNum += 1;
                         cylArr.push(droneobj);
                     }
                }
