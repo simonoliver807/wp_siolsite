@@ -52,7 +52,7 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 											"opacity": 1,
 											"image": "planets/mercury.jpg"
 										},
-										"drone": 200,
+										"drone": 1,
 										"ms1": {
 											"type": "box",
 											"size": [700, 300, 700],
@@ -63,7 +63,7 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 											"msname": "ms1",
 											"transparent": false,
 											"opacity": 0,
-											"image": "ms/ms_4.obj",
+											"image": "ms/ms.obj",
 											"mtl": "ms/ms.mtl"
 										}
 									},
@@ -154,7 +154,7 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 											"opacity": 1,
 											"image": "planets/molten.jpg"
 										},
-										"drone": 6,
+										"drone": 600,
 										"ms1": {
 											"type": "box",
 											"size": [700, 300, 700],

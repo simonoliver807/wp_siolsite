@@ -1,1 +1,0 @@
-var loadgame=document.getElementById("loadGame").addEventListener("click",function(e){var t=document.getElementById("form1");t.submit()}),startgame=document.getElementById("startGame").addEventListener("click",function(e){var t=document.getElementById("form1");t.submit()});

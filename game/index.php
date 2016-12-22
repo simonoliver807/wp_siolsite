@@ -26,7 +26,7 @@ session_start();
 <html lang="en-US" class="no-js">
 <head>
 	<meta charset="UTF-8">
-	<title>MF Drone Warfare &#8211; siolsite</title>
+	<title>Drone Warfare &#8211; siolsite</title>
 	<link rel="stylesheet" type="text/css" href="http://siolsite.com/style/wp.css">
 	<link rel="stylesheet" type="text/css" href="http://siolsite.com/style/frontend.css">
 	<link rel="stylesheet" type="text/css" href="http://siolsite.com/style/frontend-grid.css">
@@ -72,7 +72,7 @@ session_start();
 
 								<article id="post-171" class="post-171 page type-page status-publish hentry">
 									<header class="entry-header">
-										<h1 class="entry-title">MF Drone Warfare</h1>	
+										<h1 class="entry-title">Drone Warfare</h1>	
 									</header><!-- .entry-header -->
 
 
@@ -146,7 +146,7 @@ session_start();
 
 				<!-- 					<footer class="entry-footer"><span class="edit-link"><a class="post-edit-link" href="http://localhost:8887/game/website/wordpress/wp-admin/post.php?post=171&#038;action=edit">Edit<span class="screen-reader-text"> "MF Drone Warfare"</span></a></span></footer>  -->
 
- 									<footer class="entry-footer"><span class="edit-link"><a class="post-edit-link" href="http://siolsite.com/website/wordpress/wp-admin/post.php?post=171&#038;action=edit">Edit<span class="screen-reader-text"> "MF Drone Warfare"</span></a></span></footer>
+ 									<footer class="entry-footer"><span class="edit-link"><a class="post-edit-link" href="http://siolsite.com/website/wordpress/wp-admin/post.php?post=171&#038;action=edit">Edit<span class="screen-reader-text"> "Drone Warfare"</span></a></span></footer>
 								</article><!-- #post-## -->
 
 							</main><!-- .site-main -->
