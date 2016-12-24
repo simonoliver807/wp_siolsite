@@ -198,20 +198,20 @@ V3D.View.prototype = {
     },
     initPoints: function() {
 
-        var particles = 500;
+        var particles = 1500;
         var geometry = new THREE.BufferGeometry();
         var positions = new Float32Array( particles * 3 );
 
         for( var i = 0; i < positions.length; i++) {
-            var x = this.randMinMax(-11000,11000);
-            var y = this.randMinMax(-11000,11000);
-            var z = this.randMinMax(-11000,11000);
+            var x = this.randMinMax(-35000,35000);
+            var y = this.randMinMax(-35000,35000);
+            var z = this.randMinMax(-35000,35000);
             positions[ i ]     = x;
             positions[ i + 1 ] = y;
             positions[ i + 2 ] = z;
         }
         geometry.addAttribute( 'position', new THREE.BufferAttribute( positions, 3 ) );
-        geometry.computeBoundingSphere();
+      //  geometry.computeBoundingSphere();
         var points = new THREE.Points( geometry, new THREE.PointsMaterial( { size: 15, color: '#ffffff' } ) );
 
         points.name = 'points';
@@ -281,6 +281,11 @@ V3D.View.prototype = {
         geos['moon'] = new THREE.SphereGeometry(500, 16, 12);
         geos['molten'] = new THREE.SphereGeometry(570, 16, 12);
         geos['msphaser'] = new THREE.CylinderGeometry( 5, 5, 20 );
+        geos['msphaser'].applyMatrix( new THREE.Matrix4().makeRotationX( THREE.Math.degToRad( 90 ) ) );
+
+                geos['msphaser2'] = new THREE.CylinderGeometry( 5, 5, 20 );
+        geos['msphaser2'].applyMatrix( new THREE.Matrix4().makeRotationX( THREE.Math.degToRad( 90 ) ) );
+
         geos['laser'] = new THREE.CylinderGeometry(0.06,0.06,5000);
         geos['laserglow'] = new THREE.CylinderGeometry(0.16,0.16,5000);
 
@@ -331,7 +336,7 @@ V3D.View.prototype = {
         //return mesh;
 
     },
-    addCylinder: function(cylinder, mspos){
+    addCylinder: function(cylinder){
 
         if(cylinder.length > 0){
           var texture = this.loadTGA('images/Free_Droid/Materials/BaseMaterial_normal.tga');
@@ -350,17 +355,13 @@ V3D.View.prototype = {
              var i = 0;
              while(i<4){
                 var mesh = new THREE.Mesh( this.geos['msphaser'], material, cylinder.name  );
-                mesh.quaternion.setFromAxisAngle( new THREE.Vector3(0,0,1), 1.57);
-                var q  = new THREE.Quaternion(mesh.quaternion.x,mesh.quaternion.y,mesh.quaternion.z,mesh.quaternion.w);
-                mesh.quaternion.setFromAxisAngle( new THREE.Vector3(0,1,0), 1);
-                mesh.quaternion.multiply(q);
                 mesh.position.set(pos[i][0],pos[i][1], pos[i][2]); 
-                V3D.ms1phaser.add(mesh);
+                 V3D.ms1phaser.add(mesh);
                 i++;
              }
              V3D.ms1phaser.name = 'ms1phaser'
-             V3D.ms1phaser.position.set(mspos[0], mspos[1], mspos[2])
-             this.scene.add(V3D.ms1phaser);
+           // V3D.ms1phaser.position.set(0, 0, -100)
+            //this.scene.add(V3D.ms1phaser);
              return;
         }
         if(cylinder.name == 'ms2phaser'){
@@ -368,24 +369,24 @@ V3D.View.prototype = {
              var pos = [];
              
              //back
-             pos[0] = [110,100,-100];
-             pos[2] = [110, 100, 150];
+             pos[0] = [60,70,-500];
+             pos[2] = [-30,70,-500];
 
               //front
-             pos[1] = [-300, 100, -50];
-             pos[3] = [-300, 100, 50];
+             pos[1] = [100,70,-10];
+             pos[3] = [-100,70,-10];
              var i = 0;
              while(i<4){
-                var mesh = new THREE.Mesh( this.geos['msphaser'], material, cylinder.name  );
-                mesh.quaternion.setFromAxisAngle( new THREE.Vector3(0,0,1), 1.57);
-                var q  = new THREE.Quaternion(mesh.quaternion.x,mesh.quaternion.y,mesh.quaternion.z,mesh.quaternion.w);
+                var mesh = new THREE.Mesh( this.geos['msphaser2'], material, cylinder.name  );
+                // mesh.quaternion.setFromAxisAngle( new THREE.Vector3(0,0,1), 1.57);
+                // var q  = new THREE.Quaternion(mesh.quaternion.x,mesh.quaternion.y,mesh.quaternion.z,mesh.quaternion.w);
                 mesh.position.set(pos[i][0],pos[i][1], pos[i][2]); 
                 V3D.ms2phaser.add(mesh);
                 i++;
              }
              V3D.ms2phaser.name = 'ms2phaser'
-             V3D.ms2phaser.position.set(mspos[0], mspos[1], mspos[2])
-             this.scene.add(V3D.ms2phaser);
+             //V3D.ms2phaser.position.set(mspos[0], mspos[1], mspos[2])
+             // this.scene.add(V3D.ms2phaser);
              return;
         }
         if(cylinder.name == 'laser'){
@@ -1187,6 +1188,14 @@ V3D.View.prototype = {
             });
         }
     },
+    msla: function(ms) {
+        var dir = new THREE.Vector3();
+        dir.subVectors( ms.position, this.containerMesh.position);
+        var m = this.lookAtFunc( dir, new THREE.Vector3(0,1,0));
+        var q = new THREE.Quaternion();
+        q.setFromRotationMatrix( m );
+        return q;
+    },
     setBodys: function(rb){
         this.bodys.push(rb);
     },
@@ -1196,6 +1205,9 @@ V3D.View.prototype = {
     },
     tvec: function(x,y,z) {
         return new THREE.Vector3(x,y,z);
+    },
+    tquat: function(x,y,z,w){
+        return new THREE.Quaternion(x,y,z,w);
     },
     whcam: function() {
         var vFOV = this.camera.fov * Math.PI / 180;        // convert vertical fov to radians

@@ -71,8 +71,8 @@ else {
 <!-- 
 <script type="text/javascript" data-main="http://localhost:8887/game/js_minified/config.js" src="http://localhost:8887/game/js_minified/require.js"></script> 
  -->
-<!-- 
-<script type="text/javascript" data-main="http://siolsite.com/js_minified/config101216.js" src="http://siolsite.com/js_minified/require.js"></script>  -->
+
+<!-- <script type="text/javascript" data-main="http://siolsite.com/js_minified/config.js" src="http://siolsite.com/js_minified/require.js"></script>  -->
 
 
 </body>
