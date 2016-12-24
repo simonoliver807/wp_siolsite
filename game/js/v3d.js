@@ -167,6 +167,8 @@ V3D.View.prototype = {
         this.laser;
         this.lraycaster = new THREE.Raycaster();
 
+        this.planetpos;
+
 
 
     },
@@ -273,7 +275,7 @@ V3D.View.prototype = {
       //  geos['cylTarget'] = new THREE.CylinderGeometry( 20, 20, 20 );
         geos['phaser'] = new THREE.SphereGeometry(0.5, 32, 32);
         geos['dphaser'] = new THREE.SphereGeometry(1, 32, 32);
-        geos['mercury'] = new THREE.SphereBufferGeometry(750, 16, 12);
+        geos['mercury1'] = new THREE.SphereBufferGeometry(750, 16, 12);
         geos['shp1'] = new THREE.SphereGeometry(0.1)
         geos['sight'] = new THREE.BoxGeometry(15,15,0.5);
         geos['mothershipbb1'] = new THREE.BoxGeometry(700,300,700,10,10,10);
@@ -283,7 +285,7 @@ V3D.View.prototype = {
         geos['msphaser'] = new THREE.CylinderGeometry( 5, 5, 20 );
         geos['msphaser'].applyMatrix( new THREE.Matrix4().makeRotationX( THREE.Math.degToRad( 90 ) ) );
 
-                geos['msphaser2'] = new THREE.CylinderGeometry( 5, 5, 20 );
+        geos['msphaser2'] = new THREE.CylinderGeometry( 5, 5, 20 );
         geos['msphaser2'].applyMatrix( new THREE.Matrix4().makeRotationX( THREE.Math.degToRad( 90 ) ) );
 
         geos['laser'] = new THREE.CylinderGeometry(0.06,0.06,5000);
@@ -413,6 +415,9 @@ V3D.View.prototype = {
     
         // this.mats['sph'] = this.setMesh(color);
         if( sphere.class == 'planet'){
+            if(sphere.name.match([1])){
+                this.planetpos = new THREE.Vector3(sphere.pos[0],sphere.pos[1],sphere.pos[2])
+            }
             var setImage = 'images/'+sphere.image;
             var texture = new THREE.TextureLoader().load(setImage);
             var material = new THREE.MeshBasicMaterial({map:texture});
@@ -745,11 +750,11 @@ V3D.View.prototype = {
         var raycastdrone = this.lraycaster.intersectObjects( this.scene.children[this.dronenum].children);
         if(raycastdrone.length){
             raycastdrone[0].object.userData.tbd = 1;
-            V3D.dronewav.pause();
-            V3D.dronewav.currentTime = 0;
-            setTimeout(function(){
-                V3D.dronewav.play();
-            },20);
+            // V3D.dronewav.pause();
+            // V3D.dronewav.currentTime = 0;
+            // setTimeout(function(){
+            //     V3D.dronewav.play();
+            // },20);
         }
         var raycastms1 = (this.lraycaster.intersectObject(this.scene.children[this.ms1arrpos].children[0]));
         if(raycastms1.length){
@@ -762,11 +767,11 @@ V3D.View.prototype = {
             }
         }
         if(V3D.laserwav.currentTime == 0 || V3D.laserwav.currentTime > 0.5){
-            V3D.laserwav.pause();
-            V3D.laserwav.currentTime = 0;
-            setTimeout(function(){
-                V3D.laserwav.play();
-            }, 20);
+            // V3D.laserwav.pause();
+            // V3D.laserwav.currentTime = 0;
+            // setTimeout(function(){
+            //     V3D.laserwav.play();
+            // }, 20);
         }
 
 
@@ -1190,11 +1195,16 @@ V3D.View.prototype = {
     },
     msla: function(ms) {
         var dir = new THREE.Vector3();
-        dir.subVectors( ms.position, this.containerMesh.position);
+        var mspos = new THREE.Vector3( ms.position.x, ms.position.y, ms.position.z);
+        mspos.multiplyScalar(100);
+        dir.subVectors( mspos, this.planetpos);
         var m = this.lookAtFunc( dir, new THREE.Vector3(0,1,0));
         var q = new THREE.Quaternion();
         q.setFromRotationMatrix( m );
         return q;
+    },
+    changems: function(n) {
+        
     },
     setBodys: function(rb){
         this.bodys.push(rb);
