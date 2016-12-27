@@ -50,9 +50,10 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 											"name": "mercury1",
 											"transparent": false,
 											"opacity": 1,
-											"image": "planets/mercury.jpg"
+											"image": "planets/mercury.jpg",
+											"new": 1
 										},
-										"drone": 300,
+										"drone": 1,
 										"ms1": {
 											"type": "box",
 											"size": [700, 300, 700],
@@ -61,26 +62,28 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 											"world": "world",
 											"name": "ms1",
 											"msname": "ms1",
-											"transparent": false,
+											"transparent": true,
 											"opacity": 0,
 											"image": "ms/ms.obj",
-											"mtl": "ms/ms.mtl"
+											"mtl": "ms/ms.mtl",
+											"new": 1
 										}
 									},
 									"2": {
 										"planet1": {
 											"class": "planet",
 											"type": "sphere",
-											"size": [750, 750, 750],
-											"pos": [500, 10, -10000],
+											"size": [1000, 750, 750],
+											"pos": [2000, 10, -8000],
 											"move": false,
 											"world": "world",
 											"color": "0x0000ff",
 											"wireframe": false,
-											"name": "mercury1",
+											"name": "earth1",
 											"transparent": false,
 											"opacity": 1,
-											"image": "planets/mercury.jpg"
+											"image": "planets/earth.jpg",
+											"new": 0
 										},
 										"planet2": {
 											"class": "planet",
@@ -95,12 +98,13 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 											"transparent": false,
 											"opacity": 1,
 											"image": "planets/moon.jpg"
+											"new": 1
 										},
 										"drone": 400,
 										"ms1": {
 											"type": "box",
 											"size": [700, 300, 700],
-											"pos": [-5000, 0, -2000],
+											"pos": [5000, 0, -2000],
 											"move": false,
 											"world": "world",
 											"name": "ms1",
@@ -108,7 +112,8 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 											"transparent": "false",
 											"opacity": 0,
 											"image": "ms/ms.obj",
-											"mtl": "ms/ms.mtl"
+											"mtl": "ms/ms.mtl",
+											"new": 0
 										}
 									},
 									"3": {
@@ -116,7 +121,7 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 											"class": "planet",
 											"type": "sphere",
 											"size": [750, 750, 750],
-											"pos": [500, 10, -10000],
+											"pos": [500, 10, 10000],
 											"move": false,
 											"world": "world",
 											"color": "0x0000ff",
@@ -124,13 +129,14 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 											"name": "mercury1",
 											"transparent": false,
 											"opacity": 1,
-											"image": "planets/mercury.jpg"
+											"image": "planets/mercury.jpg",
+											"new": 0
 										},
 										"planet2": {
 											"class": "planet",
 											"type": "sphere",
 											"size": [500, 500, 500],
-											"pos": [500, 10, 10000],
+											"pos": [-1500, 100, -10000],
 											"move": false,
 											"world": "world",
 											"color": "#0000ff",
@@ -138,13 +144,14 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 											"name": "moon",
 											"transparent": false,
 											"opacity": 1,
-											"image": "planets/moon.jpg"
+											"image": "planets/moon.jpg",
+											"new": 0
 										},
 										"planet3": {
 											"class": "planet",
 											"type": "sphere",
 											"size": [500, 500, 500],
-											"pos": [2000, 100, 10000],
+											"pos": [2000, 100, -10000],
 											"move": false,
 											"world": "world",
 											"color": "#0000ff",
@@ -152,13 +159,15 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 											"name": "molten",
 											"transparent": false,
 											"opacity": 1,
-											"image": "planets/molten.jpg"
+											"image": "planets/molten.jpg",
+											"new": 1
+
 										},
 										"drone": 600,
 										"ms1": {			
 											"type": "box",
 											"size": [700, 300, 700],
-											"pos": [-5000, 0, -2000],
+											"pos": [-5000, 0, 2000],
 											"move": true,
 											"world": "world",
 											"name": "ms1",
@@ -166,12 +175,13 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 											"transparent": "false",
 											"opacity": 0,
 											"image": "ms/ms.obj",
-											"mtl": "ms/ms.mtl"
+											"mtl": "ms/ms.mtl",
+											"new": 0
 										},
 										"ms2": {
 											"type": "box",
 											"size": [700, 300, 700],
-											"pos": [8000, 0, -10000],
+											"pos": [8000, 0, 10000],
 											"move": true,
 											"world": "world",
 											"name": "ms2",
@@ -179,7 +189,8 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 											"transparent": "false",
 											"opacity": 0,
 											"image": "ms/ds.obj",
-											"mtl": "ms/ds.mtl"
+											"mtl": "ms/ds.mtl",
+											"new": 1
 										}
 									}
 								});

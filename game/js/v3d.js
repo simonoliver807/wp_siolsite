@@ -19,6 +19,7 @@ V3D.ms2phaser = new THREE.Group();
 V3D.percom = document.getElementById('perCom');
 V3D.laserwav = new Audio('audio/laser.wav');
 V3D.dronewav = new Audio('audio/droneExpl.wav');
+V3D.ms1_1arrpos = 0
 
 
 V3D.View = function(h,v,d){
@@ -161,6 +162,8 @@ V3D.View.prototype = {
         this.distms = new THREE.Vector3(0,0,0);
         this.ms1arrpos = 0;
         this.ms2arrpos = 0;
+        this.ms1y = { y: 0, t: 0};
+        this.ms2y = { y: 0, t: 0};
 
 
         this.dronenum;
@@ -304,11 +307,12 @@ V3D.View.prototype = {
         //     material.map = new THREE.TextureLoader().load(setImage);
         //     material.transparent = true;
         // }
-        if(box.name == 'ms1' || box.name == 'ms2'){
+        //if(box.name == 'ms1' || box.name == 'ms2'){
+        if(box.name.match('ms')){
             if(box.msname == 'ms1'){
                 this.ms1pos.set(box.pos[0],box.pos[1],box.pos[2]);
             }
-            else {
+            if(box.msname == 'ms2') {
                 this.ms2pos.set(box.pos[0],box.pos[1],box.pos[2]);
             }
             var texture = '';
@@ -758,7 +762,8 @@ V3D.View.prototype = {
         }
         var raycastms1 = (this.lraycaster.intersectObject(this.scene.children[this.ms1arrpos].children[0]));
         if(raycastms1.length){
-            this.ms1y = 1;
+            this.ms1y.y = 1;
+            this.ms1y.t += 1;
         }
         if(this.ms2arrpos){
             var raycastms2 = this.lraycaster.intersectObject(this.scene.children[this.ms2arrpos].children[0]);
@@ -1027,6 +1032,44 @@ V3D.View.prototype = {
 
 
     },
+    swapms: function(mesh) {
+
+        if( mesh.name == 'ms1' ) {
+
+            V3D.ms1phaser.children[0].geometry.dispose();
+            V3D.ms1phaser.children[0].material.dispose();
+            V3D.ms1phaser.remove( V3D.ms1phaser.children[0] );
+            this.scene.children[this.ms1arrpos].children[0].material.transparent = true;
+            this.scene.children[this.ms1arrpos].children[0].material.opacity = 0;
+            this.scene.children[V3D.ms1_1arrpos].children[0].material.transparent = false;
+            this.scene.children[V3D.ms1_1arrpos].children[0].material.opacity = 1;
+            this.scene.children[V3D.ms1_1arrpos].quaternion.copy( this.scene.children[this.ms1arrpos].quaternion );
+            this.scene.children[this.ms1arrpos].name = this.scene.children[V3D.ms1_1arrpos].name;
+            this.scene.children[V3D.ms1_1arrpos].name = 'ms1';
+            this.ms1arrpos = V3D.ms1_1arrpos;
+            this.ms1y.t = 0;
+            if ( V3D.ms1phaser.children.length == 0) {
+                V3D.ms1_1arrpos = 99;
+            }
+
+            if ( this.scene.children[this.ms1arrpos].userData.msname.substr(-1) < 4) { 
+                    var num = this.scene.children[this.ms1arrpos].userData.msname.substr(-1);
+                    num = parseInt(num)+1;
+
+                    this.addBox({ "type": "box",
+                                 "pos": [-5000, 0, -2000],
+                                 "world": "world",
+                                 "name": "ms1_"+num,
+                                 "msname": "ms1_"+num,
+                                 "image": "ms/ms_"+num+".obj",
+                                 "mtl": "ms/ms_"+num+".mtl"});
+            }
+
+        }
+
+        return this.scene.children[this.ms1arrpos];
+
+    },
     normalizelv: function(rb, mag, ldh) {
 
         if( rb.linearVelocity.length() >= (mag + 1) ){
@@ -1187,6 +1230,17 @@ V3D.View.prototype = {
                     if(obj.msname){
                         object.userData.msname = obj.msname;
                     }
+                    if(object.name.match('ms1_')){
+                        object.children[0].material.transparent = true;
+                        object.children[0].material.opacity = 0;
+                        if(V3D.ms1_1arrpos !== 99){
+                            V3D.ms1_1arrpos = scene.children.length;
+                        }
+                        if(object.name.substr(-1) > 1){
+                            V3D.startRender -= 1;
+                        }
+
+                    }
                     scene.add(object);
                     V3D.startRender +=1;
                 }, V3D.View.prototype.onProgress, V3D.View.prototype.onError);
@@ -1202,9 +1256,6 @@ V3D.View.prototype = {
         var q = new THREE.Quaternion();
         q.setFromRotationMatrix( m );
         return q;
-    },
-    changems: function(n) {
-        
     },
     setBodys: function(rb){
         this.bodys.push(rb);

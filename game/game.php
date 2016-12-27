@@ -16,6 +16,7 @@ else {
 ?>
 
 <!DOCTYPE html>
+<!-- <html manifest="dronewarfare.appcache"> -->
 <html>
 <head>
 		<title>Drone Warfare &#8211; siolsite</title>
