@@ -12,7 +12,7 @@ V3D.exdrone2;
 V3D.exdrone3;
 V3D.phasers;
 V3D.dphasers;
-V3D.mesharrpos = {phasers:0,dphasers:0,drones:0};
+V3D.mesharrpos = {phasers:0,dphasers:0};
 V3D.grouppart = new THREE.Object3D();
 V3D.ms1phaser = new THREE.Group();
 V3D.ms2phaser = new THREE.Group();
@@ -279,6 +279,7 @@ V3D.View.prototype = {
         geos['phaser'] = new THREE.SphereGeometry(0.5, 32, 32);
         geos['dphaser'] = new THREE.SphereGeometry(1, 32, 32);
         geos['mercury1'] = new THREE.SphereBufferGeometry(750, 16, 12);
+        geos['earth1'] = new THREE.SphereBufferGeometry(1000, 16, 12);
         geos['shp1'] = new THREE.SphereGeometry(0.1)
         geos['sight'] = new THREE.BoxGeometry(15,15,0.5);
         geos['mothershipbb1'] = new THREE.BoxGeometry(700,300,700,10,10,10);
@@ -427,6 +428,8 @@ V3D.View.prototype = {
             var material = new THREE.MeshBasicMaterial({map:texture});
             var mesh = new THREE.Mesh( this.geos[sphere.name], material, sphere.name );
             mesh.position.set( sphere.pos[0], sphere.pos[1], sphere.pos[2] );
+            var q = new THREE.Quaternion();
+            q.setFromAxisAngle( new THREE.Vector3(1,0,0), 0.41 );
             this.scene.add( mesh );
         }
         if(sphere.name == 'containerMesh' && sphere.image != 0){
@@ -489,7 +492,7 @@ V3D.View.prototype = {
             mesh.add( circle );
 
         }
-
+        mesh.name = 'sight';
         this.scene.add( mesh );
 
         this.sight = mesh;
@@ -1160,7 +1163,7 @@ V3D.View.prototype = {
                 if( obj[0] && obj[0].name == 'drone'){
                     for(var i=0;i<obj.length;i++){
                         if(i==0){
-                            object.children[0].position.set(obj[i].pos[0], obj[i].pos[1], obj[i].pos[2]);
+                            object.children[0].position.set(10000, 10000, 10000);
                             object.children[0].name = 'drone';
                             object.children[0].userData.dpcnt = 0;
                             object.children[0].userData.rtm = 0;
@@ -1175,7 +1178,6 @@ V3D.View.prototype = {
 
                     }
                     object.name = 'drones';
-                    V3D.mesharrpos.drones = scene.children.length;
                     scene.add(object);
                 }
                 if(object.name != 'drones') { object.name = obj.name ;}

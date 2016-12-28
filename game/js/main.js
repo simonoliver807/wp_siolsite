@@ -43,17 +43,16 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 											"type": "sphere",
 											"size": [750, 750, 750],
 											"pos": [500, 10, -10000],
-											"move": false,
+											"move": true,
 											"world": "world",
 											"color": "0x0000ff",
 											"wireframe": false,
 											"name": "mercury1",
 											"transparent": false,
 											"opacity": 1,
-											"image": "planets/mercury.jpg",
-											"new": 1
+											"image": "planets/mercury.jpg"
 										},
-										"drone": 1,
+										"drone": 2,
 										"ms1": {
 											"type": "box",
 											"size": [700, 300, 700],
@@ -73,7 +72,7 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 										"planet1": {
 											"class": "planet",
 											"type": "sphere",
-											"size": [1000, 750, 750],
+											"size": [1000, 1000, 1000],
 											"pos": [2000, 10, -8000],
 											"move": false,
 											"world": "world",
@@ -82,8 +81,7 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 											"name": "earth1",
 											"transparent": false,
 											"opacity": 1,
-											"image": "planets/earth.jpg",
-											"new": 0
+											"image": "planets/earth.jpg"
 										},
 										"planet2": {
 											"class": "planet",
@@ -98,13 +96,12 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 											"transparent": false,
 											"opacity": 1,
 											"image": "planets/moon.jpg"
-											"new": 1
 										},
-										"drone": 400,
+										"drone": 2,
 										"ms1": {
 											"type": "box",
 											"size": [700, 300, 700],
-											"pos": [5000, 0, -2000],
+											"pos": [-5000, 0, -2000],
 											"move": false,
 											"world": "world",
 											"name": "ms1",
@@ -129,8 +126,7 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 											"name": "mercury1",
 											"transparent": false,
 											"opacity": 1,
-											"image": "planets/mercury.jpg",
-											"new": 0
+											"image": "planets/mercury.jpg"
 										},
 										"planet2": {
 											"class": "planet",
@@ -144,8 +140,7 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 											"name": "moon",
 											"transparent": false,
 											"opacity": 1,
-											"image": "planets/moon.jpg",
-											"new": 0
+											"image": "planets/moon.jpg"
 										},
 										"planet3": {
 											"class": "planet",
@@ -159,8 +154,7 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 											"name": "molten",
 											"transparent": false,
 											"opacity": 1,
-											"image": "planets/molten.jpg",
-											"new": 1
+											"image": "planets/molten.jpg"
 
 										},
 										"drone": 600,
