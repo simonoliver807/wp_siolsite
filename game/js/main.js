@@ -43,7 +43,7 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 											"type": "sphere",
 											"size": [750, 750, 750],
 											"pos": [500, 10, -10000],
-											"move": true,
+											"move": false,
 											"world": "world",
 											"color": "0x0000ff",
 											"wireframe": false,
@@ -97,11 +97,11 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 											"opacity": 1,
 											"image": "planets/moon.jpg"
 										},
-										"drone": 2,
+										"drone": 300,
 										"ms1": {
 											"type": "box",
 											"size": [700, 300, 700],
-											"pos": [-5000, 0, -2000],
+											"pos": [8000, 0, -1000],
 											"move": false,
 											"world": "world",
 											"name": "ms1",
