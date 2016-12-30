@@ -63,8 +63,8 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 											"msname": "ms1",
 											"transparent": true,
 											"opacity": 0,
-											"image": "ms/ms.obj",
-											"mtl": "ms/ms.mtl",
+											"image": "ms/ms1.obj",
+											"mtl": "ms/ms1.mtl",
 											"new": 1
 										}
 									},
@@ -97,7 +97,7 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 											"opacity": 1,
 											"image": "planets/moon.jpg"
 										},
-										"drone": 300,
+										"drone": 2,
 										"ms1": {
 											"type": "box",
 											"size": [700, 300, 700],
@@ -108,8 +108,8 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 											"msname": "ms1",
 											"transparent": "false",
 											"opacity": 0,
-											"image": "ms/ms.obj",
-											"mtl": "ms/ms.mtl",
+											"image": "ms/ms1.obj",
+											"mtl": "ms/ms1.mtl",
 											"new": 0
 										}
 									},
@@ -157,7 +157,7 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 											"image": "planets/molten.jpg"
 
 										},
-										"drone": 600,
+										"drone": 2,
 										"ms1": {			
 											"type": "box",
 											"size": [700, 300, 700],
@@ -168,8 +168,8 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 											"msname": "ms1",
 											"transparent": "false",
 											"opacity": 0,
-											"image": "ms/ms.obj",
-											"mtl": "ms/ms.mtl",
+											"image": "ms/ms1.obj",
+											"mtl": "ms/ms1.mtl",
 											"new": 0
 										},
 										"ms2": {
@@ -182,8 +182,67 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 											"msname": "ms2",
 											"transparent": "false",
 											"opacity": 0,
-											"image": "ms/ds.obj",
-											"mtl": "ms/ds.mtl",
+											"image": "ms/ms2.obj",
+											"mtl": "ms/ms2.mtl",
+											"new": 1
+										}
+									},
+									"4": {
+										"planet1": {
+											"class": "planet",
+											"type": "sphere",
+											"size": [750, 750, 750],
+											"pos": [500, 200, 8000],
+											"move": false,
+											"world": "world",
+											"color": "0x0000ff",
+											"wireframe": false,
+											"name": "electric1",
+											"transparent": false,
+											"opacity": 1,
+											"image": "planets/electric.jpg"
+										},
+										"planet2": {
+											"class": "planet",
+											"type": "sphere",
+											"size": [450, 450, 450],
+											"pos": [500, 100, -8000],
+											"move": false,
+											"world": "world",
+											"color": "#0000ff",
+											"wireframe": false,
+											"name": "ice",
+											"transparent": false,
+											"opacity": 1,
+											"image": "planets/ice.jpg"
+										},
+										"drone": 400,
+										"ms1": {			
+											"type": "box",
+											"size": [700, 300, 700],
+											"pos": [-5000, 0, 2000],
+											"move": true,
+											"world": "world",
+											"name": "ms1",
+											"msname": "ms1",
+											"transparent": "false",
+											"opacity": 0,
+											"image": "ms/ms1.obj",
+											"mtl": "ms/ms1.mtl",
+											"new": 0
+										},
+										"ms2": {
+											"type": "box",
+											"size": [700, 300, 700],
+											"pos": [8000, 0, 10000],
+											"move": true,
+											"world": "world",
+											"name": "ms2",
+											"msname": "ms2",
+											"transparent": "false",
+											"opacity": 0,
+											"image": "ms/ms2.obj",
+											"mtl": "ms/ms2.mtl",
 											"new": 1
 										}
 									}

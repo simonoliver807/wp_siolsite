@@ -160,7 +160,12 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
                             v3d.render();
 
                             if(firstRender != 0){
-                                bodys[firstRender].body.setupMass(0x2);
+                                if( firstRender.ms1 ) {
+                                    bodys[firstRender.ms1].body.setupMass(0x2);
+                                }
+                                if( firstRender.ms2  ) {
+                                    bodys[firstRender.ms2].body.setupMass(0x2);
+                                }
                                 firstRender = 0;
                             }
 
@@ -186,6 +191,7 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
                             // }
 
                            if(!containerMesh){
+                                firstRender = { ms1: 0, ms2: 0 };
                                document.getElementById('loadingScreen').style.display = 'none';  
                                var dist = v3d.tvec();                             
                                // make sure the two mesh and body array match
@@ -207,7 +213,12 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
                                                         //         v3d.scene.children[n].quaternion.set( q.x,q.y,q.z,q.w); 
                                                         //     }
                                                         // }
-                                                        firstRender = b;
+                                                        if( bodys[b].name == 'ms1'){
+                                                            firstRender.ms1 = b;
+                                                        }
+                                                        else {
+                                                            firstRender.ms2 = b;
+                                                        }
                                                     }
                                                     break;
                                             }
@@ -447,6 +458,10 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
                                     world.removeRigidBody(body.body);
                                 
                                 }
+                                if(worldcount - mesh.userData.color > 0.0005 && worldcount - mesh.userData.color < 0.001 ){
+                                        mesh.children[0].material.color.setRGB(0.64,0.64,0.64);
+                                        mesh.userData.color = 0;
+                                }
                                 if(mesh.name == 'ms1' || mesh.name == 'ms2') {
                                     if ( body.msname == 'ms1' ) {
                                         if( mesh.userData.msname != 'ms1_4'){
@@ -460,23 +475,20 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
 
                                                 }
                                             }
-                                            if(worldcount - mesh.userData.color > 0.0005 ){
-                                                mesh.children[0].material.color.setRGB(0.64,0.64,0.64);
-                                                mesh.userData.color = 0;
-                                            }
                                         }
                                     } 
                                     else {
-                                          mapel = mapel2;
-                                        if(v3d.ms2y){
-                                            mesh.children[0].material.color.setRGB(255,255,0);
-                                            mesh.userData.color = worldcount;
-                                            v3d.ms2y = 0;
-                                        }
-                                        if(worldcount - mesh.userData.color > 0.0005 ){
-                                            mesh.children[0].material.color.setRGB(0.64,0.64,0.64);
-                                            mesh.userData.color = 0;
+                                        if( mesh.userData.msname != 'ms2_4' ){
+                                              mapel = mapel2;
+                                            if(v3d.ms2y.y){
+                                                mesh.children[0].material.color.setRGB(255,255,0);
+                                                mesh.userData.color = worldcount;
+                                                v3d.ms2y.y = 0;
+                                                if(v3d.ms2y.t == 10 && V3D.ms2_1arrpos !== 99){
+                                                 meshs[i] = v3d.swapms(mesh, currlevel);
 
+                                                }
+                                            }
                                         }
                                     }
                                     mapcm.set(containerMesh.position.x, containerMesh.position.y, containerMesh.position.z);
@@ -683,10 +695,10 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
                         v3d.addBox({ "type": "box",
                                      "pos": ms[i].pos,
                                      "world": "world",
-                                     "name": "ms1_1",
-                                     "msname": "ms1_1",
-                                     "image": "ms/ms_1.obj",
-                                     "mtl": "ms/ms_1.mtl"});
+                                     "name": ms[i].name+"_1",
+                                     "msname": ms[i].name+"_1",
+                                     "image": "ms/"+ms[i].name+"_1.obj",
+                                     "mtl": "ms/"+ms[i].name+".mtl"});
 
                         var msphaser = {type: 'cylinder', name: 'ms'+(i+1)+'phaser', color: 0x0099ff}
                         v3d.addCylinder(msphaser);
@@ -720,6 +732,7 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
                         while(k--){
                             if( bodys[k].name == ms[i].name ) {
                                 bodys[k].body.position.set( ms[i].pos[0]/100,ms[i].pos[1]/100,ms[i].pos[2]/100 );
+                                bodys[k].body.setupMass(0x1);
                             }
                         }
                       //  var msbb1 = { type: 'box', size:[700,300,700], pos:[-5000,0,-2000], move: true, world: world, color: 0xff0000, wireframe: 'false',  name: 'mothershipbb1', transparent: 'false', opacity: 0};
@@ -813,9 +826,6 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
                         var laser = {type: 'cylinder', name: 'laser', color: 0x0099ff};
                         v3d.addCylinder(laser);
                     }
-            
-                    numobj =  ms.length + 7;
-                    if(!V3D.bincam){ numobj -= 1};
                 }
                 else {
                     // add next level drones to scene drones
@@ -830,6 +840,8 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
                         }
                     }
                 }
+                numobj =  ms.length + 6;
+                if(!V3D.bincam){ numobj -= 1};
             },
             getObj: function(el) {
 
@@ -878,9 +890,9 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
             },
             startnext: function() {
                 currlevel += 1;
-                if(currlevel === 2){
-                    currlevel = 3;
-                }
+                // if(currlevel === 2){
+                //     currlevel = 3;
+                // }
                 startlevel = 0;
                 endsequence = 100;
                 v3d.ms1y.t = 0;

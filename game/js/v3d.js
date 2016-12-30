@@ -19,7 +19,8 @@ V3D.ms2phaser = new THREE.Group();
 V3D.percom = document.getElementById('perCom');
 V3D.laserwav = new Audio('audio/laser.wav');
 V3D.dronewav = new Audio('audio/droneExpl.wav');
-V3D.ms1_1arrpos = 0
+V3D.ms1_1arrpos = 0;
+V3D.ms2_1arrpos = 0;
 
 
 V3D.View = function(h,v,d){
@@ -770,7 +771,8 @@ V3D.View.prototype = {
         if(this.ms2arrpos){
             var raycastms2 = this.lraycaster.intersectObject(this.scene.children[this.ms2arrpos].children[0]);
             if(raycastms2.length){
-                this.ms2y = 1;
+                this.ms2y.y = 1;
+                this.ms2y.t += 1;
             }
         }
         if(V3D.laserwav.currentTime == 0 || V3D.laserwav.currentTime > 0.5){
@@ -1055,46 +1057,66 @@ V3D.View.prototype = {
     swapms: function(mesh, currlevel) {
 
         if( mesh.name == 'ms1' ) {
+            var currarrpos = this.ms1arrpos;
+            var nextarrpos = V3D.ms1_1arrpos;
+            var phaser = V3D.ms1phaser;
+            var name = 'ms1';
+        }
+        if ( mesh.name == 'ms2' ) {
+            var currarrpos = this.ms2arrpos;
+            var nextarrpos = V3D.ms2_1arrpos;
+            var phaser = V3D.ms2phaser;
+            var name = 'ms2';
+        }
 
-            V3D.ms1phaser.children[0].geometry.dispose();
-            V3D.ms1phaser.children[0].material.dispose();
-            V3D.ms1phaser.remove( V3D.ms1phaser.children[0] );
-            this.scene.children[this.ms1arrpos].children[0].material.transparent = true;
-            this.scene.children[this.ms1arrpos].children[0].material.opacity = 0;
-            this.scene.children[V3D.ms1_1arrpos].children[0].material.transparent = false;
-            this.scene.children[V3D.ms1_1arrpos].children[0].material.opacity = 1;
-            this.scene.children[V3D.ms1_1arrpos].quaternion.copy( this.scene.children[this.ms1arrpos].quaternion );
-            this.scene.children[this.ms1arrpos].name = this.scene.children[V3D.ms1_1arrpos].name;
-            this.scene.children[V3D.ms1_1arrpos].name = 'ms1';
-            this.ms1arrpos = V3D.ms1_1arrpos;
-            this.ms1y.t = 0;
-            if ( V3D.ms1phaser.children.length == 0) {
-                V3D.ms1_1arrpos = 99;
-            }
+            phaser.children[0].geometry.dispose();
+            phaser.children[0].material.dispose();
+            phaser.remove( phaser.children[0] );
+            this.scene.children[currarrpos].children[0].material.transparent = true;
+            this.scene.children[currarrpos].children[0].material.opacity = 0;
+            this.scene.children[nextarrpos].children[0].material.transparent = false;
+            this.scene.children[nextarrpos].children[0].material.opacity = 1;
+            this.scene.children[nextarrpos].quaternion.copy( this.scene.children[this.ms1arrpos].quaternion );
+            this.scene.children[currarrpos].name = this.scene.children[nextarrpos].name;
+            this.scene.children[nextarrpos].name = name;
+            currarrpos = nextarrpos;
+            if( name == 'ms1'){ 
+                this.ms1arrpos = nextarrpos;
+                this.ms1y.t = 0;
+                if ( phaser.children.length == 0) {
+                    V3D.ms1_1arrpos = 99;
+                }
+            };
+            if( name == 'ms2'){ 
+                this.ms2arrpos = nextarrpos;
+                this.ms2y.t = 0;
+                if ( phaser.children.length == 0) {
+                    V3D.ms1_1arrpos = 99;
+                }
+            };
             if( currlevel == 1) {
-                if ( this.scene.children[this.ms1arrpos].userData.msname.substr(-1) < 4) { 
-                        var num = this.scene.children[this.ms1arrpos].userData.msname.substr(-1);
+                if ( this.scene.children[currarrpos].userData.msname.substr(-1) < 4) { 
+                        var num = this.scene.children[currarrpos].userData.msname.substr(-1);
                         num = parseInt(num)+1;
 
                         this.addBox({ "type": "box",
                                      "pos": [-5000, 0, -2000],
                                      "world": "world",
-                                     "name": "ms1_"+num,
-                                     "msname": "ms1_"+num,
-                                     "image": "ms/ms_"+num+".obj",
-                                     "mtl": "ms/ms_"+num+".mtl"});
+                                     "name": this.scene.children[currarrpos].name+'_'+num,
+                                     "msname": this.scene.children[currarrpos].name+'_'+num,
+                                     "image": "ms/"+this.scene.children[currarrpos].name+"_"+num+".obj",
+                                     "mtl": "ms/"+name+".mtl"});
                 }
             }
             else {
-                for(var i = V3D.ms1_1arrpos; i < this.scene.children.length; i++){
-                    if( this.scene.children[i].name.match('ms1_') ){
-                        V3D.ms1_1arrpos = i;
+                for(var i = nextarrpos; i < this.scene.children.length; i++){
+                    if( this.scene.children[i].name.match(name+'_') ){
+                        nextarrpos = i;
                         break;
                     }
                 }
             }
-        }
-        return this.scene.children[this.ms1arrpos];
+        return this.scene.children[currarrpos];
     },
     normalizelv: function(rb, mag, ldh) {
 
@@ -1255,16 +1277,19 @@ V3D.View.prototype = {
                     if(obj.msname){
                         object.userData.msname = obj.msname;
                     }
-                    if(object.name.match('ms1_')){
+                    if(object.name.match('_')){
                         object.children[0].material.transparent = true;
                         object.children[0].material.opacity = 0;
-                        if(object.name == 'ms1_4') {
+                        if(object.name.match('_4')) {
                             object.children[0].material.color.setRGB(0,0,0);
                         }
-                        if(V3D.ms1_1arrpos !== 99){
+                        if(V3D.ms1_1arrpos !== 99 && object.name.match('ms1')){
                             V3D.ms1_1arrpos = scene.children.length;
                         }
-                        if(object.name.substr(-1) > 1){
+                        if(V3D.ms2_1arrpos !== 99 && object.name.match('ms2')){
+                            V3D.ms2_1arrpos = scene.children.length;
+                        }
+                        if(object.name.substr(-1) >= 1){
                             V3D.startRender -= 1;
                         }
 
