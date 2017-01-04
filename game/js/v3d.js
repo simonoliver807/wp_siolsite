@@ -12,7 +12,7 @@ V3D.exdrone2;
 V3D.exdrone3;
 V3D.phasers;
 V3D.dphasers;
-V3D.mesharrpos = {phasers:0,dphasers:0};
+V3D.mesharrpos = {phasers:0,dphasers:0,pl:0};
 V3D.grouppart = new THREE.Object3D();
 V3D.ms1phaser = new THREE.Group();
 V3D.ms2phaser = new THREE.Group();
@@ -173,20 +173,14 @@ V3D.View.prototype = {
 
         this.rotplanetq = new THREE.Quaternion();
 
-        this.planetpos;
+        this.planetpos = new THREE.Vector3(0,0,0);
+        var pgroup = new THREE.Object3D();
+        pgroup.name = 'planets';
+        this.scene.add(pgroup);
+        V3D.mesharrpos.pl = this.scene.children.length-1;
 
 
 
-    },
-    initBackground:function(){
-    	var geometry = new THREE.SphereGeometry( 10000, 32, 32 );
-        var texture = new THREE.TextureLoader().load('images/space_bg.png');
-        var material = new THREE.MeshBasicMaterial( { map: texture, side: THREE.BackSide } );
-        var bg = new THREE.Mesh( geometry, material );
-        bg.name = 'bg';
-        bg.position.set(0,0,-200);
-        this.scene.add( bg );
-//this.renderer.autoClear = false;
     },
     initLight:function(){
 
@@ -368,7 +362,7 @@ V3D.View.prototype = {
                  V3D.ms1phaser.add(mesh);
                 i++;
              }
-             V3D.ms1phaser.name = 'ms1phaser'
+             V3D.ms1phaser.name = 'ms1phaserg';
            // V3D.ms1phaser.position.set(0, 0, -100)
             //this.scene.add(V3D.ms1phaser);
              return;
@@ -422,15 +416,15 @@ V3D.View.prototype = {
     
         // this.mats['sph'] = this.setMesh(color);
         if( sphere.class == 'planet'){
-            if(sphere.name.match([1])){
-                this.planetpos = new THREE.Vector3(sphere.pos[0],sphere.pos[1],sphere.pos[2])
-            }
+            // if(sphere.name.match([1])){
+            //     this.planetpos = new THREE.Vector3(sphere.pos[0],sphere.pos[1],sphere.pos[2])
+            // }
             var setImage = 'images/'+sphere.image;
             var texture = new THREE.TextureLoader().load(setImage);
             var material = new THREE.MeshBasicMaterial({map:texture});
             var mesh = new THREE.Mesh( this.geos[sphere.name], material, sphere.name );
             mesh.position.set( sphere.pos[0], sphere.pos[1], sphere.pos[2] );
-            this.scene.add( mesh );
+            this.scene.children[V3D.mesharrpos.pl].add( mesh );
         }
         if(sphere.name == 'containerMesh' && sphere.image != 0){
             var texture = '';
@@ -1054,7 +1048,7 @@ V3D.View.prototype = {
 
 
     },
-    swapms: function(mesh, currlevel) {
+    swapms: function(mesh) {
 
         if( mesh.name == 'ms1' ) {
             var currarrpos = this.ms1arrpos;
@@ -1094,11 +1088,17 @@ V3D.View.prototype = {
                     V3D.ms1_1arrpos = 99;
                 }
             };
-            if( currlevel == 1) {
+            var i = this.scene.children.length;
+            var loadnextms = 1;
+            var num = this.scene.children[currarrpos].userData.msname.substr(-1);
+            num = parseInt(num)+1;
+            while(i--) {
+                if( this.scene.children[i].userData.msname == this.scene.children[currarrpos].name+'_'+num ) {
+                    loadnextms = 0;
+                }
+            }
+            if(loadnextms){
                 if ( this.scene.children[currarrpos].userData.msname.substr(-1) < 4) { 
-                        var num = this.scene.children[currarrpos].userData.msname.substr(-1);
-                        num = parseInt(num)+1;
-
                         this.addBox({ "type": "box",
                                      "pos": [-5000, 0, -2000],
                                      "world": "world",
@@ -1111,7 +1111,7 @@ V3D.View.prototype = {
             else {
                 for(var i = nextarrpos; i < this.scene.children.length; i++){
                     if( this.scene.children[i].name.match(name+'_') ){
-                        nextarrpos = i;
+                        V3D.ms1_1arrpos = i;
                         break;
                     }
                 }

@@ -52,7 +52,7 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 											"opacity": 1,
 											"image": "planets/mercury.jpg"
 										},
-										"drone": 2,
+										"drone": 10,
 										"ms1": {
 											"type": "box",
 											"size": [700, 300, 700],
@@ -97,12 +97,12 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 											"opacity": 1,
 											"image": "planets/moon.jpg"
 										},
-										"drone": 2,
+										"drone": 20,
 										"ms1": {
 											"type": "box",
 											"size": [700, 300, 700],
 											"pos": [8000, 0, -1000],
-											"move": false,
+											"move": true,
 											"world": "world",
 											"name": "ms1",
 											"msname": "ms1",
@@ -157,7 +157,7 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 											"image": "planets/molten.jpg"
 
 										},
-										"drone": 2,
+										"drone": 30,
 										"ms1": {			
 											"type": "box",
 											"size": [700, 300, 700],
