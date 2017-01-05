@@ -495,7 +495,10 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
                                                 mesh.children[0].material.color.setRGB(255,255,0);
                                                 mesh.userData.color = worldcount;
                                                 v3d.ms1y.y = 0;
-                                                if(v3d.ms1y.t == 10 && V3D.ms1_1arrpos !== 99){
+                                                // if(v3d.ms1y.t == 10 && V3D.ms1_1arrpos !== 99){
+
+                                                if(v3d.ms1y.t == 5 && V3D.ms1_1arrpos !== 99){
+
                                                    meshs[i] = v3d.swapms(mesh);
 
                                                 }
@@ -951,6 +954,9 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
                     case 'levels':
                         return levels;
                         break;
+                    case 'endsequence':
+                        return endsequence;
+                        break;
                 }
 
             },
@@ -1028,13 +1034,13 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
                 }
                 bodys[0].body.position.set(0,0,0);
                 startlevel = 0;
-                endsequence = 100;
                 v3d.ms1y.t = 0;
                 v3d.ms2y.t = 0;
                 health = 10;
                 V3D.startRender = 0;
                 bodysNum = bodys.length;
                 this.populate();
+                endsequence = 100;
             }
         }
     }

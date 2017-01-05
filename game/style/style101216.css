@@ -226,7 +226,7 @@ optgroup {
 	width:10%;
 }
 #container {
-	cursor: none;
+	/*cursor: none;*/
 	display: block;
 	height:100%;
 	width:100%; 

@@ -30,7 +30,6 @@ else {
 <body>
 
 	<input type="hidden" id="insideship" value="<?php echo $insideship; ?>">
-	<input type="hidden" id='jsonlevels' value='{ "1": { "planet1": { "type": "sphere", "size": [750, 750, 750], "pos": [500, 10, -10000], "move": false, "world": "world", "color": "0x0000ff", "wireframe": false, "name": "mercury", "transparent": false, "opacity": 1, "image": "planets/mercury.jpg" }, "drone": 200, "ms": { "type": "box", "size": [700, 300, 700], "pos": [-5000, 0, -2000], "move": false, "world": "world", "name": "mothership", "msname": "ms_Object007.001", "transparent": false, "opacity": 0, "image": "ms/ms.obj", "mtl": "ms/ms.mtl" } }, "2": { "planet1": { "type": "sphere", "size": [750, 750, 750], "pos": [500, 10, -10000], "move": false, "world": "world", "color": "0x0000ff", "wireframe": false, "name": "mercury", "transparent": false, "opacity": 1, "image": "planets/mercury.jpg" }, "planet2": { "type": "sphere", "size": [500, 500, 500], "pos": [500, 10, 10000], "move": false, "world": "world", "color": "#0000ff", "wireframe": false, "name": "mercury", "transparent": false, "opacity": 1, "image": "planets/moon.jpg" }, "drone": 200, "ms": { "type": "box", "size": [700, 300, 700], "pos": [-5000, 0, -2000], "move": false, "world": "world", "name": "mothership", "transparent": "false", "opacity": 0, "image": "ms/ms.obj", "mtl": "ms/ms.mtl" } } }'>
 
 	<div id="loadingScreen">
 		<div id = "lscont">

@@ -34,8 +34,6 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 		//		try {
 
 				    var levels = gameinit.getObj('levels');
-
-				   var jsonlevels = document.getElementById('jsonlevels').value;
 				     levels.push( {
 									"1": {
 										"planet1": {
@@ -52,7 +50,7 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 											"opacity": 1,
 											"image": "planets/mercury.jpg"
 										},
-										"drone": 10,
+										"drone": 2,
 										"ms1": {
 											"type": "box",
 											"size": [700, 300, 700],
@@ -97,7 +95,7 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 											"opacity": 1,
 											"image": "planets/moon.jpg"
 										},
-										"drone": 20,
+										"drone": 2,
 										"ms1": {
 											"type": "box",
 											"size": [700, 300, 700],
