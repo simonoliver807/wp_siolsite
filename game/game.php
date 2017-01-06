@@ -6,7 +6,7 @@ if (isset($_SESSION['radio_3698130'])) {
 	$insideship = $_SESSION["radio_3698130"];
 }
 else {
-	$insideship = 'clicked inside';
+	$insideship = 'clicked outside';
 }
 
 //echo "<script type='text/javascript'>console.log('$favcolor')</script>";

@@ -580,7 +580,7 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
                                 var drone = meshs[i];
                                 if(dbody.name == 'drone') {
                                     if( drone.userData.ld ) {
-                                     v3d.updateDrones( dbody.body, meshs[i], dbody.ms );
+                                        v3d.updateDrones( dbody.body, meshs[i], dbody.ms );
                                     }
                                     if ( !drone.userData.ld && !drone.userData.rtm) {
                                         pddist.sub(containerMesh.position,meshs[i].position);
@@ -595,19 +595,19 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
                                 }
                             }
                             // update ms phasers
-                            var p = 0;
-                            while(p < V3D.ms1phaser.children.length){
-                                if( V3D.ms1phaser.children[p].scale.z * 20 < ms1len){
-                                    V3D.ms1phaser.children[p].scale.z += 0.5;
-                                    V3D.ms1phaser.children[p].position.z += 5;
-                                }
-                                if(V3D.ms2phaser.children.length > 0){
+                            var p = 4;
+                            while(p--){
+                                if(V3D.ms1phaser.children[p])
+                                    if( V3D.ms1phaser.children[p].scale.z * 20 < ms1len){
+                                        V3D.ms1phaser.children[p].scale.z += 0.5;
+                                        V3D.ms1phaser.children[p].position.z += 5;
+                                    }
+                                if(V3D.ms2phaser.children[p]){
                                     if( V3D.ms2phaser.children[p].scale.z * 20 < ms2len ){
                                         V3D.ms2phaser.children[p].scale.z += 0.5;
                                         V3D.ms2phaser.children[p].position.z += 5; 
                                     }
                                 }
-                                 p ++;
                             }
 
                         }
@@ -633,7 +633,7 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
                     x = 0;
                     z = 0;
                     y = 0;
-                    w = h = d = 25 ;
+                    w = h = d = 26 ;
 
                 var spheres = [];
                 var ms = [];
@@ -993,9 +993,9 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
 
 
                 
-                // if(currlevel === 2){
-                //     currlevel = 3;
-                // }
+                if(currlevel === 2){
+                    currlevel = 4;
+                }
                 
 
 

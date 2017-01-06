@@ -33,7 +33,7 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 											"opacity": 1,
 											"image": "planets/mercury.jpg"
 										},
-										"drone": 2,
+										"drone": 3,
 										"ms1": {
 											"type": "box",
 											"size": [700, 300, 700],
@@ -138,7 +138,7 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 											"image": "planets/molten.jpg"
 
 										},
-										"drone": 3,
+										"drone": 6,
 										"ms1": {			
 											"type": "box",
 											"size": [700, 300, 700],
@@ -156,7 +156,7 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 										"ms2": {
 											"type": "box",
 											"size": [700, 300, 700],
-											"pos": [8000, 0, 10000],
+											"pos": [5000, 0, 1000],
 											"move": true,
 											"world": "world",
 											"name": "ms2",
@@ -197,7 +197,7 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 											"opacity": 1,
 											"image": "planets/ice.jpg"
 										},
-										"drone": 400,
+										"drone": 6,
 										"ms1": {			
 											"type": "box",
 											"size": [700, 300, 700],
@@ -255,6 +255,17 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 				    this.angleprev = 0;
 				    this.setAxis = 1;
 				    this.timestep = timestep;
+
+				    this.lockcount = 0;
+				    this.arrpos = [ 1,0,1,1,0,1,-1,0,-1,-1,0,-1,-1,1, 1,-1 ];
+				    this.arrposcnt = 0;
+
+		    		if( V3D.bincam){
+						this.dnum = 7;
+					}
+					else {
+						this.dnum = 8;
+					}
 				    var bodys = gameinit.getObj('bodys');
    					for(var i=0; i < bodys.length; i++) {
 						if(bodys[i].name == 'shp1'){
@@ -265,7 +276,7 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 
 				    gameinit.oimoLoop();
 
-				    setInterval( updateShip, 100 );
+				    setInterval( updateShip, 300 );
 
 
 				    function updateShip() {
@@ -278,6 +289,7 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 							}
 						};
 						function getTar () {
+
 
 							var bodys = gameinit.getObj('bodys');
 							var dist = v3d.tvec();
@@ -302,8 +314,8 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 										self.tarvec.set( tar.x, tar.y, tar.z);
 										self.tarvec.multiplyScalar(100);
 										if(bodys[i].name == 'drone'){
-											for(var j=0; j< v3d.scene.children[8].children.length; j++){
-												var drone = v3d.scene.children[8].children[j];
+											for(var j=0; j< v3d.scene.children[self.dnum].children.length; j++){
+												var drone = v3d.scene.children[self.dnum].children[j];
 												if( self.tarvec.equals(drone.position) ){
 													self.tarbody = drone;
 												}
@@ -324,15 +336,25 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 
 
 						};
-						function toScreenPosition(obj, camera)
+						function toScreenPosition(obj, camera, vec )
 						{
-						    var vector = v3d.tvec();
+							if ( obj ) { 
+							    var vector = v3d.tvec();
 
-						    var widthHalf = 0.5*v3d.w;
-						    var heightHalf = 0.5*v3d.h;
+							    var widthHalf = 0.5*v3d.w;
+							    var heightHalf = 0.5*v3d.h;
 
-						    obj.updateMatrixWorld();
-						    vector.setFromMatrixPosition(obj.matrixWorld);
+							    obj.updateMatrixWorld();
+							    vector.setFromMatrixPosition(obj.matrixWorld);
+							}
+							if ( vec ) {
+								var vector = v3d.tvec();
+								var widthHalf = 0.5*v3d.w;
+							    var heightHalf = 0.5*v3d.h;
+								vector.set(vec.x, vec.y, vec.z);
+							}
+
+
 						    vector.project(camera);
 
 						    vector.x = ( vector.x * widthHalf ) + widthHalf;
@@ -351,6 +373,7 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 						    self.chngdiry = 0;
 						    self.angleprev = 0;
 						    self.setAxis = 1;
+						    self.lockcount = 0;
 						}
 						window.addEventListener( 'keydown', handleKeyDown, false );
 						var es = gameinit.getObj('endsequence');
@@ -364,40 +387,48 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 
 				    		if(containerMesh){
 
+				    			var keys = gameinit.getObj('keys');
+				    			if( !keys[32]){
+									keys[32] = 1;
+								}
+
 				    			if(self.chngdir == 99) {
 				    				var target = 0;
 				    				if( self.tarbody.name == 'drone' ) {
-					    				for(var i = 0; i < v3d.scene.children[8].children.length; i++ ){
-					    					if(self.tarbody.id == v3d.scene.children[8].children[i].id){
+					    				for(var i = 0; i < v3d.scene.children[self.dnum].children.length; i++ ){
+					    					if(self.tarbody.id == v3d.scene.children[self.dnum].children[i].id){
 					    						target = 1;
 					    					}
 					    				}
 					    			}
-					    			if( self.tarbody.name.match('ms') ){
-					    				for(var i = 0; i < v3d.scene.children.length; i++ ){
+					    			if ( self.tarbody != 0 ){
+						    			if( self.tarbody.name.match('ms') ){
+						    				for(var i = 0; i < v3d.scene.children.length; i++ ){
 
-					    					if( self.tarbody.userData.msname == v3d.scene.children[i].userData.msname){
+						    					if( self.tarbody.userData.msname == v3d.scene.children[i].userData.msname){
 
-					    						var msyn = v3d.scene.children[i].children[0].children[0].children.length;
-					    						if( msyn ){ target = 1};
+						    						var msyn = v3d.scene.children[i].children[0].children[0].children.length;
+						    						if( msyn ){ target = 1};
 
-					    					}
+						    					}
 
-					    				}
-					    			}
+						    				}
+						    			}
+						    		}
 					    			if( !target ) {
 					    				reset();
 					    			}
 				    			}
 
-				    			v3d.phaser();
-								getTar();
+				    			if ( self.tarbody == 0){
+									getTar();
+								}
 
 								self.shp1.linearVelocity.set(0,0,0);
 								var ldh = v3d.tvec(self.tarvec.x, self.tarvec.y, self.tarvec.z);
 								ldh.normalize();
 								var len = ldh.length();
-								ldh.multiplyScalar(100);
+								ldh.multiplyScalar(0);
 
 								self.shp1.linearVelocity.addTime(ldh, self.timestep); 
 								var v1 = v3d.tvec();
@@ -412,6 +443,9 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 								dp = Math.acos(dp);
 								var axis = v3d.tvec();
 								axis.crossVectors(v1,v2);
+
+
+
 
 								if(self.chngdir == 0 ) {
 									if( axis.y < 0) { self.chngdir = -1}
@@ -487,20 +521,36 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 										}
 									}
 								}
-								// if( self.angleprev !=0 && ( dp < self.angleprev ) ){
-								// 	if ( self.y < perhu && self.y > perhd ) {
-								// 		if ( self.y < perhu10 && self.y > perhd10){
-								// 			axis.y < 0 ? self.y -=100 : self.y +=100;
-								// 		}
-								// 		else {
-								// 			axis.y < 0 ? self.y -=20 : self.y +=20;
-								// 		}
-								// 	}
-								// }
 						    	
 
 								if ( self.tarbody != 0 ){
-							    	var xy = toScreenPosition(self.tarbody, v3d.camera);
+
+
+									if( !V3D.bincam ) {
+							    		var xy = toScreenPosition(self.tarbody, v3d.camera);
+							    	}
+							    	if( V3D.bincam ) {
+							    		var vector1 = v3d.tvec();
+							    		var vector2 = v3d.tvec();
+
+							    	//	vector2.subVectors( v3d.sight.position, v3d.containerMesh.position ).normalize();
+							    	//	vector2.multiplyScalar(90);	
+
+							    		vector1.subVectors( self.tarbody.position, v3d.containerMesh.position ).normalize();
+							    		vector1.multiplyScalar(90);
+
+							    		// vector2.subVectors( self.tarbody.position, v3d.containerMesh.position );
+							    		// var len = vector2.length();
+							    		// var vector3 = v3d.tvec();
+							    		// vector3.subVectors( v3d.sight.position, v3d.containerMesh.position ).normalize();
+							    		// vector3.multiplyScalar(len);
+
+
+							    		var xy = toScreenPosition( 0, v3d.camera, vector1);
+							    		var xy2 = toScreenPosition( self.tarbody, v3d.camera, 0 );
+							    	}
+
+
 						    		var angdif = self.angleprev - dp;
 									if (angdif < 0){ angdif *= -1};
 									if( self.chngdir == 99 ) {
@@ -511,6 +561,21 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 											self.y = xy.y;
 										}
 									}
+								}
+
+								if(V3D.bincam && self.chngdir == 99 ){
+
+									if ( self.lockcount == 10 ){
+
+										self.x += self.arrpos[self.arrposcnt];
+										self.y += self.arrpos[self.arrposcnt+1];
+										self.arrposcnt += 2;
+
+									}
+									if ( self.lockcount < 10 ){
+										self.lockcount +=1 ;
+									}
+
 								}
 								
 

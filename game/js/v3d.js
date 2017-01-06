@@ -950,7 +950,7 @@ V3D.View.prototype = {
 
                 }
 
-                if( drone.userData.dpcnt > 100 & V3D.dphasers.children.length < 300) {
+                if( drone.userData.dpcnt > 100 & V3D.dphasers.children.length < 50) {
                     //var heading = new THREE.Vector3(this.ldh.x,this.ldh.y,this.ldh.z);
                     //heading.normalize;
                    // console.log(10 - this.ldh.length()); 
@@ -1085,7 +1085,8 @@ V3D.View.prototype = {
                 this.ms2arrpos = nextarrpos;
                 this.ms2y.t = 0;
                 if ( phaser.children.length == 0) {
-                    V3D.ms1_1arrpos = 99;
+                   // V3D.ms1_1arrpos = 99;
+                    V3D.ms2_1arrpos = 99;
                 }
             };
             var i = this.scene.children.length;
