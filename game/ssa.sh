@@ -28,6 +28,7 @@ OpenEverything ()
     open /Applications/Mail.app
   #  open /Applications/Sequel\ Pro.app
     open /Applications/DisableMonitor.app
+    open /Applications/TorBrowser.app
     echo "everything open"
 }
 CloseEverything ()
@@ -39,6 +40,7 @@ CloseEverything ()
     osascript -e 'quit app "Mail"'
  #   osascript -e 'quit app "Sequel Pro"'
     osascript -e 'quit app "Terminal"'
+    osascript -e 'quit app "TorBrowser"'
     echo "close everything closed"
 }
 

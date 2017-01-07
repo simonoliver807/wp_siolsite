@@ -50,7 +50,7 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 											"opacity": 1,
 											"image": "planets/mercury.jpg"
 										},
-										"drone": 2,
+										"drone": 10,
 										"ms1": {
 											"type": "box",
 											"size": [700, 300, 700],
@@ -155,7 +155,7 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 											"image": "planets/molten.jpg"
 
 										},
-										"drone": 30,
+										"drone": 6,
 										"ms1": {			
 											"type": "box",
 											"size": [700, 300, 700],
@@ -173,7 +173,7 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 										"ms2": {
 											"type": "box",
 											"size": [700, 300, 700],
-											"pos": [8000, 0, 10000],
+											"pos": [5000, 0, 1000],
 											"move": true,
 											"world": "world",
 											"name": "ms2",
@@ -190,7 +190,7 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 											"class": "planet",
 											"type": "sphere",
 											"size": [750, 750, 750],
-											"pos": [500, 200, 8000],
+											"pos": [500, 10, -10000],
 											"move": false,
 											"world": "world",
 											"color": "0x0000ff",
@@ -204,7 +204,7 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 											"class": "planet",
 											"type": "sphere",
 											"size": [450, 450, 450],
-											"pos": [500, 100, -8000],
+											"pos": [500, 100, 10100],
 											"move": false,
 											"world": "world",
 											"color": "#0000ff",
@@ -214,7 +214,7 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 											"opacity": 1,
 											"image": "planets/ice.jpg"
 										},
-										"drone": 400,
+										"drone": 200,
 										"ms1": {			
 											"type": "box",
 											"size": [700, 300, 700],

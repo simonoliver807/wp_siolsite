@@ -91,6 +91,7 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
 
     var numofdrone = 0;
     var numofdroneleft = 0;
+    var totaldrones = 0;
     var endsequence = 0;
 
     var halfdiamplanet = 0;
@@ -210,8 +211,28 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
                                                     meshs.push(v3d.scene.children[i]);
                                                     if(bodys[b].name == 'ms1' || bodys[b].name == 'ms2'){
 
-                                                        var q = v3d.msla(bodys[b].body);
-                                                        bodys[b].body.setQuaternion(q);
+                                                       var q = v3d.msla(bodys[b].body);
+                                                       bodys[b].body.setQuaternion(q);
+
+                                                        // if ( bodys[b].name == 'ms2'){
+                                                        //     var q = v3d.tquat();
+                                                        //     var vector1 = v3d.tvec(0,1,0);
+                                                        //     q.setFromAxisAngle(vector1, 1.57);
+                                                    
+
+                                                        //     var q2 = v3d.tquat();
+                                                        //     var vector2 = v3d.tvec(0,0,1);
+                                                        //     q2.setFromAxisAngle(vector2, 0.75);
+                                                        //     q.multiply(q2);
+                                                    
+
+                                                        //     bodys[b].body.setQuaternion(q);
+
+                                                        // }
+
+
+
+                                                        // remove
                                                         // for(var n=0; n < v3d.scene.children.length; n++){
                                                         //     if(v3d.scene.children[n].name == 'mothershipbb1' && bodys[b].body.name == 'ms1'){
                                                         //         v3d.scene.children[n].quaternion.set( q.x,q.y,q.z,q.w); 
@@ -220,12 +241,16 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
                                                         //         v3d.scene.children[n].quaternion.set( q.x,q.y,q.z,q.w); 
                                                         //     }
                                                         // }
+
+
+
                                                         if( bodys[b].name == 'ms1'){
                                                             firstRender.ms1 = b;
                                                         }
                                                         else {
                                                             firstRender.ms2 = b;
                                                         }
+
                                                     }
                                                     break;
                                             }
@@ -250,27 +275,47 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
                                                 var contmeshnum = i;
                                             }
                                             if(v3d.scene.children[i].name == 'ms1'){
+
                                                 v3d.ms1arrpos = i;
-                                                v3d.scene.children[i].children[0].add(V3D.ms1phaser);
-                                                dist.subVectors(v3d.planetpos, v3d.scene.children[i].position );
-                                                ms1len = dist.length();
-                                                ms1len -= halfdiamplanet; // minus half the diameter of the planet
-                                                v3d.ms1pos.set(v3d.scene.children[i].position.x,v3d.scene.children[i].position.y,v3d.scene.children[i].position.z);
+                                              // v3d.scene.children[i].children[0].add(V3D.ms1phaser);
+                                              //  dist.subVectors(v3d.planetpos, v3d.scene.children[i].position );
+                                              //  ms1len = dist.length();
+                                              //  ms1len -= halfdiamplanet; // minus half the diameter of the planet
+                                              //  v3d.ms1pos.set(v3d.scene.children[i].position.x,v3d.scene.children[i].position.y,v3d.scene.children[i].position.z);
                                             }
                                             if(v3d.scene.children[i].name == 'ms2'){
                                                 v3d.ms2arrpos = i;
-                                                v3d.scene.children[i].children[0].add(V3D.ms2phaser);
-                                                dist.subVectors(v3d.planetpos, v3d.scene.children[i].position );
-                                                ms2len = dist.length();
-                                                ms2len -= halfdiamplanet; // minus half the diameter of the planet
-                                                v3d.ms2pos.set( v3d.scene.children[i].position.x, v3d.scene.children[i].position.y , v3d.scene.children[i].position.z);
+                                              //  v3d.scene.children[i].children[0].add(V3D.ms2phaser);
+                                              //  dist.subVectors(v3d.planetpos, v3d.scene.children[i].position );
+                                              //  ms2len = dist.length();
+                                              //  ms2len -= halfdiamplanet; // minus half the diameter of the planet
+                                              //  v3d.ms2pos.set( v3d.scene.children[i].position.x, v3d.scene.children[i].position.y , v3d.scene.children[i].position.z);
                                             }
                                             if(v3d.scene.children[i].name == 'ms1_1'){
                                                 V3D.ms1_1arrpos = i;
                                             }
+                                            if(v3d.scene.children[i].name == 'ms2_1'){
+                                                V3D.ms2_1arrpos = i;
+                                            }
 
                                         }
                                     }
+
+                                    v3d.scene.children[v3d.ms1arrpos].children[0].add(V3D.ms1phaser);
+                                    dist.subVectors(v3d.planetpos, v3d.scene.children[v3d.ms1arrpos].position );
+                                    ms1len = dist.length();
+                                    ms1len -= halfdiamplanet; // minus half the diameter of the planet
+                                    v3d.ms1pos.set(v3d.scene.children[v3d.ms1arrpos].position.x,v3d.scene.children[v3d.ms1arrpos].position.y,v3d.scene.children[v3d.ms1arrpos].position.z);
+
+                                    if( v3d.ms2arrpos ) {
+                                        v3d.scene.children[v3d.ms2arrpos].children[0].add(V3D.ms2phaser);
+                                        dist.subVectors(v3d.planetpos, v3d.scene.children[v3d.ms2arrpos].position );
+                                        ms2len = dist.length();
+                                        ms2len -= halfdiamplanet; // minus half the diameter of the planet
+                                        v3d.ms2pos.set( v3d.scene.children[v3d.ms2arrpos].position.x, v3d.scene.children[v3d.ms2arrpos].position.y , v3d.scene.children[v3d.ms2arrpos].position.z);
+                                    }
+
+
                                     for(var i = 1; i < v3d.scene.children[v3d.dronenum].children.length;i++){
                                         meshs.push(v3d.scene.children[v3d.dronenum].children[i]);
                                     }
@@ -454,33 +499,48 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
 
                                 } 
                                 if ( btd.indexOf(body.body.shapes.id) != -1 || mesh.userData.tbd ) {
-                                    bodys.splice(i,1);
-                                    meshs.splice(i,1);
-                                    var g = mesh.geometry;
-                                    var m = mesh.material;
-                                    g.dispose();
-                                    if( typeof(m.dispose) === 'undefined' ){                 
-                                            V3D.exdrone1.userData.active = true;
-                                            var exdrone = V3D.exdrone1.children[0].clone();
-                                            exdrone.position.set(mesh.position.x,mesh.position.y,mesh.position.z);
-                                            exdrone.quaternion.set(mesh.quaternion.x,mesh.quaternion.y,mesh.quaternion.z,mesh.quaternion.w);
-                                            exdrone.visible = true;
-                                            V3D.exdrone1.children.push(exdrone);
-                                            m.materials[0].dispose();
-                                            m.materials[1].dispose();
-                                            v3d.scene.children[v3d.dronenum].remove(mesh);
+                                    if(body.ld && numofdrone > totaldrones/4){
+                                        var ms = {pos: []};
+                                        if ( body.ms == 'ms1' ) {
+                                            ms.pos = [ v3d.scene.children[v3d.ms1arrpos].position.x, v3d.scene.children[v3d.ms1arrpos].position.y, v3d.scene.children[v3d.ms1arrpos].position.z ];
                                         }
-                                    else {
-                                        m.dispose();
-                                        if(mesh.name == 'phaser'){
-                                             v3d.scene.children[V3D.mesharrpos.phasers].remove(mesh);
+                                        if ( body.ms == 'ms2' ) {
+                                            ms.pos = [ v3d.scene.children[v3d.ms2arrpos].position.x, v3d.scene.children[v3d.ms2arrpos].position.y, v3d.scene.children[v3d.msarrpos].position.z];
                                         }
-                                        if(mesh.name = 'dphaser'){
-                                            v3d.scene.children[V3D.mesharrpos.dphasers].remove(mesh);
-                                        }
-                             
+                                        var pos = self.dronePos(ms);
+                                        body.body.linearVelocity.set(0,0,0);
+                                        body.body.angularVelocity.set(0,0,0);
+                                        body.body.position.set(pos[0]/100,pos[1]/100,pos[2]/100); 
                                     }
-                                    world.removeRigidBody(body.body);
+                                    else {
+                                        bodys.splice(i,1);
+                                        meshs.splice(i,1);
+                                        var g = mesh.geometry;
+                                        var m = mesh.material;
+                                        g.dispose();
+                                        if( typeof(m.dispose) === 'undefined' ){                 
+                                                V3D.exdrone1.userData.active = true;
+                                                var exdrone = V3D.exdrone1.children[0].clone();
+                                                exdrone.position.set(mesh.position.x,mesh.position.y,mesh.position.z);
+                                                exdrone.quaternion.set(mesh.quaternion.x,mesh.quaternion.y,mesh.quaternion.z,mesh.quaternion.w);
+                                                exdrone.visible = true;
+                                                V3D.exdrone1.children.push(exdrone);
+                                                m.materials[0].dispose();
+                                                m.materials[1].dispose();
+                                                v3d.scene.children[v3d.dronenum].remove(mesh);
+                                            }
+                                        else {
+                                            m.dispose();
+                                            if(mesh.name == 'phaser'){
+                                                 v3d.scene.children[V3D.mesharrpos.phasers].remove(mesh);
+                                            }
+                                            if(mesh.name = 'dphaser'){
+                                                v3d.scene.children[V3D.mesharrpos.dphasers].remove(mesh);
+                                            }
+                                 
+                                        }
+                                        world.removeRigidBody(body.body);
+                                    }
                                 
                                 }
                                 if(worldcount - mesh.userData.color > 0.0005 && worldcount - mesh.userData.color < 0.001 ){
@@ -497,7 +557,7 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
                                                 v3d.ms1y.y = 0;
                                                 // if(v3d.ms1y.t == 10 && V3D.ms1_1arrpos !== 99){
 
-                                                if(v3d.ms1y.t == 5 && V3D.ms1_1arrpos !== 99){
+                                                if(v3d.ms1y.t == 10 && V3D.ms1_1arrpos !== 99){
 
                                                    meshs[i] = v3d.swapms(mesh);
 
@@ -579,12 +639,16 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
                                 var dbody = bodys[i];
                                 var drone = meshs[i];
                                 if(dbody.name == 'drone') {
-                                    if( drone.userData.ld ) {
-                                        v3d.updateDrones( dbody.body, meshs[i], dbody.ms );
+                                    if( drone.userData.ld || dbody.ld ) {
+                                        if ( dbody.ld ) {
+                                            drone.userData.ld = 1;
+                                        }
+                                        v3d.updateDrones( dbody, drone, dbody.ms );
                                     }
                                     if ( !drone.userData.ld && !drone.userData.rtm) {
                                         pddist.sub(containerMesh.position,meshs[i].position);
                                         if(pddist.length() < 3500) {
+                                    //if(pddist.length() < 5000) {
                                             drone.userData.ld = 1;
                                         }
                                         else {
@@ -633,7 +697,7 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
                     x = 0;
                     z = 0;
                     y = 0;
-                    w = h = d = 26 ;
+                    w = h = d = 30 ;
 
                 var spheres = [];
                 var ms = [];
@@ -670,6 +734,7 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
                     }
                     if(obj == 'drone') {
                         numofdrone= this.levelobj[obj];
+                        totaldrones = this.levelobj[obj];
                     }
                 }
                     
@@ -759,8 +824,9 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
                             mslist.push(ms[k].name);
                         }
                         while(j--){
-                            if( v3d.scene.children[j].name.substr(0,3) == 'ms1' || v3d.scene.children[j].name.substr(0,3) == 'ms2' ){
-                                if ( v3d.scene.children[j].userData.msname == 'ms1' || v3d.scene.children[j].userData.msname == 'ms2' ) {
+                            //if( v3d.scene.children[j].name.substr(0,3) == 'ms1' || v3d.scene.children[j].name.substr(0,3) == 'ms2' ){
+                             if( v3d.scene.children[j].name.substr(0,3) == ms[i].name ){
+                                if ( v3d.scene.children[j].userData.msname == ms[i].name ) {
                                     if(  mslist.indexOf( v3d.scene.children[j].userData.msname ) != -1){
                                         v3d.scene.children[j].children[0].material.transparent = false;
                                         v3d.scene.children[j].children[0].material.opacity = 1;
@@ -791,8 +857,9 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
                                     }
                                     
                                     if(  mslist.indexOf( v3d.scene.children[j].userData.msname ) != -1){
-                                        v3d.scene.children[j].children[0].remove( V3D.ms1phaser )
-                                        var msphaser = {type: 'cylinder', name: 'ms'+(i+1)+'phaser', color: 0x0099ff}
+                                        v3d.scene.children[j].children[0].remove( msphaser )
+                                        var msname = v3d.scene.children[j].userData.msname ;
+                                        var msphaser = {type: 'cylinder', name: msname+'phaser', color: 0x0099ff}
                                         v3d.addCylinder(msphaser);
                                     }
                                 }
@@ -804,8 +871,8 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
                                 }
                             }
                         }
-                      //  var msbb1 = { type: 'box', size:[700,300,700], pos:[-5000,0,-2000], move: true, world: world, color: 0xff0000, wireframe: 'false',  name: 'mothershipbb1', transparent: 'false', opacity: 0};
-                       // v3d.addBox(msbb1);
+                       // var msbb2 = { type: 'box', size:[700,300,700], pos:[0,0,-2000], move: true, world: world, color: 0xff0000, wireframe: 'false',  name: 'mothershipbb2', transparent: 'false', opacity: 0};
+                       // v3d.addBox(msbb2);
                     }               
                 }
                 for(var numms=0; numms < ms.length; numms++ ){
@@ -821,7 +888,23 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
                var dpm = 0;
                var x,y,z =  0;
 
-               if( numofdroneleft != 0){
+                if( numofdroneleft != 0){
+                    var dm =  v3d.scene.children[v3d.dronenum].children.length -1;
+                    while( dm > numofdrone) {
+                        var g = v3d.scene.children[v3d.dronenum].children[dm].geometry;
+                        var m = v3d.scene.children[v3d.dronenum].children[dm].material;
+                        v3d.scene.children[v3d.dronenum].remove( v3d.scene.children[v3d.dronenum].children[dm] );
+                        dm -= 1;  
+                    }
+                    var i = bodys.length -1;
+                    //numofdroneleft ++;
+                    while(i-- && numofdroneleft > numofdrone) {
+                        if(bodys[i].name == 'drone') {
+                            bodys.splice(i,1);
+                            bodysNum --;
+                            numofdroneleft --;
+                        }   
+                    }
                     numofdrone -= numofdroneleft;
                     var i = bodys.length;
                     while(i--){                    
@@ -834,7 +917,7 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
                     }
 
                }
-
+               var numofld = Math.round(numofdrone / (numofms * 4));
                for(var i=0;i<numofdrone;i++){
 
 
@@ -855,14 +938,27 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
                             bodys[bodysNum] = new OIMO.Body(droneobj);
                             bodys[bodysNum].drota = 0;
                             bodys[bodysNum].ms = ms[msnum].msname;
+
+                            if ( numofld ) {
+                                bodys[bodysNum].ld = 1;
+                                bodys[bodysNum].nrtm = 1;
+                                numofld -= 1;
+                            }
+                            if ( !numofld ) {
+                                bodys[bodysNum].ld = 0;
+                                bodys[bodysNum].nrtm = 0;
+                            }
+
                             bodysNum += 1;
                             dpm +=1;
                         }
                         cylArr.push(droneobj);
+
                     }
                     else {
                         msnum +=1;
                         dpm = 0;
+                        numofld = Math.round(numofdrone / (numofms * 4));
                         var pos = this.dronePos(ms[msnum]);
                         var droneobj= { type:'cylinder', size:[w,h,d], pos: pos, move: true, world:world, noSleep: true, color:'#66ff33', wireframe: 'false', name: 'drone', transparent: 'false', opacity: 1, image:'Free_Droid/bake.obj'};
                         bodys[bodysNum] = new OIMO.Body(droneobj);
@@ -996,6 +1092,7 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
                 if(currlevel === 2){
                     currlevel = 4;
                 }
+
                 
 
 
@@ -1032,11 +1129,14 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
                     i--;
 
                 }
+                console.log('starting level' + currlevel); 
                 bodys[0].body.position.set(0,0,0);
                 startlevel = 0;
                 v3d.ms1y.t = 0;
                 v3d.ms2y.t = 0;
-                health = 10;
+                v3d.ms1y.y = 0;
+                v3d.ms2y.y = 0;
+                health = 100000000000000;
                 V3D.startRender = 0;
                 bodysNum = bodys.length;
                 this.populate();

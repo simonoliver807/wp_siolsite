@@ -33,7 +33,7 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 											"opacity": 1,
 											"image": "planets/mercury.jpg"
 										},
-										"drone": 3,
+										"drone": 1,
 										"ms1": {
 											"type": "box",
 											"size": [700, 300, 700],
@@ -138,7 +138,7 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 											"image": "planets/molten.jpg"
 
 										},
-										"drone": 6,
+										"drone": 2,
 										"ms1": {			
 											"type": "box",
 											"size": [700, 300, 700],
@@ -173,7 +173,7 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 											"class": "planet",
 											"type": "sphere",
 											"size": [750, 750, 750],
-											"pos": [500, 200, 8000],
+											"pos": [500, 10, -10000],
 											"move": false,
 											"world": "world",
 											"color": "0x0000ff",
@@ -187,7 +187,7 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 											"class": "planet",
 											"type": "sphere",
 											"size": [450, 450, 450],
-											"pos": [500, 100, -8000],
+											"pos": [500, 100, 10100],
 											"move": false,
 											"world": "world",
 											"color": "#0000ff",
@@ -197,7 +197,7 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 											"opacity": 1,
 											"image": "planets/ice.jpg"
 										},
-										"drone": 6,
+										"drone": 20,
 										"ms1": {			
 											"type": "box",
 											"size": [700, 300, 700],
@@ -225,6 +225,7 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 											"image": "ms/ms2.obj",
 											"mtl": "ms/ms2.mtl",
 											"new": 1
+											//"new": 0
 										}
 									}
 								});
@@ -233,7 +234,7 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 
 
 					window.oncontextmenu = function (){ return false; }
-					window.addEventListener( 'resize', this.onWindowResize, false );
+					window.addEventListener( 'resize', onWindowResize, false );
 
 
 					v3d = gameinit.getObj('v3d');
@@ -257,7 +258,7 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 				    this.timestep = timestep;
 
 				    this.lockcount = 0;
-				    this.arrpos = [ 1,0,1,1,0,1,-1,0,-1,-1,0,-1,-1,1, 1,-1 ];
+				    this.arrpos = [ 1,0,1,1,0,1 ,-1,0,-1,-1, 0,-1,-1,1, 1,-1,2,0, 2,2 ,0,2,-2,0, -2,-2, 0,-2,-2,2 ];
 				    this.arrposcnt = 0;
 
 		    		if( V3D.bincam){
@@ -278,6 +279,16 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 
 				    setInterval( updateShip, 300 );
 
+				    
+					function onWindowResize(){
+				    	v3d.camera.aspect = window.innerWidth / window.innerHeight;
+				    	v3d.camera.fov = ( 360 / Math.PI ) * Math.atan( v3d.tanFOV * ( window.innerHeight / window.innerHeight ) );
+				    	v3d.camera.updateProjectionMatrix();
+				    	v3d.renderer.setSize( window.innerWidth, window.innerHeight );
+				    	v3d.h = window.innerHeight;
+				    	v3d.w = window.innerWidth;
+					}
+
 
 				    function updateShip() {
 						function handleKeyDown ( event ) {
@@ -286,6 +297,9 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 							if( event.keyCode === 27) {
 								var val = gameinit.gspause() ? 0: 1;
 							    gameinit.gspause(val);
+							}
+							if ( event.keyCode == 70) {
+								document.body.webkitRequestFullScreen();
 							}
 						};
 						function getTar () {

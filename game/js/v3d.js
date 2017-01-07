@@ -275,14 +275,14 @@ V3D.View.prototype = {
       //  geos['cylTarget'] = new THREE.CylinderGeometry( 20, 20, 20 );
         geos['phaser'] = new THREE.SphereGeometry(0.5, 32, 32);
         geos['dphaser'] = new THREE.SphereGeometry(1, 32, 32);
-        geos['mercury1'] = new THREE.SphereBufferGeometry(750, 16, 12);
+        geos['mercelec1'] = new THREE.SphereBufferGeometry(750, 16, 12);
         geos['earth1'] = new THREE.SphereBufferGeometry(1000, 16, 12);
         geos['earth1'].applyMatrix( new THREE.Matrix4().makeRotationX( THREE.Math.degToRad( 23.5 ) ) );
         geos['shp1'] = new THREE.SphereGeometry(0.1)
         geos['sight'] = new THREE.BoxGeometry(15,15,0.5);
         geos['mothershipbb1'] = new THREE.BoxGeometry(700,300,700,10,10,10);
         geos['mothershipbb2'] = new THREE.BoxGeometry(1600,300,300,10,10,10);
-        geos['moon'] = new THREE.SphereGeometry(500, 16, 12);
+        geos['moonice'] = new THREE.SphereGeometry(500, 16, 12);
         geos['molten'] = new THREE.SphereGeometry(570, 16, 12);
         geos['msphaser'] = new THREE.CylinderGeometry( 5, 5, 20 );
         geos['msphaser'].applyMatrix( new THREE.Matrix4().makeRotationX( THREE.Math.degToRad( 90 ) ) );
@@ -371,13 +371,17 @@ V3D.View.prototype = {
              var material = new THREE.MeshBasicMaterial({ color: cylinder.color});
              var pos = [];
              
-             //back
-             pos[0] = [60,70,-500];
-             pos[2] = [-30,70,-500];
+             //back right
+            pos[2] = [-110,65,-70];
 
-              //front
-             pos[1] = [100,70,-10];
-             pos[3] = [-100,70,-10];
+             // back left
+             pos[0] = [90,62,-45];
+
+              //front left
+             pos[1] = [45,60,550];
+
+             //front right
+             pos[3] = [-70,60,550];
              var i = 0;
              while(i<4){
                 var mesh = new THREE.Mesh( this.geos['msphaser2'], material, cylinder.name  );
@@ -387,7 +391,7 @@ V3D.View.prototype = {
                 V3D.ms2phaser.add(mesh);
                 i++;
              }
-             V3D.ms2phaser.name = 'ms2phaser'
+             V3D.ms2phaser.name = 'ms2phaserg'
              //V3D.ms2phaser.position.set(mspos[0], mspos[1], mspos[2])
              // this.scene.add(V3D.ms2phaser);
              return;
@@ -416,13 +420,22 @@ V3D.View.prototype = {
     
         // this.mats['sph'] = this.setMesh(color);
         if( sphere.class == 'planet'){
-            // if(sphere.name.match([1])){
-            //     this.planetpos = new THREE.Vector3(sphere.pos[0],sphere.pos[1],sphere.pos[2])
-            // }
+
+            var geometry;
             var setImage = 'images/'+sphere.image;
             var texture = new THREE.TextureLoader().load(setImage);
             var material = new THREE.MeshBasicMaterial({map:texture});
-            var mesh = new THREE.Mesh( this.geos[sphere.name], material, sphere.name );
+            if ( sphere.name == 'mercury1' || sphere.name == 'electric1') {
+                geometry = this.geos['mercelec1'];
+            }
+            if ( sphere.name == 'moon' || sphere.name == 'ice') {
+                geometry = this.geos['moonice'];
+            }
+            if ( geometry === undefined ){
+                geometry = this.geos[sphere.name];
+            }
+
+            var mesh = new THREE.Mesh( geometry, material, sphere.name );
             mesh.position.set( sphere.pos[0], sphere.pos[1], sphere.pos[2] );
             this.scene.children[V3D.mesharrpos.pl].add( mesh );
         }
@@ -847,20 +860,7 @@ V3D.View.prototype = {
      //   rb.body.linearVelocity.addEqual(shplv);
     },
     // updateDrones: function(db){
-         updateDrones: function(rb,drone,ms){
-
-
-            // var q = new THREE.Quaternion();
-            // q.setFromAxisAngle( this.startRot.axis, this.startRot.camAngle);
-
-            // var cmq = this.camera.quaternion;
-            // cmq.multiplyQuaternions(q, cmq);
-            // cmq.normalize;
-            // this.camera.matrix.makeRotationFromQuaternion(cmq);
-
-            // var q = new THREE.Quaternion();
-            // var rotAxis = new THREE.Vector3(0,1,0);
-            // q.setFromAxisAngle( rotAxis, 0.1);
+         updateDrones: function(dbody,drone,ms){
 
 
 
@@ -870,11 +870,7 @@ V3D.View.prototype = {
             /// and adjust heading of drone ///
             ///////////////////////////////////
 
-
-            // for(var i=0;i<db.body.length;i++){
-
-            //     var rb = db.body[i];
-            //     var drone = db.drone[i];
+            var rb = dbody.body;
 
             if(!drone.userData.rtm){
                 var rblv = rb.linearVelocity.length();
@@ -950,7 +946,7 @@ V3D.View.prototype = {
 
                 }
 
-                if( drone.userData.dpcnt > 100 & V3D.dphasers.children.length < 50) {
+                if( drone.userData.dpcnt > 100 & V3D.dphasers.children.length < 0) {
                     //var heading = new THREE.Vector3(this.ldh.x,this.ldh.y,this.ldh.z);
                     //heading.normalize;
                    // console.log(10 - this.ldh.length()); 
@@ -995,7 +991,7 @@ V3D.View.prototype = {
                     this.distms.subVectors(this.ms2pos,drone.position);
                 }
                 var len = this.distms.length();
-                if(len > 12000 ){
+                if(len > 12000 && !dbody.nrtm ){
                     drone.userData.rtm = 1;
                 }
             }
@@ -1085,7 +1081,6 @@ V3D.View.prototype = {
                 this.ms2arrpos = nextarrpos;
                 this.ms2y.t = 0;
                 if ( phaser.children.length == 0) {
-                   // V3D.ms1_1arrpos = 99;
                     V3D.ms2_1arrpos = 99;
                 }
             };
@@ -1112,7 +1107,12 @@ V3D.View.prototype = {
             else {
                 for(var i = nextarrpos; i < this.scene.children.length; i++){
                     if( this.scene.children[i].name.match(name+'_') ){
-                        V3D.ms1_1arrpos = i;
+                        if( name == 'ms1' ) {
+                            V3D.ms1_1arrpos = i;
+                        }
+                        if( name == 'ms2' ) {
+                            V3D.ms2_1arrpos = i;
+                        }
                         break;
                     }
                 }
