@@ -17,10 +17,17 @@ V3D.grouppart = new THREE.Object3D();
 V3D.ms1phaser = new THREE.Group();
 V3D.ms2phaser = new THREE.Group();
 V3D.percom = document.getElementById('perCom');
-V3D.laserwav = new Audio('audio/laser.wav');
+V3D.mspdown = new Audio('audio/pdown.mp3');
 V3D.dronewav = new Audio('audio/droneExpl.wav');
 V3D.ms1_1arrpos = 0;
 V3D.ms2_1arrpos = 0;
+V3D.x982y= 1;
+
+
+// remove
+V3D.clientx = 0;
+V3D.clienty = 0;
+
 
 
 V3D.View = function(h,v,d){
@@ -178,6 +185,8 @@ V3D.View.prototype = {
         pgroup.name = 'planets';
         this.scene.add(pgroup);
         V3D.mesharrpos.pl = this.scene.children.length-1;
+
+        this.mouse = new THREE.Vector2();
 
 
 
@@ -759,36 +768,92 @@ V3D.View.prototype = {
         }
 
 
-        var direction = this.getPlayerDir('forward', this.containerMesh.position);
-        this.lraycaster.set(this.containerMesh.position, direction);
-        var raycastdrone = this.lraycaster.intersectObjects( this.scene.children[this.dronenum].children);
-        if(raycastdrone.length){
-            raycastdrone[0].object.userData.tbd = 1;
+
+        // var cmnorm = new THREE.Vector3(0,0,0);
+        // cmnorm.copy(this.containerMesh.position);
+        // cmnorm.normalize();
+
+        
+
+        if( !V3D.bincam ) {
+            this.mouse.x = ( V3D.clientx / this.w ) * 2 - 1;
+            this.mouse.y = - ( V3D.clienty / this.h ) * 2 + 1;
+            this.lraycaster.setFromCamera( this.mouse, this.camera );
+            var intersects = this.lraycaster.intersectObjects( this.scene.children, true );
+            for(var i=0; i < intersects.length; i++) {
+                if( intersects[i].object.name == 'ms_Object007.001' && this.ms1y.y == 0) {
+                     this.ms1y.y = 1;
+                     this.ms1y.t += 1;
+                }
+                if( intersects[i].object.name == 'drone' && intersects[i].object.userData.tbd == 0  ) {
+                    intersects[i].object.userData.tbd = 1;
+                    this.playDroneEx();
+                }
+                if( intersects[i].object.name == "DestroyerR_Destroyer_Untitled.000" && this.ms2y.y == 0) {
+                     this.ms2y.y = 1;
+                     this.ms2y.t += 1;
+                }
+            }
+        }
+      //  var vectordir = this.getPlayerDir( 'forward', this.containerMesh.position )
+        this.lraycaster.set( this.containerMesh.position, this.getPlayerDir( 'forward', this.containerMesh.position ) );
+        var intersects = this.lraycaster.intersectObjects( this.scene.children, true );
+        for(var i=0; i < intersects.length; i++) {
+            if( intersects[i].object.name == 'ms_Object007.001' && this.ms1y.y == 0) {
+                this.ms1y.y = 1;
+                this.ms1y.t += 1;
+            }
+            if( intersects[i].object.name == 'drone' && intersects[i].object.userData.tbd == 0  ) {
+                intersects[i].object.userData.tbd = 1;
+                this.playDroneEx();
+            }
+            if( intersects[i].object.name == "DestroyerR_Destroyer_Untitled.000" && this.ms2y.y == 0) {
+                 this.ms2y.y = 1;
+                 this.ms2y.t += 1;
+            }
+        }
+
+        // this.lraycaster.set(this.containerMesh.position, direction);
+        // //lraycaster.set(cmnorm, direction);
+
+        // var raycastdrone = this.lraycaster.intersectObjects( this.scene.children[this.dronenum].children);
+        // if(raycastdrone.length && raycastdrone[0].object.userData.tbd == 0  ) {
+        //     raycastdrone[0].object.userData.tbd = 1;
             // V3D.dronewav.pause();
             // V3D.dronewav.currentTime = 0;
             // setTimeout(function(){
             //     V3D.dronewav.play();
             // },20);
-        }
-        var raycastms1 = (this.lraycaster.intersectObject(this.scene.children[this.ms1arrpos].children[0]));
-        if(raycastms1.length){
-            this.ms1y.y = 1;
-            this.ms1y.t += 1;
-        }
-        if(this.ms2arrpos){
-            var raycastms2 = this.lraycaster.intersectObject(this.scene.children[this.ms2arrpos].children[0]);
-            if(raycastms2.length){
-                this.ms2y.y = 1;
-                this.ms2y.t += 1;
-            }
-        }
-        if(V3D.laserwav.currentTime == 0 || V3D.laserwav.currentTime > 0.5){
-            // V3D.laserwav.pause();
-            // V3D.laserwav.currentTime = 0;
-            // setTimeout(function(){
-            //     V3D.laserwav.play();
-            // }, 20);
-        }
+       // }
+        // var raycastms1 = lraycaster.intersectObject(this.scene.children[this.ms1arrpos].children[0]);
+        // if(raycastms1.length){
+        //     this.ms1y.y = 1;
+        //     this.ms1y.t += 1;
+        // }
+
+
+        // if ( this.scene.children[this.ms1arrpos].children[0].geometry.boundingSphere.radius < 2000 ) { 
+        //     this.scene.children[this.ms1arrpos].children[0].geometry.boundingSphere.radius += 1000;
+        // }
+
+        // var mesh = this.scene.children[this.ms1arrpos].children[0];
+        // var sphere = new THREE.Sphere();
+        // sphere.copy( mesh.geometry.boundingSphere );
+        // sphere.applyMatrix4( mesh.matrixWorld );
+        // var hit = lraycaster.ray.distanceToPoint( sphere.center ) <= sphere.radius;
+        // if( hit ){
+        //     this.ms1y.y = 1;
+        //     this.ms1y.t += 1;
+        // }
+
+
+        // if(this.ms2arrpos){
+        //     var raycastms2 = this.lraycaster.intersectObject(this.scene.children[this.ms2arrpos].children[0]);
+        //     if(raycastms2.length){
+        //         this.ms2y.y = 1;
+        //         this.ms2y.t += 1;
+        //     }
+        // }
 
 
 
@@ -858,6 +923,16 @@ V3D.View.prototype = {
         // }
       //  shplv.multiplyScalar(len + appvelmag);
      //   rb.body.linearVelocity.addEqual(shplv);
+    },
+    playDroneEx: function() {
+
+        V3D.dronewav.pause();
+        V3D.dronewav.currentTime = 0;
+        setTimeout(function(){
+        V3D.dronewav.play();
+        },20);
+
+
     },
     // updateDrones: function(db){
          updateDrones: function(dbody,drone,ms){
@@ -945,8 +1020,8 @@ V3D.View.prototype = {
                         }
 
                 }
-
-                if( drone.userData.dpcnt > 100 & V3D.dphasers.children.length < 0) {
+                var fr = 30 + (V3D.x982y * 25);
+                if( drone.userData.dpcnt > 1000 & V3D.dphasers.children.length < fr) {
                     //var heading = new THREE.Vector3(this.ldh.x,this.ldh.y,this.ldh.z);
                     //heading.normalize;
                    // console.log(10 - this.ldh.length()); 
@@ -977,7 +1052,7 @@ V3D.View.prototype = {
                     var body = { type: 'sphere', size: [0.3,0.3,0.3], pos: [this.shootStart.x, this.shootStart.y, this.shootStart.z], move: 'true', world: this.world, name: 'dphaser' };
                     var rbdphaser = this.addPhaser(body, dphaser);
                     rbdphaser.body.linearVelocity.addTime(heading, this.world.timeStep);
-                    drone.userData.dpcnt = this.randMinMax(0,200);
+                    drone.userData.dpcnt = this.randMinMax(0,1000);
                 }
                 else {
                     drone.userData.dpcnt +=1;
@@ -1006,42 +1081,38 @@ V3D.View.prototype = {
                 var len = this.distms.length();
                 var self = this;
                 if(len > 4000){
-                    dronedist(1000);
+                    this.dronedist(1000, this.distms, rb);
                 }
                 if(len > 2800 && len <= 4000){
-                    dronedist(50);
+                    this.dronedist(50, this.distms, rb);
                 }
                 if( len > 2100 && len <= 2800) {
-                    dronedist(30);
+                    this.dronedist(30, this.distms, rb);
                 }
                 if ( len > 1100 && len <= 2100){
-                    dronedist(10);
+                    this.dronedist(10, this.distms, rb);
                 }
                 if( len <= 1100 ) {
                     drone.userData.rtm = 0;
                     drone.userData.ld = 0;
                 }
-                function dronedist(val) {
-                    if( val == 1000 ) {
-                        rb.linearVelocity.set(0,0,0);
-                    }
-                    self.distms.normalize();
-                    self.distms.x *= val;
-                    self.distms.y *= val;
-                    self.distms.z *= val;
-                    var lv = rb.linearVelocity.length();
-                    rb.linearVelocity.addTime(self.distms, self.world.timeStep);
-                    lv = rb.linearVelocity.length();
-                 }
 
             }
             drone.userData.bincount ? drone.userData.bincount = 0 : drone.userData.bincount = 1;
 
-        //}
+    },
+    dronedist: function(val, distms, rb) {
 
-
-
-
+        if( val == 1000 ) {
+            rb.linearVelocity.set(0,0,0);
+        }
+        distms.normalize();
+        distms.x *= val;
+        distms.y *= val;
+        distms.z *= val;
+        //var lv = rb.linearVelocity.length();
+        rb.linearVelocity.addTime(distms, this.world.timeStep);
+     //   lv = rb.linearVelocity.length();
 
     },
     swapms: function(mesh) {
@@ -1214,10 +1285,12 @@ V3D.View.prototype = {
                             object.children[0].userData.dpcnt = 0;
                             object.children[0].userData.rtm = 0;
                             object.children[0].userData.ld = 0;
+                            object.children[0].userData.tbd = 0;
                         }
                         else {
                             var tmpDrone = object.children[0].clone();
                             tmpDrone.position.set(obj[i].pos[0], obj[i].pos[1], obj[i].pos[2]);
+                            tmpDrone.userData.dpcnt = V3D.View.prototype.randMinMax(0,1000);
                             object.add(tmpDrone);
                         }
 

@@ -1,40 +1,42 @@
 CACHE MANIFEST
 
 CACHE:
- http://localhost:8887/game/game.php
- http://localhost:8887/game/style/style101216.css
- http://localhost:35729/livereload.js
- http://localhost:8887/game/js/require.js
- http://localhost:8887/game/js/config.js
- http://localhost:8887/game/js/hammer.js
- http://localhost:8887/game/js/oimo.js
- http://localhost:8887/game/js/three.js
- http://localhost:8887/game/js/objloader.js
- http://localhost:8887/game/js/tgaloader.js
- http://localhost:8887/game/js/mtlloader.js
- http://localhost:8887/game/js/ddsloader.js
- http://localhost:8887/game/js/v3d.js
- http://localhost:8887/game/js/gameinit.js
- http://localhost:8887/game/js/main.js
- http://localhost:8887/game/images/cpv/cpv.mtl
- http://localhost:8887/game/images/ms/ms.mtl
- http://localhost:8887/game/images/ms/ms_1.mtl
- http://localhost:8887/game/images/Free_Droid/Materials/BaseMaterial_normal.tga
- http://localhost:8887/game/images/Free_Droid/bake.obj
- http://localhost:8887/game/images/ani/exdrone1.obj
- http://localhost:8887/game/images/ani/exdrone2.obj
- http://localhost:8887/game/images/ani/exdrone3.obj
- http://localhost:8887/game/images/phasers/bluefire.png
- http://localhost:8887/game/images/phasers/dphaser.obj
- http://localhost:8887/game/images/cpv/ed1a.jpg
- http://localhost:8887/game/images/cpv/cp6b.jpg
- http://localhost:8887/game/images/cpv/cpv.obj
- http://localhost:8887/game/images/ms/mst.png
- http://localhost:8887/game/images/ms/ms.obj
- http://localhost:8887/game/images/ms/mst.png
- http://localhost:8887/game/images/ms/ms_1.obj
- http://localhost:8887/game/audio/laser.wav
- http://localhost:8887/game/audio/droneExpl.wav
+ http://siolsite.com/game.php
+ http://siolsite.com/style/style101216.css
+ http://siolsite.com/js/require.js
+ http://siolsite.com/js/config.js
+ http://siolsite.com/images/cpv/cpv.mtl
+ http://siolsite.com/images/Free_Droid/Materials/BaseMaterial_normal.tga
+ http://siolsite.com/images/Free_Droid/bake.obj
+ http://siolsite.com/images/ani/exdrone1.obj
+ http://siolsite.com/images/ani/exdrone2.obj
+ http://siolsite.com/images/ani/exdrone3.obj
+ http://siolsite.com/images/phasers/bluefire.png
+ http://siolsite.com/images/phasers/dphaser.obj
+ http://siolsite.com/images/cpv/ed1a.jpg
+ http://siolsite.com/images/cpv/cp6b.jpg
+ http://siolsite.com/images/cpv/cpv.obj
+ http://siolsite.com/images/ms/mst.png
+ http://siolsite.com/images/ms/dst.png
+ http://siolsite.com/images/ms/ms1.obj
+ http://siolsite.com/images/ms/ms1.mtl
+ http://siolsite.com/images/ms/ms1_1.obj
+ http://siolsite.com/images/ms/ms1_2.obj
+ http://siolsite.com/images/ms/ms1_3.obj
+ http://siolsite.com/images/ms/ms1_4.obj
+ http://siolsite.com/images/ms/ms2.obj
+ http://siolsite.com/images/ms/ms2.mtl
+ http://siolsite.com/images/ms/ms2_1.obj
+ http://siolsite.com/images/ms/ms2_2.obj
+ http://siolsite.com/images/ms/ms2_3.obj
+ http://siolsite.com/images/ms/ms2_4.obj
+
+ http://siolsite.com/audio/pdown.mp3
 
 NETWORK:
 *
+
+
+
+
+

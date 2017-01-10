@@ -33,7 +33,7 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 											"opacity": 1,
 											"image": "planets/mercury.jpg"
 										},
-										"drone": 1,
+										"drone": 10,
 										"ms1": {
 											"type": "box",
 											"size": [700, 300, 700],
@@ -78,7 +78,7 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 											"opacity": 1,
 											"image": "planets/moon.jpg"
 										},
-										"drone": 2,
+										"drone": 10,
 										"ms1": {
 											"type": "box",
 											"size": [700, 300, 700],
@@ -138,7 +138,7 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 											"image": "planets/molten.jpg"
 
 										},
-										"drone": 2,
+										"drone": 10,
 										"ms1": {			
 											"type": "box",
 											"size": [700, 300, 700],
@@ -197,7 +197,7 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 											"opacity": 1,
 											"image": "planets/ice.jpg"
 										},
-										"drone": 20,
+										"drone": 10,
 										"ms1": {			
 											"type": "box",
 											"size": [700, 300, 700],
@@ -224,7 +224,7 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 											"opacity": 0,
 											"image": "ms/ms2.obj",
 											"mtl": "ms/ms2.mtl",
-											"new": 1
+											"new": 0
 											//"new": 0
 										}
 									}
@@ -277,8 +277,8 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 
 				    gameinit.oimoLoop();
 
-				    setInterval( updateShip, 300 );
-
+				    setInterval( updateShip, 75 );
+ 
 				    
 					function onWindowResize(){
 				    	v3d.camera.aspect = window.innerWidth / window.innerHeight;
@@ -542,6 +542,12 @@ define(['gameinit','v3d'], function(GAMEINIT,V3D){
 
 									if( !V3D.bincam ) {
 							    		var xy = toScreenPosition(self.tarbody, v3d.camera);
+
+							    		// get sight screen xy pos for raycast;
+							    		var sightxy = toScreenPosition(v3d.sight, v3d.camera);
+							    		V3D.clientx = sightxy.x;
+							    		V3D.clienty = sightxy.y;
+
 							    	}
 							    	if( V3D.bincam ) {
 							    		var vector1 = v3d.tvec();

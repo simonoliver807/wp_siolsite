@@ -103,3 +103,30 @@
 [12-Oct-2016 10:52:08 UTC] PHP   7. wpdb->db_connect() /Applications/MAMP/htdocs/website/wordpress/wp-includes/wp-db.php:658
 [12-Oct-2016 10:52:08 UTC] PHP   8. wpdb->db_connect() /Applications/MAMP/htdocs/website/wordpress/wp-includes/wp-db.php:1517
 [12-Oct-2016 10:52:08 UTC] PHP   9. mysql_connect() /Applications/MAMP/htdocs/website/wordpress/wp-includes/wp-db.php:1522
+[09-Jan-2017 20:46:24 UTC] PHP Warning:  An unexpected error occurred. Something may be wrong with WordPress.org or this server&#8217;s configuration. If you continue to have problems, please try the <a href="https://wordpress.org/support/">support forums</a>. (WordPress could not establish a secure connection to WordPress.org. Please contact your server administrator.) in /Applications/MAMP/htdocs/website/wordpress/wp-includes/update.php on line 123
+[09-Jan-2017 20:46:24 UTC] PHP Stack trace:
+[09-Jan-2017 20:46:24 UTC] PHP   1. {main}() /Applications/MAMP/htdocs/website/wordpress/wp-admin/index.php:0
+[09-Jan-2017 20:46:24 UTC] PHP   2. require_once() /Applications/MAMP/htdocs/website/wordpress/wp-admin/index.php:10
+[09-Jan-2017 20:46:24 UTC] PHP   3. do_action() /Applications/MAMP/htdocs/website/wordpress/wp-admin/admin.php:168
+[09-Jan-2017 20:46:24 UTC] PHP   4. call_user_func_array:{/Applications/MAMP/htdocs/website/wordpress/wp-includes/plugin.php:525}() /Applications/MAMP/htdocs/website/wordpress/wp-includes/plugin.php:525
+[09-Jan-2017 20:46:24 UTC] PHP   5. _maybe_update_core() /Applications/MAMP/htdocs/website/wordpress/wp-includes/plugin.php:525
+[09-Jan-2017 20:46:24 UTC] PHP   6. wp_version_check() /Applications/MAMP/htdocs/website/wordpress/wp-includes/update.php:615
+[09-Jan-2017 20:46:24 UTC] PHP   7. trigger_error() /Applications/MAMP/htdocs/website/wordpress/wp-includes/update.php:123
+[09-Jan-2017 20:46:30 UTC] PHP Warning:  session_start(): Cannot send session cache limiter - headers already sent (output started at /Applications/MAMP/htdocs/website/wordpress/wp-includes/update.php:123) in /Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/helpers/class-fw-flash-messages.php on line 214
+[09-Jan-2017 20:46:30 UTC] PHP Stack trace:
+[09-Jan-2017 20:46:30 UTC] PHP   1. {main}() /Applications/MAMP/htdocs/website/wordpress/wp-admin/index.php:0
+[09-Jan-2017 20:46:30 UTC] PHP   2. require_once() /Applications/MAMP/htdocs/website/wordpress/wp-admin/index.php:10
+[09-Jan-2017 20:46:30 UTC] PHP   3. set_current_screen() /Applications/MAMP/htdocs/website/wordpress/wp-admin/admin.php:201
+[09-Jan-2017 20:46:30 UTC] PHP   4. WP_Screen->set_current_screen() /Applications/MAMP/htdocs/website/wordpress/wp-admin/includes/screen.php:223
+[09-Jan-2017 20:46:30 UTC] PHP   5. do_action() /Applications/MAMP/htdocs/website/wordpress/wp-admin/includes/class-wp-screen.php:393
+[09-Jan-2017 20:46:30 UTC] PHP   6. call_user_func_array:{/Applications/MAMP/htdocs/website/wordpress/wp-includes/plugin.php:525}() /Applications/MAMP/htdocs/website/wordpress/wp-includes/plugin.php:525
+[09-Jan-2017 20:46:30 UTC] PHP   7. _action_fw_flash_message_backend_prepare() /Applications/MAMP/htdocs/website/wordpress/wp-includes/plugin.php:525
+[09-Jan-2017 20:46:30 UTC] PHP   8. session_start() /Applications/MAMP/htdocs/website/wordpress/wp-content/plugins/unyson/framework/helpers/class-fw-flash-messages.php:214
+[09-Jan-2017 20:47:42 UTC] PHP Warning:  An unexpected error occurred. Something may be wrong with WordPress.org or this server&#8217;s configuration. If you continue to have problems, please try the <a href="https://wordpress.org/support/">support forums</a>. (WordPress could not establish a secure connection to WordPress.org. Please contact your server administrator.) in /Applications/MAMP/htdocs/website/wordpress/wp-admin/includes/update.php on line 115
+[09-Jan-2017 20:47:42 UTC] PHP Stack trace:
+[09-Jan-2017 20:47:42 UTC] PHP   1. {main}() /Applications/MAMP/htdocs/website/wordpress/wp-admin/update-core.php:0
+[09-Jan-2017 20:47:42 UTC] PHP   2. do_core_upgrade() /Applications/MAMP/htdocs/website/wordpress/wp-admin/update-core.php:643
+[09-Jan-2017 20:47:42 UTC] PHP   3. Core_Upgrader->upgrade() /Applications/MAMP/htdocs/website/wordpress/wp-admin/update-core.php:491
+[09-Jan-2017 20:47:42 UTC] PHP   4. Core_Upgrader->check_files() /Applications/MAMP/htdocs/website/wordpress/wp-admin/includes/class-wp-upgrader.php:2298
+[09-Jan-2017 20:47:42 UTC] PHP   5. get_core_checksums() /Applications/MAMP/htdocs/website/wordpress/wp-admin/includes/class-wp-upgrader.php:2553
+[09-Jan-2017 20:47:42 UTC] PHP   6. trigger_error() /Applications/MAMP/htdocs/website/wordpress/wp-admin/includes/update.php:115

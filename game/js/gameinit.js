@@ -34,7 +34,7 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
     var worldcount = 0;
 
     var levels = [];
-    var currlevel = 1;      //*************************************
+    var x982y = 1;      //*************************************
     var startlevel = 1;     //*************************************
 
 
@@ -105,7 +105,7 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
     var numobj = 0;
     var self;
 
-    var health = 1;
+    var health = 250;
 
         return {
 
@@ -168,6 +168,7 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
                             var btd = []
                             world.step();
                             v3d.render();
+
 
                             if(firstRender != 0){
                                 if( firstRender.ms1 ) {
@@ -324,8 +325,6 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
                                     meshNum = meshs.length;
                                 }
 
-
-
                             
                                 if(V3D.exdrone3.userData.active){
                                     for(var i=1; i <V3D.exdrone3.children.length; i++) {
@@ -342,8 +341,8 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
                                         V3D.exdrone3.remove(V3D.exdrone3.children[i])
                                     }
                                     V3D.exdrone3.userData.active = false;
-                                    numofdrone -= 1;
-                                    bodysNum -= 1;
+                                    // numofdrone -= 1;
+                                    // bodysNum -= 1;
 
                                 }
                                 if(V3D.exdrone2.userData.active){
@@ -455,8 +454,9 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
 
 
                                 if( mesh.name == 'phaser' || mesh.name == 'dphaser' ) {
+
                                     if( mesh.userData.timealive ){
-                                        if( worldcount - mesh.userData.timealive > 0.008 && mesh.name == 'dphaser' ){
+                                        if( worldcount - mesh.userData.timealive > 0.006 && mesh.name == 'dphaser' ){
                                             btd.push(bodys[i].body.shapes.id);
                                         }
                                         if( worldcount - mesh.userData.timealive > 0.000615 && mesh.name == 'phaser' ){
@@ -466,6 +466,10 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
                                     else {
                                         mesh.userData.timealive = worldcount;
                                     }
+                                }
+                                // after lead drone is respawned need to wait befor it can be destroyed again
+                                if ( mesh.userData.tbd < 0 ) {
+                                    mesh.userData.tbd += 1;
                                 }
                                 if(!body.getSleep()){ // if body didn't sleep
                                     // apply rigidbody position and rotation to mesh
@@ -498,19 +502,21 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
 
 
                                 } 
-                                if ( btd.indexOf(body.body.shapes.id) != -1 || mesh.userData.tbd ) {
+                                if ( btd.indexOf(body.body.shapes.id) != -1 || mesh.userData.tbd == 1 ) {
                                     if(body.ld && numofdrone > totaldrones/4){
                                         var ms = {pos: []};
                                         if ( body.ms == 'ms1' ) {
-                                            ms.pos = [ v3d.scene.children[v3d.ms1arrpos].position.x, v3d.scene.children[v3d.ms1arrpos].position.y, v3d.scene.children[v3d.ms1arrpos].position.z ];
+                                            ms.pos = [ v3d.ms1pos.x, v3d.ms1pos.y, v3d.ms1pos.z ];
                                         }
                                         if ( body.ms == 'ms2' ) {
-                                            ms.pos = [ v3d.scene.children[v3d.ms2arrpos].position.x, v3d.scene.children[v3d.ms2arrpos].position.y, v3d.scene.children[v3d.msarrpos].position.z];
+                                           ms.pos = [ v3d.ms2pos.x, v3d.ms2pos.y, v3d.ms2pos.z ];
                                         }
+                                        self.loadExdrone( mesh );
                                         var pos = self.dronePos(ms);
-                                        body.body.linearVelocity.set(0,0,0);
-                                        body.body.angularVelocity.set(0,0,0);
+                                     //   body.body.linearVelocity.set(0,0,0);
+                                     //   body.body.angularVelocity.set(0,0,0);
                                         body.body.position.set(pos[0]/100,pos[1]/100,pos[2]/100); 
+                                        mesh.userData.tbd = -2;
                                     }
                                     else {
                                         bodys.splice(i,1);
@@ -519,15 +525,20 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
                                         var m = mesh.material;
                                         g.dispose();
                                         if( typeof(m.dispose) === 'undefined' ){                 
-                                                V3D.exdrone1.userData.active = true;
-                                                var exdrone = V3D.exdrone1.children[0].clone();
-                                                exdrone.position.set(mesh.position.x,mesh.position.y,mesh.position.z);
-                                                exdrone.quaternion.set(mesh.quaternion.x,mesh.quaternion.y,mesh.quaternion.z,mesh.quaternion.w);
-                                                exdrone.visible = true;
-                                                V3D.exdrone1.children.push(exdrone);
+                                                // V3D.exdrone1.userData.active = true;
+                                                // var exdrone = V3D.exdrone1.children[0].clone();
+                                                // exdrone.position.set(mesh.position.x,mesh.position.y,mesh.position.z);
+                                                // exdrone.quaternion.set(mesh.quaternion.x,mesh.quaternion.y,mesh.quaternion.z,mesh.quaternion.w);
+                                                // exdrone.visible = true;
+                                                // V3D.exdrone1.children.push(exdrone);
+                                                self.loadExdrone( mesh );
                                                 m.materials[0].dispose();
                                                 m.materials[1].dispose();
                                                 v3d.scene.children[v3d.dronenum].remove(mesh);
+
+                                                numofdrone -= 1;
+                                                bodysNum -= 1;
+
                                             }
                                         else {
                                             m.dispose();
@@ -557,10 +568,10 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
                                                 v3d.ms1y.y = 0;
                                                 // if(v3d.ms1y.t == 10 && V3D.ms1_1arrpos !== 99){
 
-                                                if(v3d.ms1y.t == 10 && V3D.ms1_1arrpos !== 99){
+                                                if(v3d.ms1y.t == 1000 && V3D.ms1_1arrpos !== 99){
 
                                                    meshs[i] = v3d.swapms(mesh);
-
+                                                   V3D.mspdown.play();
                                                 }
                                             }
                                         }
@@ -572,9 +583,9 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
                                                 mesh.children[0].material.color.setRGB(255,255,0);
                                                 mesh.userData.color = worldcount;
                                                 v3d.ms2y.y = 0;
-                                                if(v3d.ms2y.t == 10 && V3D.ms2_1arrpos !== 99){
-                                                 meshs[i] = v3d.swapms(mesh, currlevel);
-
+                                                if(v3d.ms2y.t == 1000 && V3D.ms2_1arrpos !== 99){
+                                                 meshs[i] = v3d.swapms(mesh, x982y);
+                                                 V3D.mspdown.play();
                                                 }
                                             }
                                         }
@@ -612,7 +623,6 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
                                 }
 
                             }
-
                             if(keys[38] && !keys[32]){
                                 v3d.addForce();
                             }
@@ -718,7 +728,7 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
                 if( !startlevel && V3D.bincam ) {
                     V3D.startRender += 1;
                 }
-                this.levelobj = levels[0][currlevel];
+                this.levelobj = levels[0][x982y];
                 for( obj in  this.levelobj){
                     if(obj.charAt(0) == 'p'){
                         if(obj == 'planet1'){
@@ -1026,6 +1036,16 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
                 z += ms.pos[2]; 
                 return [x,y,z];
             },
+            loadExdrone: function( drone ) {
+
+                V3D.exdrone1.userData.active = true;
+                var exdrone = V3D.exdrone1.children[0].clone();
+                exdrone.position.set( drone.position.x, drone.position.y, drone.position.z);
+                exdrone.quaternion.set( drone.quaternion.x, drone.quaternion.y, drone.quaternion.z, drone.quaternion.w);
+                exdrone.visible = true;
+                V3D.exdrone1.children.push(exdrone);
+
+            },
             getObj: function(el) {
 
                    switch (el) {
@@ -1075,7 +1095,8 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
                 }
             },
             levelGen: function( restart ) {
-                restart ? currlevel = 1 : currlevel += 1 ;
+                restart ? x982y = 1 : x982y += 1 ;
+                V3D.x982y = x982y;
                 for(var i = 0; i < v3d.scene.children.length; i++){
                     if( v3d.scene.children[i].userData.msname ){
                         if( v3d.scene.children[i].userData.msname == 'ms1_4'){
@@ -1089,9 +1110,9 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
 
 
                 
-                if(currlevel === 2){
-                    currlevel = 4;
-                }
+                // if(x982y === 2){
+                //     x982y = 3;
+                // }
 
                 
 
@@ -1129,14 +1150,14 @@ define(['oimo', 'v3d'], function(OIMO,V3D) {
                     i--;
 
                 }
-                console.log('starting level' + currlevel); 
                 bodys[0].body.position.set(0,0,0);
                 startlevel = 0;
                 v3d.ms1y.t = 0;
                 v3d.ms2y.t = 0;
                 v3d.ms1y.y = 0;
                 v3d.ms2y.y = 0;
-                health = 100000000000000;
+               // health = 100000000000000;
+                health = 250;
                 V3D.startRender = 0;
                 bodysNum = bodys.length;
                 this.populate();

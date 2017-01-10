@@ -20,8 +20,8 @@ else {
 <html>
 <head>
 		<title>Drone Warfare &#8211; siolsite</title>
-	<link rel="stylesheet" type="text/css" href="style/style101216.css">
-<!-- 	 <link rel="stylesheet" type="text/css" href="http://siolsite.com/style/style101216.css"> -->
+<!-- 	<link rel="stylesheet" type="text/css" href="style/style101216.css"> -->
+	 <link rel="stylesheet" type="text/css" href="http://siolsite.com/style/style101216.css">
 	 <link rel="icon" type="image/png" href="images/favicon.ico">
 	 <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1, minimal-ui">
 	 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -60,7 +60,7 @@ else {
 		</div>
 		<div id='mobcon'></div>
 	</div>
- <script src="//localhost:35729/livereload.js"></script>
+<!--  <script src="//localhost:35729/livereload.js"></script> -->
 <!-- <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script> -->
 
 
@@ -68,9 +68,9 @@ else {
 
 
 
-<!-- 
-<script type="text/javascript" data-main="http://localhost:8887/game/js_minified/config.js" src="http://localhost:8887/game/js_minified/require.js"></script> 
- -->
+
+<!-- <script type="text/javascript" data-main="http://localhost:8887/game/js_minified/config.js" src="http://localhost:8887/game/js_minified/require.js"></script>  -->
+
 
 <!-- <script type="text/javascript" data-main="http://siolsite.com/js_minified/config.js" src="http://siolsite.com/js_minified/require.js"></script>  -->
 
